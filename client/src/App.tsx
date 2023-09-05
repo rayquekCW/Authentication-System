@@ -6,8 +6,6 @@ import viteLogo from '/vite.svg';
 // import PatientListPage from '../src/components/exampleComponent'; // example of a component
 import './App.css';
 import '../src/styles/styles.scss';
-// eslint-disable-next-line
-import * as bootstrap from 'bootstrap';
 
 const App = () => {
 	const [count, setCount] = useState(0);

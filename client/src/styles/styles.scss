@@ -1,2 +1,20 @@
-@import "~bootstrap/scss/bootstrap";
 @import "./variable";
+
+@font-face {
+    font-family: $baseFont;
+    src: url("./fonts/Gotham\ Book.otf") format("opentype");
+}
+
+html {
+    font-size: $font-base-rem;
+}
+
+body {
+    font-family: $baseFont;
+    // color: $primaryText; // (Example)
+    // background-color: $background; // (Example)
+}
+
+h1, h2, h3, h4, h5, h6, p {
+    font-family: $baseFont;
+}
