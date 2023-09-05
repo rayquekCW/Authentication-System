@@ -1,0 +1,15 @@
+@font-face {
+  font-family: "Gotham Book";
+  src: url("./fonts/Gotham Book.otf") format("opentype");
+}
+html {
+  font-size: 16px;
+}
+
+body {
+  font-family: "Gotham Book";
+}
+
+h1, h2, h3, h4, h5, h6, p {
+  font-family: "Gotham Book";
+}
