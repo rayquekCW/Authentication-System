@@ -39,12 +39,12 @@ const homePage = () => {
 			<div className="container bg-light shadow-sm mt-4 pb-5">
 				<div className="row p-3">
 					<div className="col-md-4 col-12 text-start" >
-						<h2>Deposites</h2>
+						<h2>Deposits</h2>
 					</div>
-					<div className="col pt-5 pt-md-0 text-end ">
+					<div className="col pt-md-0 text-md-end text-start">
 						<button className="btn btn-secondary mx-2">View Bank & Earn Summary</button>
-						<button className="btn btn-secondary mx-2">Set Account Nickname</button>
-						<button className="btn btn-secondary mr-2">View Account</button>
+						<button className="btn mt-md-0 mt-3 btn-secondary mx-2">Set Account Nickname</button>
+						<button className="btn mt-md-0  mt-3 btn-secondary mr-2">View Account</button>
 					</div>
 				</div>
 				<table className="table table-bordered h-50 text-center">
