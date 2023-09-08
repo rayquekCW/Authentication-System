@@ -13,3 +13,15 @@ body {
 h1, h2, h3, h4, h5, h6, p {
   font-family: "Gotham Book";
 }
+
+.setPasswordBtn {
+  background-color: #0078CE;
+  color: #ffffff;
+  border: none;
+  transition: background-color 0.3s;
+}
+
+.setPasswordBtn:hover {
+  background-color: #161693;
+  color: #ffffff;
+}
