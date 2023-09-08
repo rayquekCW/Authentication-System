@@ -19,13 +19,19 @@ h1, h2, h3, h4, h5, h6, p {
     font-family: $baseFont;
 }
 
-.setPasswordBtn{
+.defaultBtn{
     background-color: $primaryBrandColor;
     color:#ffffff;
     border:none;
     transition: background-color 0.3s; 
 }
-.setPasswordBtn:hover {
+.defaultBtn:hover {
     background-color: $hoverColor;
     color: #ffffff;
+}
+
+.cancelBtn{
+    background-color: #ffffff;
+    color:$primaryBrandColor;
+    border:solid 1px black;
 }
