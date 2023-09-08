@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-const homePage = () => {
+const HomePage = () => {
 	return (
 		<>
 			<div className="container bg-light shadow-sm mt-4">
@@ -72,4 +72,4 @@ const homePage = () => {
 	);
 };
 
-export default homePage;
+export default HomePage;
