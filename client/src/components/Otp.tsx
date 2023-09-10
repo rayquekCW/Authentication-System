@@ -1,18 +1,23 @@
-// TODO: Component border with shadow
-
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faMobileScreen } from "@fortawesome/free-solid-svg-icons";
+import {
+  faMobileScreen,
+  faEnvelopeOpenText,
+} from "@fortawesome/free-solid-svg-icons";
+import Notifications from "./Notifications";
 
-interface OtpProps {
+type OtpProps = {
   otpType: string; // email or phone
-}
+};
 
 const Otp = ({ otpType }: OtpProps) => {
-  const [isEmail, setIsEmail] = useState(otpType === "email"); // true if otpType is 'email', false if otpType is 'phone'
+  const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
+
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
   const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(6).fill(null)); // to store references to the 6 input fields
   const [time, setTime] = useState(300); // 5 minutes timer
+  const [msg, setMsg] = useState(""); // message to be displayed
+  const [error, setError] = useState(false); // true if error, false if not
 
   useEffect(() => {
     let timer: NodeJS.Timeout; // to store the timer
@@ -34,6 +39,7 @@ const Otp = ({ otpType }: OtpProps) => {
     ).padStart(2, "0")}`;
   };
 
+  // handle input change of OTP
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number,
@@ -59,15 +65,48 @@ const Otp = ({ otpType }: OtpProps) => {
     }
   };
 
+  const handleLogin = () => {
+    // if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
+    if (time <= 0) {
+      setMsg("OTP is invalid");
+      setError(true);
+    }
+    // if otp contains any empty string, set message to "OTP is invalid" and set error to true
+    if (otp.includes("")) {
+      setMsg("OTP is invalid");
+      setError(true);
+    }
+    // TODO: check if OTP is valid
+  };
+
   return (
     <div>
-      <h1>OTP Verification</h1>
+      <h1 aria-label="OTP Verification">OTP Verification</h1>
       {isEmail && (
         <>
-          <FontAwesomeIcon icon={faMobileScreen} size="3x" fade />
+          <FontAwesomeIcon
+            icon={faEnvelopeOpenText}
+            size="3x"
+            fade
+            aria-label="Envelope Icon"
+          />
           <p id="otp-text" className="my-3">
-            A one-time password has been sent to xav******@gmail.com.{" "}
+            A one-time password has been sent to xav******@gmail.com.
             {/* to be replaced with user's email */}
+          </p>
+        </>
+      )}
+      {!isEmail && (
+        <>
+          <FontAwesomeIcon
+            icon={faMobileScreen}
+            size="3x"
+            fade
+            aria-label="Mobile Screen Icon"
+          />
+          <p id="otp-text" className="my-3">
+            A one-time password has been sent to +65 **** 5432.{" "}
+            {/* to be replaced with user's phone number */}
           </p>
         </>
       )}
@@ -94,23 +133,32 @@ const Otp = ({ otpType }: OtpProps) => {
                   borderBottom: "1px solid #000",
                 }}
                 ref={(input) => (inputRefs.current[index] = input)}
+                aria-label={`Digit ${index + 1}`}
               />
             </div>
           ))}
         </div>
-        <p id="otp-text" className="my-3">
+        <p id="otp-text" className="my-3" aria-labelledby="email-description">
           OTP is only valid for {formatTime(time)} seconds.
         </p>
         <p id="otp-text" className="my-3">
-          Did not receive the OTP? <a href="#">Resend OTP</a>
+          Did not receive the OTP?{" "}
+          <a href="#" aria-label="Resend OTP">
+            Resend OTP
+          </a>
         </p>
-        <button className="btn defaultBtn" id="login">
+        <button
+          className="btn defaultBtn"
+          id="login"
+          onClick={handleLogin}
+          aria-label="Login"
+        >
           <span className="btn-text">Login</span>
         </button>
       </div>
-      {/* <div className="container text-center">
-				{msg && <Notification message={msg} isError={error} />}
-			</div> */}
+      <div className="container text-center">
+        {msg && <Notifications message={msg} isError={error} />}
+      </div>
     </div>
   );
 };

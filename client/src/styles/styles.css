@@ -10,7 +10,7 @@ body {
   font-family: "Gotham Book";
   font-weight: 400;
   font-size: clamp(0.89rem, 0.23vw + 0.84rem, 1rem);
-  color: var(--dark, #1D1D1F);
+  color: var(--dark, #1d1d1f);
 }
 
 h1,
@@ -41,15 +41,41 @@ p {
   font-size: clamp(0.89rem, 0.23vw + 0.84rem, 1rem);
 }
 
+/* Backgrounds */
+.bg-primary {
+  background-color: #0078ce;
+}
+
+.bg-secondary {
+  background-color: #fa9d00;
+}
+
+/* Text */
+.text-primary {
+  color: #0078ce;
+}
+
+.text-secondary {
+  color: #fa9d00;
+}
+
+.caption {
+  font-size: clamp(0.71rem, 0.18vw + 0.67rem, 0.8rem);
+}
+
+.font-tiny {
+  font-size: clamp(0.57rem, 0.15vw + 0.54rem, 0.64rem);
+}
+
 /* Buttons */
 .cancelBtn {
   background-color: #ffffff;
-  color: #0078CE;
+  color: #0078ce;
   border: solid 1px black;
 }
 
 .defaultBtn {
-  background-color: #0078CE;
+  background-color: #0078ce;
   color: #ffffff;
   border: none;
   transition: background-color 0.3s;
@@ -59,6 +85,32 @@ p {
   color: #ffffff;
 }
 
+.mfaBtn {
+  color: #0078ce;
+  border-color: #0078ce;
+  transition: background-color 0.3s;
+}
+@media (min-width: 320px) {
+  .mfaBtn {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .mfaBtn {
+    width: 40%;
+  }
+}
+.mfaBtn:hover {
+  background-color: #161693;
+  color: #ffffff;
+}
+
+.seePasswordBtn {
+  cursor: pointer;
+  background-color: #ffffff;
+}
+
+/* Misc */
 .passwordDesign {
   background-image: url("https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
   background-size: cover;
