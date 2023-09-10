@@ -6,7 +6,7 @@ module.exports = {
 		"plugin:@typescript-eslint/recommended",
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
-		"prettier:recommended",
+		"plugin:prettier/recommended",
 	],
 	ignorePatterns: ["dist", ".eslintrc.cjs"],
 	parser: "@typescript-eslint/parser",
@@ -21,9 +21,6 @@ module.exports = {
 		"react/react-in-jsx-scope": 0,
 		"import/no-anonymous-default-export": "off",
 		"no-tabs": 0,
-		indent: ["error", "tab"],
-		"react/jsx-indent": ["error", "tab"],
-		"react/jsx-indent-props": ["error", "tab"],
 		"max-len": [
 			"error",
 			{
