@@ -18,13 +18,12 @@ const EmailOtp = () => {
 		}
 
 		return () => clearTimeout(timer); // clear the timer when the component unmounts
-
 	}, [time]);
 
 	const formatTime = (seconds: number): string => {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
-	
+
 		return `${String(minutes).padStart(2, '0')}:${String(remainingSeconds).padStart(2, '0')}`;
 	};
 
@@ -77,7 +76,7 @@ const EmailOtp = () => {
 					OTP is only valid for {formatTime(time)} seconds.
 				</p>
 				<p id='otp-text' className='my-3'>
-					Didn't receive the OTP? <a href='#'>Resend OTP</a>
+					Did not receive the OTP? <a href='#'>Resend OTP</a>
 				</p>
 				<button className="btn defaultBtn" id="login">
 					<span className="btn-text">Login</span>

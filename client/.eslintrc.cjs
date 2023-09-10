@@ -7,7 +7,6 @@ module.exports = {
 		"plugin:react/recommended",
 		"plugin:react-hooks/recommended",
 		"google",
-		"prettier/recommended",
 	],
 	ignorePatterns: ["dist", ".eslintrc.cjs"],
 	parser: "@typescript-eslint/parser",
@@ -44,4 +43,3 @@ module.exports = {
 		},
 	},
 };
-x
