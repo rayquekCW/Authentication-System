@@ -1,5 +1,4 @@
-// eslint-disable-next-line
-import {BrowserRouter as Router, Route, Link, Routes} from 'react-router-dom';
+import { BrowserRouter as Router, Route, Link, Routes } from 'react-router-dom';
 // import PatientListPage from '../src/components/exampleComponent'; // example of a component
 import HomePage from './pages/homePage';
 import './App.css';

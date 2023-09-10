@@ -1,8 +1,8 @@
-import {useState} from 'react';
-import {Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody} from '@mui/material';
+import { useState } from 'react';
+import { Box, Table, Button, TableHead, Typography, TableCell, TableRow, TableBody } from '@mui/material';
 import axios from 'axios';
 
-import {PatientFormValues, Patient} from '../utils/types';
+import { PatientFormValues, Patient } from '../utils/types';
 import AddPatientModal from '../components/exampleModal';
 
 import HealthRatingBar from '../components/exampleComponent';
@@ -10,11 +10,11 @@ import HealthRatingBar from '../components/exampleComponent';
 import patientService from '../services/exampleService';
 
 interface Props {
-  patients : Patient[]
-  setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
+	patients: Patient[]
+	setPatients: React.Dispatch<React.SetStateAction<Patient[]>>
 }
 
-const PatientListPage = ({patients, setPatients} : Props ) => {
+const PatientListPage = ({ patients, setPatients }: Props) => {
 	const [modalOpen, setModalOpen] = useState<boolean>(false);
 	const [error, setError] = useState<string>();
 
@@ -53,7 +53,7 @@ const PatientListPage = ({patients, setPatients} : Props ) => {
 					Patient list
 				</Typography>
 			</Box>
-			<Table style={{marginBottom: '1em'}}>
+			<Table style={{ marginBottom: '1em' }}>
 				<TableHead>
 					<TableRow>
 						<TableCell>Name</TableCell>

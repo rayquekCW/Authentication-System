@@ -1,11 +1,11 @@
-import {Rating} from '@mui/material';
-import {Favorite} from '@mui/icons-material';
+import { Rating } from '@mui/material';
+import { Favorite } from '@mui/icons-material';
 
-import {styled} from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 
 type BarProps = {
-  rating: number;
-  showText: boolean;
+	rating: number;
+	showText: boolean;
 };
 
 const StyledRating = styled(Rating)({
@@ -24,7 +24,7 @@ const HEALTHBAR_TEXTS = [
 	'The patient has a diagnosed condition',
 ];
 
-const HealthRatingBar = ({rating, showText}: BarProps) => {
+const HealthRatingBar = ({ rating, showText }: BarProps) => {
 	return (
 		<div className="health-bar">
 			<StyledRating

@@ -1,33 +1,39 @@
 @font-face {
-  font-family: "Gotham Book";
-  src: url("./fonts/Gotham Book.otf") format("opentype");
+	font-family: "Gotham Book";
+	src: url("./fonts/Gotham Book.otf") format("opentype");
 }
 html {
-  font-size: 16px;
+	font-size: 16px;
 }
 
 body {
-  font-family: "Gotham Book";
+	font-family: "Gotham Book";
 }
 
-h1, h2, h3, h4, h5, h6, p {
-  font-family: "Gotham Book";
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+	font-family: "Gotham Book";
 }
 
 .defaultBtn {
-  background-color: #0078CE;
-  color: #ffffff;
-  border: none;
-  transition: background-color 0.3s;
+	background-color: #0078ce;
+	color: #ffffff;
+	border: none;
+	transition: background-color 0.3s;
 }
 
 .defaultBtn:hover {
-  background-color: #161693;
-  color: #ffffff;
+	background-color: #161693;
+	color: #ffffff;
 }
 
 .cancelBtn {
-  background-color: #ffffff;
-  color: #0078CE;
-  border: solid 1px black;
+	background-color: #ffffff;
+	color: #0078ce;
+	border: solid 1px black;
 }
