@@ -1,8 +1,8 @@
 // TODO: Component border with shadow
 
-import {useState, useRef, useEffect} from 'react';
-import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
-import {faMobileScreen} from '@fortawesome/free-solid-svg-icons';
+import { useState, useRef, useEffect } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faMobileScreen } from '@fortawesome/free-solid-svg-icons';
 
 const EmailOtp = () => {
 	const [otp, setOtp] = useState(['', '', '', '', '', '']); // 6 digit OTP
@@ -42,7 +42,7 @@ const EmailOtp = () => {
 			// if value is not empty and the index is less than 5 and the next input field exists, focus on the next input field
 			if (value !== '' && index < 5 && inputRefs.current[index + 1]) {
 				inputRefs.current[index + 1]?.focus();
-			// if value is empty and the index is greater than 0 and the previous input field exists, focus on the previous input field
+				// if value is empty and the index is greater than 0 and the previous input field exists, focus on the previous input field
 			} else if (value === '' && index > 0 && inputRefs.current[index - 1]) {
 				inputRefs.current[index - 1]?.focus();
 			}
@@ -57,16 +57,16 @@ const EmailOtp = () => {
 				A one-time password has been sent to xav******@gmail.com. {/* to be replaced with user's email */}
 			</p>
 			<div className="container text-center">
-				<div className="mx-auto" style={{maxWidth: '400px'}}>
+				<div className="mx-auto" style={{ maxWidth: '400px' }}>
 					{otp.map((value, index) => (
-						<div key={index} style={{display: 'inline-block', marginRight: '10px', marginBottom: '10px'}}>
+						<div key={index} style={{ display: 'inline-block', marginRight: '10px', marginBottom: '10px' }}>
 							<input
 								type="text"
 								className="form-control text-center"
 								value={value}
 								onChange={(e) => handleInputChange(e, index)}
 								maxLength={1}
-								style={{height: '50px', width: '40px', borderBottom: '1px solid #000'}}
+								style={{ height: '50px', width: '40px', borderBottom: '1px solid #000' }}
 								ref={(input) => (inputRefs.current[index] = input)}
 							/>
 						</div>
