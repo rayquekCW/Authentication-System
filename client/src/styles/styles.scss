@@ -1,19 +1,19 @@
-@import "./variable";
+@import './variable';
 
 @font-face {
-    font-family: $baseFont;
-    src: url("./fonts/Gotham\ Book.otf") format("opentype");
+	font-family: $baseFont;
+	src: url('./fonts/Gotham\ Book.otf') format('opentype');
 }
 
 html {
-    font-size: $font-base-rem;
+	font-size: $font-base-rem;
 }
 
 body {
-    font-family: $baseFont;
-    font-weight: $font-base-weight;
-    font-size: $font-size-base;
-    color: $dark;
+	font-family: $baseFont;
+	font-weight: $font-base-weight;
+	font-size: $font-size-base;
+	color: $dark;
 }
 
 h1,
@@ -22,66 +22,95 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: $baseFont;
-    font-weight: $font-header-weight;
-    line-height: $font-variable-line-height;
-    overflow-wrap: break-word;
+	font-family: $baseFont;
+	font-weight: $font-header-weight;
+	line-height: $font-variable-line-height;
+	overflow-wrap: break-word;
 }
 
 h1 {
-    font-size: $font-size-h1;
+	font-size: $font-size-h1;
 }
 
 h2 {
-    font-size: $font-size-h2;
+	font-size: $font-size-h2;
 }
 
 h3 {
-    font-size: $font-size-h3;
+	font-size: $font-size-h3;
 }
 
 p {
-    font-size: $font-size-base;
+	font-size: $font-size-base;
+}
+/* Backgrounds */
+.bg-primary {
+	background-color: $primaryBrandColor;
+}
+
+.bg-secondary {
+	background-color: $secondaryBrandColor;
+}
+
+/* Text */
+
+.text-primary {
+	color: $primaryBrandColor;
+}
+
+.text-secondary {
+	color: $secondaryBrandColor;
+}
+
+.caption {
+	font-size: $font-size-caption;
+}
+
+.font-tiny {
+	font-size: $font-size-tiny;
 }
 
 /* Buttons */
 
 .cancelBtn {
-    background-color: #ffffff;
-    color: $primaryBrandColor;
-    border: solid 1px black;
+	background-color: #ffffff;
+	color: $primaryBrandColor;
+	border: solid 1px black;
 }
 
 .defaultBtn {
-    background-color: $primaryBrandColor;
-    color: #ffffff;
-    border: none;
-    transition: background-color 0.3s;
-    &:hover {
-        background-color: $hoverColor;
-        color: #ffffff;
-    }
+	background-color: $primaryBrandColor;
+	color: #ffffff;
+	border: none;
+	transition: background-color 0.3s;
+	&:hover {
+		background-color: $hoverColor;
+		color: #ffffff;
+	}
 }
 
+.seePasswordBtn {
+	cursor: pointer;
+	background-color: #ffffff;
+}
 
-
-.passwordDesign{
-    background-image:url('https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
-    background-size: cover;
-    @media (min-width: 320px) {
-        font-size: calc(0.5em + 0.5vw);
-    }
-    @media (min-width: 778px) {
-    font-size: calc(0.4em + 0.5vw);
-    }
-    @media (min-width: 2040px) {
-        font-size: calc(0.4em + 0.5vw);
-    }
-    .heightDesign{
-        height:95vh;
-        background-color: #ffffff;
-    }
-    .boxInput{
-        background-color: #ffffff;
-    }
+.passwordDesign {
+	background-image: url('https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+	background-size: cover;
+	@media (min-width: 320px) {
+		font-size: calc(0.5em + 0.5vw);
+	}
+	@media (min-width: 778px) {
+		font-size: calc(0.4em + 0.5vw);
+	}
+	@media (min-width: 2040px) {
+		font-size: calc(0.4em + 0.5vw);
+	}
+	.heightDesign {
+		height: 95vh;
+		background-color: #ffffff;
+	}
+	.boxInput {
+		background-color: #ffffff;
+	}
 }
