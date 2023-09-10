@@ -25,6 +25,14 @@ p {
     font-family: $baseFont;
 }
 
+/* Buttons */
+
+.cancelBtn {
+    background-color: #ffffff;
+    color: $primaryBrandColor;
+    border: solid 1px black;
+}
+
 .defaultBtn {
     background-color: $primaryBrandColor;
     color: #ffffff;
@@ -35,10 +43,4 @@ p {
 .defaultBtn:hover {
     background-color: $hoverColor;
     color: #ffffff;
-}
-
-.cancelBtn {
-    background-color: #ffffff;
-    color: $primaryBrandColor;
-    border: solid 1px black;
 }
