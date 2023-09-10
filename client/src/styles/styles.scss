@@ -11,8 +11,9 @@ html {
 
 body {
     font-family: $baseFont;
-    // color: $primaryText; // (Example)
-    // background-color: $background; // (Example)
+    font-weight: $font-base-weight;
+    font-size: $font-size-base;
+    color: $dark;
 }
 
 h1,
@@ -20,9 +21,27 @@ h2,
 h3,
 h4,
 h5,
-h6,
-p {
+h6 {
     font-family: $baseFont;
+    font-weight: $font-header-weight;
+    line-height: $font-variable-line-height;
+    overflow-wrap: break-word;
+}
+
+h1 {
+    font-size: $font-size-h1;
+}
+
+h2 {
+    font-size: $font-size-h2;
+}
+
+h3 {
+    font-size: $font-size-h3;
+}
+
+p {
+    font-size: $font-size-base;
 }
 
 /* Buttons */
