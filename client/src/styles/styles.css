@@ -54,8 +54,34 @@ p {
   border: none;
   transition: background-color 0.3s;
 }
-
 .defaultBtn:hover {
   background-color: #161693;
   color: #ffffff;
+}
+
+.passwordDesign {
+  background-image: url("https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
+  background-size: cover;
+}
+@media (min-width: 320px) {
+  .passwordDesign {
+    font-size: calc(0.5em + 0.5vw);
+  }
+}
+@media (min-width: 778px) {
+  .passwordDesign {
+    font-size: calc(0.4em + 0.5vw);
+  }
+}
+@media (min-width: 2040px) {
+  .passwordDesign {
+    font-size: calc(0.4em + 0.5vw);
+  }
+}
+.passwordDesign .heightDesign {
+  height: 95vh;
+  background-color: #ffffff;
+}
+.passwordDesign .boxInput {
+  background-color: #ffffff;
 }
