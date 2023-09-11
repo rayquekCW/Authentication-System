@@ -19,6 +19,12 @@ const Setup = ({ stateChanger }: any) => {
      * of an input field, validate if the input is a valid phone number
      */
     const handlePhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        // Check the input is a number
+        if (isNaN(Number(event.target.value))) {
+            return;
+        }
+
         setPhoneNumber(event.target.value);
     };
 
@@ -27,6 +33,17 @@ const Setup = ({ stateChanger }: any) => {
      * with the value of the input element.
      */
     const handleVerificationCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+
+        // Check the input is a number
+        if (isNaN(Number(event.target.value))) {
+            return;
+        }
+
+        // Limit the length of the input to 6 characters
+        if (event.target.value.length > 6) {
+            return;
+        }
+
         setVerificationCode(event.target.value);
     };
 

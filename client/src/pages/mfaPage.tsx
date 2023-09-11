@@ -2,8 +2,13 @@ import { useState } from "react";
 import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
 import Setup from "../components/mfaSetupSteps/Setup";
 
+type MfaPageProps = {
+    email: string;
+    logoURL: string;
+}
 
-const MfaPage = () => {
+
+const MfaPage = ({ email, logoURL }: MfaPageProps) => {
 
     const [steps, setSteps] = useState(0);
 
@@ -11,7 +16,7 @@ const MfaPage = () => {
         if (steps === 0) {
             return (
                 <div className='my-5'>
-                    <MFASetupPrompt stateChanger={setSteps} email="" logoURL="" />
+                    <MFASetupPrompt stateChanger={setSteps} email={email} logoURL={logoURL} />
                 </div >
             )
         }
@@ -37,8 +42,6 @@ const MfaPage = () => {
     return (
         <>
             {renderComponents()}
-            {/* <MFASetupPrompt email="" logoURL="" /> */}
-            {/* <Setup /> */}
         </>
     );
 };
