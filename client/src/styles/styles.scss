@@ -43,6 +43,12 @@ h3 {
 p {
 	font-size: $font-size-base;
 }
+/* Height */
+
+.vh-80 {
+	height: 80vh;
+}
+
 /* Backgrounds */
 .bg-primary {
 	background-color: $primaryBrandColor;
@@ -92,6 +98,10 @@ p {
 .seePasswordBtn {
 	cursor: pointer;
 	background-color: #ffffff;
+}
+
+.cursor-pointer {
+	cursor: pointer;
 }
 
 .passwordDesign {
