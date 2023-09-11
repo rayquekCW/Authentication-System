@@ -1,4 +1,4 @@
-import {FaLock, FaRegEye, FaRegEyeSlash, FaUserAlt} from 'react-icons/fa';
+import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
 
@@ -13,15 +13,15 @@ const SignInContainer = (props: any) => {
 				<h2 className="mb-3">Sign In</h2>
 				<div className="d-flex flex-column gap-3 w-100">
 					<div className="input-group mb-3">
-						<span className="input-group-text" id="basic-addon1">
-							<FaUserAlt />
+						<span className="input-group-text" id="signin-email">
+							<FaAt />
 						</span>
 						<input
-							type="text"
+							type="email"
 							className="form-control"
-							placeholder="Username"
-							aria-label="Username"
-							aria-describedby="basic-addon1"
+							placeholder="Email"
+							aria-label="email"
+							aria-describedby="signin-email"
 						/>
 					</div>
 					<div className="input-group mb-3 w-100">
