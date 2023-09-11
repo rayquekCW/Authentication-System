@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import HomePage from "./pages/homePage";
 import "./App.css";
 import "../src/styles/styles.scss";
+import MfaPage from './pages/mfaPage';
 
 const App = () => {
   return (
