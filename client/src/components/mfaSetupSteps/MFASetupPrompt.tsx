@@ -5,11 +5,11 @@ import '../../styles/_variable.scss';
 type MFAsetup = {
     email: string;
     logoURL: string;
-    requirePrompt: boolean;
+    stateChanger: (value: number) => void;
 }
 
 // Create component to setup MFA with some text and a button and takes in a email prop
-const MFASetupPrompt = ({ email, logoURL }: MFAsetup) => {
+const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
     // if email is provided, use that, otherwise use "No email provided"
     const emailData = email || 'placeholder@gmail.com';
 
@@ -31,7 +31,7 @@ const MFASetupPrompt = ({ email, logoURL }: MFAsetup) => {
                         <p>Your organization needs more information to keep your account secure</p>
 
                         <p>Click the button below to setup MFA for your account.</p>
-                        <button className="btn btn-primary text-end">Setup MFA</button>
+                        <button className="btn btn-primary text-end" onClick={() => stateChanger(1)}>Setup MFA</button>
                     </div>
 
                     <div className="col-md-1"></div>

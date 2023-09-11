@@ -5,9 +5,10 @@ import { useState } from 'react';
 
 type Setup = {
     requireSetup: boolean;
+    stateChanger: (value: number) => void;
 }
 
-const Setup = () => {
+const Setup = ({ stateChanger }: any) => {
 
     const [requestOTP, setRequestOTP] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -38,6 +39,9 @@ const Setup = () => {
     // TODO: add a function to process and check the OTP with the backend
     const verifyOTP = () => {
         console.log('verifyOTP');
+
+        // TODO: if the OTP is correct, change the state to 2
+        stateChanger(2);
     }
 
     /* The `renderRequestOTP` function is a helper function that determines which component to render based
@@ -47,7 +51,7 @@ const Setup = () => {
             return (
                 <div className='my-5'>
                     <h3>Step 2: Enter your verification code from your mobile phone</h3>
-                    <p>Enter the verification code displayed on your app</p>
+                    <p>Enter the verification code displayed on your phone</p>
                     <FormControl>
                         <InputLabel htmlFor="verificationCode">Verification Code</InputLabel>
                         <Input type="text" onChange={handleVerificationCodeChange} id="verificationCode" aria-describedby="my-helper-text" value={verificationCode} />

@@ -2,20 +2,43 @@ import { useState } from "react";
 import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
 import Setup from "../components/mfaSetupSteps/Setup";
 
-type MfaPageProps = {
-    requirePrompt: boolean;
-    requireSetup: boolean;
-};
 
-const MfaPage = ({ requirePrompt }: MfaPageProps) => {
+const MfaPage = () => {
 
-    const [requireSetup, setRequireSetup] = useState(false);
+    const [steps, setSteps] = useState(0);
 
+    const renderComponents = () => {
+        if (steps === 0) {
+            return (
+                <div className='my-5'>
+                    <MFASetupPrompt stateChanger={setSteps} email="" logoURL="" />
+                </div >
+            )
+        }
+
+        if (steps === 1) {
+            return (
+                <div className='my-5'>
+                    <Setup stateChanger={setSteps} />
+                </div>
+            )
+        }
+
+        if (steps === 2) {
+            return (
+                <div className='my-5'>
+                    <h3>Setup Complete!</h3>
+                    <p>You have successfully setup MFA for your account.</p>
+                </div>
+            )
+        }
+    }
 
     return (
         <>
-            <MFASetupPrompt requirePrompt={requirePrompt} email="" logoURL="" />
-            <Setup />
+            {renderComponents()}
+            {/* <MFASetupPrompt email="" logoURL="" /> */}
+            {/* <Setup /> */}
         </>
     );
 };
