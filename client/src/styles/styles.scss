@@ -95,6 +95,22 @@ p {
 	}
 }
 
+.mfaBtn {
+	color: $primaryBrandColor;
+	border-color: $primaryBrandColor;
+	transition: background-color 0.3s;
+	@media (min-width: 320px) {
+		width: 100%;
+	}
+	@media (min-width: 768px) {
+		width: 40%;
+	}
+	&:hover {
+		background-color: $hoverColor;
+		color: #ffffff;
+	}
+}
+
 .seePasswordBtn {
 	cursor: pointer;
 	background-color: #ffffff;
