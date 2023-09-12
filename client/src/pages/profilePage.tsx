@@ -1,5 +1,7 @@
 import { useState, SyntheticEvent } from "react";
 import NavBar from "../components/NavBar";
+import '../styles/styles.scss';
+
 
 const ProfilePage = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -45,34 +47,6 @@ const ProfilePage = () => {
 
   return (
     <>
-      <style>
-        {`
-          .popup {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 9999;
-            background-color: #f8f9fa; /* Set to table bg color */
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            padding: 30px;
-            border-radius: 10px;
-            max-width: 400px;
-          }
-
-          .popup-content {
-            text-align: center;
-          }
-
-          .popup-content h2 {
-            margin-bottom: 20px;
-          }
-
-          .popup-content button {
-            margin-top: 10px;
-          }
-        `}
-      </style>
       <NavBar />
       <div className="container bg-light shadow-sm mt-4 p-4">
         <div className="row p-3">
@@ -177,6 +151,7 @@ const ProfilePage = () => {
                 <input
                   type="password"
                   className="form-control"
+                  placeholder="Old Password"
                   id="oldPassword"
                   value={oldPassword}
                   onChange={(e) => setOldPassword(e.target.value)}
@@ -190,6 +165,7 @@ const ProfilePage = () => {
                 <input
                   type="password"
                   className="form-control"
+                  placeholder="New Password"
                   id="newPassword"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
@@ -203,6 +179,7 @@ const ProfilePage = () => {
                 <input
                   type="password"
                   className="form-control"
+                  placeholder="New Password"
                   id="confirmNewPassword"
                   value={confirmNewPassword}
                   onChange={(e) => setConfirmNewPassword(e.target.value)}
@@ -223,6 +200,7 @@ const ProfilePage = () => {
           </div>
         </div>
       )}
+
       {showMfaPopup && (
         <div className="popup">
           <div className="popup-content">
