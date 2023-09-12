@@ -50,7 +50,7 @@ const HomePage = () => {
 
       <div className="container bg-light shadow-sm mt-4 pb-5">
         <div className="row p-3">
-          <div className="col-md-4 col-12 text-start">
+          <div className="col-lg-4 col-md-12 col-sm-12 col-12 text-start">
             <h2>Deposits</h2>
           </div>
           <div className="col pt-md-0 text-md-end text-start">
@@ -60,7 +60,7 @@ const HomePage = () => {
             <button className="btn mt-md-0 mt-3 btn-secondary mx-2">
               Set Account Nickname
             </button>
-            <button className="btn mt-md-0  mt-3 btn-secondary mr-2">
+            <button className="btn mt-md-0 mt-3 btn-secondary mr-2">
               View Account
             </button>
           </div>
