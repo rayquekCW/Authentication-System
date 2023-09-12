@@ -1,6 +1,9 @@
+import NavBar from "../components/NavBar";
+
 const HomePage = () => {
   return (
     <>
+	<NavBar/>
       <div className="container bg-light shadow-sm mt-4">
         <div className="row p-3">
           <div className="col-md-4 col-12 text-start">
