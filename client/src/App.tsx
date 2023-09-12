@@ -7,6 +7,7 @@ import ChangePassword from "./pages/changePassword"
 import ProfilePage from "./pages/profilePage"
 import "./App.css";
 import "../src/styles/styles.scss";
+import MfaPage from './pages/mfaPage';
 
 const App = () => {
   return (

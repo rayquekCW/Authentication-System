@@ -1,5 +1,5 @@
-import { useState, SyntheticEvent } from "react";
-import NavBar from "../components/NavBar";
+import { useState, SyntheticEvent } from 'react';
+import NavBar from '../components/NavBar';
 
 const ProfilePage = () => {
   const [showPopup, setShowPopup] = useState(false);
@@ -103,18 +103,10 @@ const ProfilePage = () => {
           </tr>
         </table>
         <div className="col pt-md-0 text-md-end text-start">
-          <button
-            className="btn mt-md-0 mt-3 btn-primary mx-2 primary"
-            onClick={handlePopupOpen}
-          >
+          <button className="btn mt-md-0 mt-3 btn-primary mx-2 primary" onClick={handlePopupOpen}>
             Change Password
           </button>
-          <button
-            className="btn mt-md-0  mt-3 btn-danger mr-2"
-            onClick={handleDeleteButtonClick}
-          >
-            Delete Account
-          </button>
+          <button className="btn mt-md-0  mt-3 btn-danger mr-2" onClick={handleDeleteButtonClick} >Delete Account</button>
         </div>
       </div>
 
@@ -127,39 +119,30 @@ const ProfilePage = () => {
         <div className="row p-3">
           <div className="col-md-4 col-12">
             <div className="form-check text-start">
-              <input
-                className="form-check-input"
-                type="radio"
-                id="mfaBiometrics"
-                name="mfaOption"
-              />
-              <label className="form-check-label">Phone Number</label>
+              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
+              <label className="form-check-label">
+                Phone Number
+              </label>
             </div>
           </div>
         </div>
         <div className="row p-3">
           <div className="col-md-4 col-12">
             <div className="form-check text-start">
-              <input
-                className="form-check-input"
-                type="radio"
-                id="mfaBiometrics"
-                name="mfaOption"
-              />
-              <label className="form-check-label">Email</label>
+              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
+              <label className="form-check-label">
+                Email
+              </label>
             </div>
           </div>
         </div>
         <div className="row p-3">
           <div className="col-md-4 col-12 pr-4">
             <div className="form-check text-start">
-              <input
-                className="form-check-input"
-                type="radio"
-                id="mfaBiometrics"
-                name="mfaOption"
-              />
-              <label className="form-check-label">Biometrics</label>
+              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
+              <label className="form-check-label">
+                Biometrics
+              </label>
             </div>
           </div>
         </div>
@@ -171,9 +154,7 @@ const ProfilePage = () => {
             <h2>Change Password</h2>
             <form onSubmit={handleSubmit}>
               <div className="mb-3">
-                <label htmlFor="oldPassword" className="form-label">
-                  Old Password
-                </label>
+                <label htmlFor="oldPassword" className="form-label">Old Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -184,9 +165,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="newPassword" className="form-label">
-                  New Password
-                </label>
+                <label htmlFor="newPassword" className="form-label">New Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -197,9 +176,7 @@ const ProfilePage = () => {
                 />
               </div>
               <div className="mb-3">
-                <label htmlFor="confirmNewPassword" className="form-label">
-                  Confirm New Password
-                </label>
+                <label htmlFor="confirmNewPassword" className="form-label">Confirm New Password</label>
                 <input
                   type="password"
                   className="form-control"
@@ -209,16 +186,8 @@ const ProfilePage = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary m-1">
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary m-1"
-                onClick={handlePopupClose}
-              >
-                Cancel
-              </button>
+              <button type="submit" className="btn btn-primary m-1">Submit</button>
+              <button type="button" className="btn btn-secondary m-1" onClick={handlePopupClose}>Cancel</button>
             </form>
           </div>
         </div>
@@ -229,9 +198,7 @@ const ProfilePage = () => {
             <h2>MFA Verification</h2>
             <form onSubmit={handleMfaSubmit}>
               <div className="mb-3">
-                <label htmlFor="mfaCode" className="form-label">
-                  Enter 6-digit code
-                </label>
+                <label htmlFor="mfaCode" className="form-label">Enter 6-digit code</label>
                 <input
                   type="text"
                   className="form-control"
@@ -243,16 +210,8 @@ const ProfilePage = () => {
                   required
                 />
               </div>
-              <button type="submit" className="btn btn-primary m-1">
-                Submit
-              </button>
-              <button
-                type="button"
-                className="btn btn-secondary m-1"
-                onClick={() => setShowMfaPopup(false)}
-              >
-                Cancel
-              </button>
+              <button type="submit" className="btn btn-primary m-1">Submit</button>
+              <button type="button" className="btn btn-secondary m-1" onClick={() => setShowMfaPopup(false)}>Cancel</button>
             </form>
           </div>
         </div>

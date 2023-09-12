@@ -7,14 +7,17 @@ const MultiFactAuth = () => {
 
   const handleOtpType = (e: React.MouseEvent<HTMLButtonElement>) => {
     const id = e.currentTarget.id;
-    if (id === "email") {
-      setOtpType("email");
-      setTypeSelected(true);
+    switch (id) {
+      case "phone":
+        setOtpType("phone");
+        break;
+      case "email":
+        setOtpType("email");
+        break;
+      default:
+        break;
     }
-    if (id === "phone") {
-      setOtpType("phone");
-      setTypeSelected(true);
-    }
+    setTypeSelected(true);
   };
 
   return (
