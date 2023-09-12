@@ -1,9 +1,22 @@
-import {FaLock, FaRegEye, FaRegEyeSlash, FaUserAlt, FaAt} from 'react-icons/fa';
+import {
+	FaLock,
+	FaRegEye,
+	FaRegEyeSlash,
+	FaUserAlt,
+	FaAt,
+	FaCalendar,
+} from 'react-icons/fa';
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
 
 const RegisterContainer = (props: any) => {
 	const [showPassword, setShowPassword] = useState(false);
+	var today = new Date();
+	var dd = today.getDate();
+	var mm = String(today.getMonth() + 1).padStart(2, '0');
+	var yyyy = today.getFullYear();
+	var maxDate = yyyy + '-' + mm + '-' + dd;
+
 	return (
 		<>
 			<div
@@ -13,15 +26,25 @@ const RegisterContainer = (props: any) => {
 				<h2 className="mb-3">Register</h2>
 				<div className="d-flex flex-column gap-3 w-100">
 					<div className="input-group mb-3">
-						<span className="input-group-text" id="basic-addon1">
+						<span
+							className="input-group-text"
+							id="register-firstname"
+						>
 							<FaUserAlt />
 						</span>
 						<input
 							type="text"
 							className="form-control"
-							placeholder="Username"
-							aria-label="Username"
-							aria-describedby="basic-addon1"
+							placeholder="First Name"
+							aria-label="Firstname"
+							aria-describedby="register-firstname"
+						/>
+						<input
+							type="text"
+							className="form-control"
+							placeholder="Last Name"
+							aria-label="Lastname"
+							aria-describedby="register-lastname"
 						/>
 					</div>
 					<div className="input-group mb-3">
@@ -36,8 +59,24 @@ const RegisterContainer = (props: any) => {
 							aria-describedby="register-email"
 						/>
 					</div>
+					<div className="input-group mb-3">
+						<span className="input-group-text" id="register-dob">
+							<FaCalendar />
+						</span>
+						<input
+							type="date"
+							className="form-control"
+							placeholder="Date of Birth"
+							aria-label="dob"
+							aria-describedby="register-dob"
+							max={maxDate}
+						/>
+					</div>
 					<div className="input-group mb-3 w-100">
-						<span className="input-group-text" id="basic-addon2">
+						<span
+							className="input-group-text"
+							id="register-password"
+						>
 							<FaLock />
 						</span>
 						<input
@@ -45,7 +84,7 @@ const RegisterContainer = (props: any) => {
 							className="form-control"
 							placeholder="Password"
 							aria-label="Password"
-							aria-describedby="basic-addon2"
+							aria-describedby="register-password"
 						/>
 						<button
 							className="input-group-text"
@@ -73,7 +112,7 @@ const RegisterContainer = (props: any) => {
 					</p>
 				</div>
 				<button className="defaultBtn mt-2 py-2 px-3 w-50 rounded">
-					Sign In
+					Sign Up!
 				</button>
 			</div>
 		</>
