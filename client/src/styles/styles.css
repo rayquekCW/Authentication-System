@@ -41,6 +41,11 @@ p {
   font-size: clamp(0.89rem, 0.23vw + 0.84rem, 1rem);
 }
 
+/* Height */
+.vh-80 {
+  height: 80vh;
+}
+
 /* Backgrounds */
 .bg-primary {
   background-color: #0078ce;
@@ -78,6 +83,9 @@ p {
   background-color: #0078ce;
   color: #ffffff;
   border: none;
+  height: 40px;
+  padding: 10px;
+  border-radius: 8px;
   transition: background-color 0.3s;
 }
 .defaultBtn:hover {
@@ -110,28 +118,58 @@ p {
   background-color: #ffffff;
 }
 
-/* Misc */
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 9999;
+  background-color: #f8f9fa; /* Set to table bg color */
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 400px;
+}
+
+.popup-content {
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin-bottom: 20px;
+}
+
+.popup-content button {
+  margin-top: 10px;
+}
+
 .passwordDesign {
   background-image: url("https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
-  background-size: cover;
 }
 @media (min-width: 320px) {
   .passwordDesign {
     font-size: calc(0.5em + 0.5vw);
   }
 }
-@media (min-width: 778px) {
+@media (min-width: 766px) {
   .passwordDesign {
     font-size: calc(0.4em + 0.5vw);
+    background-size: cover;
   }
 }
 @media (min-width: 2040px) {
   .passwordDesign {
     font-size: calc(0.4em + 0.5vw);
+    background-size: contain;
+    background-repeat: no-repeat;
   }
 }
 .passwordDesign .heightDesign {
-  height: 95vh;
+  height: 100vh;
   background-color: #ffffff;
 }
 .passwordDesign .boxInput {
