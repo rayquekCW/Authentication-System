@@ -4,6 +4,7 @@ import LoginPage from './pages/loginPage';
 import './App.css';
 import '../src/styles/styles.scss';
 import SetPassword from './pages/setPassword';
+import ProfilePage from './pages/profilePage';
 
 const App = () => {
 	return (
@@ -13,6 +14,7 @@ const App = () => {
 					{/* example of a route with a parameter */}
 					{/* <Route path="/" element={<PatientListPage patients={patients} setPatients={setPatients} />} /> */}
 					<Route path="/" element={<LoginPage />} />
+					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/password" element={<SetPassword />} />
 				</Routes>
 			</Router>
