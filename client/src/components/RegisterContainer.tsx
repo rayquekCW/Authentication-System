@@ -1,16 +1,12 @@
-import {
-	FaLock,
-	FaRegEye,
-	FaRegEyeSlash,
-	FaUserAlt,
-	FaAt,
-	FaCalendar,
-} from 'react-icons/fa';
-import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {FaAt, FaCalendar} from 'react-icons/fa';
+import {Link, useNavigate} from 'react-router-dom';
 
-const RegisterContainer = (props: any) => {
-	const [showPassword, setShowPassword] = useState(false);
+type RegisterContainerProps = {
+	handleSignIn: () => void;
+};
+
+const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
+	let navigate = useNavigate();
 	var today = new Date();
 	var dd = today.getDate();
 	var mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -21,33 +17,11 @@ const RegisterContainer = (props: any) => {
 		<>
 			<div
 				id="registerContainer"
-				className="w-50 d-flex align-items-center flex-column justify-content-center"
+				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
 			>
 				<h2 className="mb-3">Register</h2>
-				<div className="d-flex flex-column gap-3 w-100">
-					<div className="input-group mb-3">
-						<span
-							className="input-group-text"
-							id="register-firstname"
-						>
-							<FaUserAlt />
-						</span>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="First Name"
-							aria-label="Firstname"
-							aria-describedby="register-firstname"
-						/>
-						<input
-							type="text"
-							className="form-control"
-							placeholder="Last Name"
-							aria-label="Lastname"
-							aria-describedby="register-lastname"
-						/>
-					</div>
-					<div className="input-group mb-3">
+				<div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
+					<div className="input-group mb-3 w-75">
 						<span className="input-group-text" id="register-email">
 							<FaAt />
 						</span>
@@ -59,7 +33,7 @@ const RegisterContainer = (props: any) => {
 							aria-describedby="register-email"
 						/>
 					</div>
-					<div className="input-group mb-3">
+					<div className="input-group mb-3 w-75">
 						<span className="input-group-text" id="register-dob">
 							<FaCalendar />
 						</span>
@@ -72,28 +46,6 @@ const RegisterContainer = (props: any) => {
 							max={maxDate}
 						/>
 					</div>
-					<div className="input-group mb-3 w-100">
-						<span
-							className="input-group-text"
-							id="register-password"
-						>
-							<FaLock />
-						</span>
-						<input
-							type={showPassword ? 'text' : 'password'}
-							className="form-control"
-							placeholder="Password"
-							aria-label="Password"
-							aria-describedby="register-password"
-						/>
-						<button
-							className="input-group-text"
-							id="seePasswordBtn"
-							onClick={() => setShowPassword(!showPassword)}
-						>
-							{showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-						</button>
-					</div>
 				</div>
 				<div>
 					<p className="caption">Already have an account?</p>
@@ -101,7 +53,7 @@ const RegisterContainer = (props: any) => {
 						Login
 						<span
 							className="text-primary cursor-pointer"
-							onClick={props.handleSignIn}
+							onClick={handleSignIn}
 						>
 							{' '}
 							here!
@@ -111,7 +63,10 @@ const RegisterContainer = (props: any) => {
 						or <Link to="/">Sign In with SSO</Link>
 					</p>
 				</div>
-				<button className="defaultBtn mt-2 py-2 px-3 w-50 rounded">
+				<button
+					className="defaultBtn"
+					onClick={() => navigate('/password')}
+				>
 					Sign Up!
 				</button>
 			</div>

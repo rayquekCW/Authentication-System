@@ -1,19 +1,19 @@
 @import './variable';
 
 @font-face {
-    font-family: $baseFont;
-    src: url("./fonts/Gotham\ Book.otf") format("opentype");
+	font-family: $baseFont;
+	src: url('./fonts/Gotham\ Book.otf') format('opentype');
 }
 
 html {
-    font-size: $font-base-rem;
+	font-size: $font-base-rem;
 }
 
 body {
-    font-family: $baseFont;
-    font-weight: $font-base-weight;
-    font-size: $font-size-base;
-    color: $dark;
+	font-family: $baseFont;
+	font-weight: $font-base-weight;
+	font-size: $font-size-base;
+	color: $dark;
 }
 
 h1,
@@ -22,26 +22,26 @@ h3,
 h4,
 h5,
 h6 {
-    font-family: $baseFont;
-    font-weight: $font-header-weight;
-    line-height: $font-variable-line-height;
-    overflow-wrap: break-word;
+	font-family: $baseFont;
+	font-weight: $font-header-weight;
+	line-height: $font-variable-line-height;
+	overflow-wrap: break-word;
 }
 
 h1 {
-    font-size: $font-size-h1;
+	font-size: $font-size-h1;
 }
 
 h2 {
-    font-size: $font-size-h2;
+	font-size: $font-size-h2;
 }
 
 h3 {
-    font-size: $font-size-h3;
+	font-size: $font-size-h3;
 }
 
 p {
-    font-size: $font-size-base;
+	font-size: $font-size-base;
 }
 /* Height */
 
@@ -79,18 +79,19 @@ p {
 /* Buttons */
 
 .cancelBtn {
-    background-color: #ffffff;
-    color: $primaryBrandColor;
-    border: solid 1px black;
+	background-color: #ffffff;
+	color: $primaryBrandColor;
+	border: solid 1px black;
 }
 
 .defaultBtn {
 	background-color: $primaryBrandColor;
 	color: #ffffff;
 	border: none;
-	height:40px;
-	padding:10px;	
-	border-radius: 8px;
+	margin-top: 0.5rem;
+	padding: 0.5rem 1rem;
+	width: 50%;
+	border-radius: 5px;
 	transition: background-color 0.3s;
 	&:hover {
 		background-color: $hoverColor;
@@ -134,19 +135,19 @@ p {
 	padding: 30px;
 	border-radius: 10px;
 	max-width: 400px;
-  }
+}
 
-  .popup-content {
+.popup-content {
 	text-align: center;
-  }
+}
 
-  .popup-content h2 {
+.popup-content h2 {
 	margin-bottom: 20px;
-  }
+}
 
-  .popup-content button {
+.popup-content button {
 	margin-top: 10px;
-  }
+}
 
 .passwordDesign {
 	background-image: url('https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');

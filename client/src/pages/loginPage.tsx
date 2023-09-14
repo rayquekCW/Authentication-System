@@ -11,7 +11,7 @@ const LoginPage = () => {
 
 	return (
 		<div className="container-fluid d-flex vh-80">
-			<div className="w-50 d-flex align-items-center flex-column justify-content-center">
+			<div className="col-md-6 align-items-center flex-column justify-content-center d-md-flex d-none">
 				<h1>Welcome to Ascenda</h1>
 				<p className="fst-italic">
 					Browse and Redeem Rewards at a click of a button

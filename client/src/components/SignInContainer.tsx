@@ -2,17 +2,21 @@ import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
 import {useState} from 'react';
 import {Link} from 'react-router-dom';
 
-const SignInContainer = (props: any) => {
+type SignInContainerProps = {
+	handleSignIn: () => void;
+};
+
+const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const [showPassword, setShowPassword] = useState(false);
 	return (
 		<>
 			<div
 				id="signInContainer"
-				className="w-50 d-flex align-items-center flex-column justify-content-center"
+				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center mx-3"
 			>
 				<h2 className="mb-3">Sign In</h2>
-				<div className="d-flex flex-column gap-3 w-100">
-					<div className="input-group mb-3">
+				<div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
+					<div className="input-group mb-3 w-75">
 						<span className="input-group-text" id="signin-email">
 							<FaAt />
 						</span>
@@ -24,7 +28,7 @@ const SignInContainer = (props: any) => {
 							aria-describedby="signin-email"
 						/>
 					</div>
-					<div className="input-group mb-3 w-100">
+					<div className="input-group mb-3 w-75">
 						<span className="input-group-text" id="basic-addon2">
 							<FaLock />
 						</span>
@@ -50,7 +54,7 @@ const SignInContainer = (props: any) => {
 						Register with us
 						<span
 							className="text-primary cursor-pointer"
-							onClick={props.handleSignIn}
+							onClick={handleSignIn}
 						>
 							{' '}
 							here!
@@ -60,9 +64,7 @@ const SignInContainer = (props: any) => {
 						or <Link to="/">Sign In with SSO</Link>
 					</p>
 				</div>
-				<button className="defaultBtn mt-2 py-2 px-3 w-50 rounded">
-					Sign In
-				</button>
+				<button className="defaultBtn">Sign In</button>
 			</div>
 		</>
 	);
