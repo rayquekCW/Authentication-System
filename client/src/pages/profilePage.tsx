@@ -55,9 +55,12 @@ const ProfilePage = () => {
           <tr>
             <th className="text-start p-3">Full Name</th>
             <td className="text-start p-3">Dennis</td>
+            <td className="text-start p-3">Dennis</td>
           </tr>
           <tr>
             <th className="text-start p-3">ID</th>
+            <td className="text-start p-3">9392020</td>
+
             <td className="text-start p-3">9392020</td>
 
           </tr>
@@ -65,14 +68,20 @@ const ProfilePage = () => {
             <th className="text-start p-3">Email</th>
             <td className="text-start p-3">user@gmail.com</td>
 
+            <td className="text-start p-3">user@gmail.com</td>
+
           </tr>
           <tr>
             <th className="text-start p-3">Phone Number</th>
             <td className="text-start p-3">839292849</td>
 
+            <td className="text-start p-3">839292849</td>
+
           </tr>
           <tr>
             <th className="text-start p-3">Birth Date</th>
+            <td className="text-start p-3">20-0-2000</td>
+
             <td className="text-start p-3">20-0-2000</td>
 
           </tr>
@@ -151,6 +160,9 @@ const ProfilePage = () => {
             </button>
           </div>
           <div className="popup-content">
+            <div className='my-5'>
+              <Otp otpType={"email"} />
+            </div>
             <div className='my-5'>
               <Otp otpType={"email"} />
             </div>
