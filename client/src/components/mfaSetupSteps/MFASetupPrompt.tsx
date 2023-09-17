@@ -18,22 +18,22 @@ const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
 
     return (
         <>
-            <div className="container text-start border" style={{
+            <div className="container text-start border " style={{
                 backgroundColor: 'white',
             }}>
                 <div className="row">
                     <div className="col-md-1"></div>
                     <div className="col mx-2 my-2">
                         <img src={logoData} style={{ width: '150px' }} alt="Logo" />
-                        <p>{emailData}</p >
+                        <h3>{emailData}</h3 >
 
-                        <h1>More Information is required</h1>
-                        <p>Your organization needs more information to keep your account secure</p>
-
-                        <p>Click the button below to setup MFA for your account.</p>
-                        <button className="btn btn-primary text-end" onClick={() => stateChanger(1)}>Setup MFA</button>
+                        <div className='my-5'>
+                            <h1 className=''>More Information is required</h1>
+                            <p>Your organization needs more information to keep your account secure</p>
+                            <p>Click the button below to setup MFA for your account.</p>
+                            <button className="btn defaultBtn" onClick={() => stateChanger(1)}>Setup MFA</button>
+                        </div>
                     </div>
-
                     <div className="col-md-1"></div>
                 </div>
             </div >
