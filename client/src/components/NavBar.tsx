@@ -4,6 +4,7 @@ import { BsList } from 'react-icons/bs';
 
 
 const NavBar = () => {
+
   const inlineStyle = {
     fontSize: "16px",
     backgroundColor: "#0078CE",
@@ -15,9 +16,7 @@ const NavBar = () => {
     navbarNavDropdown?.classList.toggle('show');
   };
 
-
   return (
-    <nav className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
     <nav className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
       <div className="container-fluid">
         <Link to="/">
@@ -30,10 +29,8 @@ const NavBar = () => {
           <ul className="navbar-nav">
             <li className="nav-item">
               <Link className="nav-link" aria-current="page" to="/home" style={{ color: 'white' }}>Home</Link>
-              <Link className="nav-link" aria-current="page" to="/home" style={{ color: 'white' }}>Home</Link>
             </li>
             <li className="nav-item">
-              <Link className="nav-link" to="/profile" style={{ color: 'white' }}>Profile</Link>
               <Link className="nav-link" to="/profile" style={{ color: 'white' }}>Profile</Link>
             </li>
           </ul>

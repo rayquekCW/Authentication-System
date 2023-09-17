@@ -88,7 +88,7 @@ const ProfilePage = () => {
         </table>
         <div className="row justify-content-end">
           <div className="col-12 col-lg-4 text-md-end">
-            <Link to="/">
+            <Link to="/ChangePassword">
               <button className="defaultBtn me-3" style={{ width: 'auto' }}>
                 Change Password
               </button>
@@ -160,9 +160,6 @@ const ProfilePage = () => {
             </button>
           </div>
           <div className="popup-content">
-            <div className='my-5'>
-              <Otp otpType={"email"} />
-            </div>
             <div className='my-5'>
               <Otp otpType={"email"} />
             </div>
