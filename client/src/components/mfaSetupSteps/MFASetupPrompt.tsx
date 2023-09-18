@@ -14,7 +14,7 @@ const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
     const emailData = email || 'placeholder@gmail.com';
 
     // if logoURL is provided, use that, otherwise use "../src/assets/logo.png"
-    const logoData = logoURL || '../src/assets/dbs-logo.svg';
+    const logoData = logoURL || '../src/assets/posb.svg';
 
     return (
         <>

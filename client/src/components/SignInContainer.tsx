@@ -1,6 +1,6 @@
 import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
 import {useState} from 'react';
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
@@ -8,6 +8,8 @@ type SignInContainerProps = {
 
 const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const [showPassword, setShowPassword] = useState(false);
+	const navigate = useNavigate();
+
 	return (
 		<>
 			<div
@@ -64,7 +66,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						or <Link to="/">Sign In with SSO</Link>
 					</p>
 				</div>
-				<button className="defaultBtn">Sign In</button>
+				<button className="defaultBtn" onClick={() => navigate('/mfa', {state: {email: '', logoUrl: ''}})}>Sign In</button> {/* state is a placeholder for now */}
 			</div>
 		</>
 	);

@@ -76,6 +76,14 @@ p {
 	font-size: $font-size-tiny;
 }
 
+.bank-name {
+	color: $primaryBrandColor;
+}
+
+.bank-slogan {
+	color: $secondaryBrandColor;
+}
+
 /* Buttons */
 
 .cancelBtn {
@@ -128,6 +136,14 @@ p {
 	cursor: pointer;
 	background-color: #ffffff;
 }
+
+/* Images */
+
+.bank-logo {
+	width: 35%;
+}
+
+/* Misc */
 
 .cursor-pointer {
 	cursor: pointer;

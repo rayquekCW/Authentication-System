@@ -18,6 +18,7 @@ const Setup: React.FC<Setup> = ({ stateChanger }) => {
      * The function `handlePhoneNumberChange` is used to update the `phoneNumber` state based on the value
      * of an input field, validate if the input is a valid phone number
      */
+    // TODO: limit the length of the phone number to 8 characters
     const handlePhoneNumberChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         // Check if the input is a number and handle validation
         const value = event.target.value;

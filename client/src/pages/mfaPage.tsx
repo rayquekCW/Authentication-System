@@ -1,18 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
 import Setup from "../components/mfaSetupSteps/Setup";
 
-type MfaPageProps = {
-    email: string;
-    logoURL: string;
-}
-
-
-const MfaPage: React.FC<MfaPageProps> = ({ email, logoURL }) => {
+const MfaPage = () => {
 
     const [steps, setSteps] = useState(0);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const email = location.state.email;
+    const logoURL = location.state.logoURL;
 
     const handleRedirectToHomePage = () => {
         // Redirect the user to the homepage

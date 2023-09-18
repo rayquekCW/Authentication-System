@@ -5,17 +5,17 @@ import './App.css';
 import '../src/styles/styles.scss';
 import SetPassword from './pages/setPassword';
 import ProfilePage from './pages/profilePage';
+import MfaPage from './pages/mfaPage';
 
 const App = () => {
 	return (
 		<>
 			<Router>
 				<Routes>
-					{/* example of a route with a parameter */}
-					{/* <Route path="/" element={<PatientListPage patients={patients} setPatients={setPatients} />} /> */}
 					<Route path="/" element={<LoginPage />} />
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/password" element={<SetPassword />} />
+					<Route path="/mfa" element={<MfaPage />} />
 				</Routes>
 			</Router>
 		</>

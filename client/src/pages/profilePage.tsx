@@ -88,7 +88,7 @@ const ProfilePage = () => {
         </table>
         <div className="row justify-content-end">
           <div className="col-12 col-lg-4 text-md-end">
-            <Link to="/ChangePassword">
+            <Link to="/password">
               <button className="defaultBtn me-3" style={{ width: 'auto' }}>
                 Change Password
               </button>
