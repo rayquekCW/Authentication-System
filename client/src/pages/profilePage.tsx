@@ -2,13 +2,16 @@ import { useState, SyntheticEvent } from "react";
 import NavBar from "../components/NavBar";
 import Otp from "../components/Otp.tsx";
 import { AiOutlineClose } from 'react-icons/ai';
-import { Link } from 'react-router-dom';
+import { Link,useNavigate } from 'react-router-dom';
+
 
 
 const ProfilePage = () => {
   const [showMfaPopup, setShowMfaPopup] = useState(false);
   const [showConfirmPopup, setShowConfirmPopup] = useState(false);
   const [mfaCode, setMfaCode] = useState("");
+
+  const navigate = useNavigate();
 
   const handleMfaSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
@@ -88,11 +91,11 @@ const ProfilePage = () => {
         </table>
         <div className="row justify-content-end">
           <div className="col-12 col-lg-4 text-md-end">
-            <Link to="/password">
-              <button className="defaultBtn me-3" style={{ width: 'auto' }}>
+         
+              <button className="defaultBtn me-3" style={{ width: 'auto' }} onClick={() => navigate('/password', {state: {isChangePassword:true,isVerified:false}})}>
                 Change Password
               </button>
-            </Link>
+       
             <button className="cancelBtn me-3" onClick={handleDeleteButtonClick} style={{ width: 'auto' }}>
               Delete Account
             </button>

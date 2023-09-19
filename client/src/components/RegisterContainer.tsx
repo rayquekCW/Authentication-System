@@ -65,7 +65,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 				</div>
 				<button
 					className="defaultBtn"
-					onClick={() => navigate('/password')}
+					onClick={() => navigate('/password', {state: {isChangePassword:false,isVerified:false}})}
 				>
 					Sign Up!
 				</button>
