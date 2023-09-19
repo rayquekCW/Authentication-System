@@ -35,7 +35,7 @@ const HomePage = () => {
                 <small className="text-secondary">September 2023</small>
               </div>
               <div className="col-6 text-end">
-                <button className="btn btn-primary">View Account</button>
+                <button className="btn defaultBtn">View Account</button>
               </div>
             </div>
             <table className="w-100 text-secondary h-25 border-bottom">
@@ -53,14 +53,14 @@ const HomePage = () => {
           <div className="col-lg-4 col-md-12 col-sm-12 col-12 text-start">
             <h2>Deposits</h2>
           </div>
-          <div className="col pt-md-0 text-md-end text-start">
-            <button className="btn btn-secondary mx-2">
+          <div className="col pt-md-0 text-md-end text-md-start text-start">
+            <button className="btn mt-xl-2 mt-lg-2 btn-secondary mx-2">
               View Bank & Earn Summary
             </button>
-            <button className="btn mt-md-0 mt-3 btn-secondary mx-2">
+            <button className="btn mt-xl-2 mt-lg-2 mt-md-0 mt-3 btn-secondary mx-2">
               Set Account Nickname
             </button>
-            <button className="btn mt-md-0 mt-3 btn-secondary mr-2">
+            <button className="btn mt-xl-2 mt-lg-2 mt-3 btn-secondary mx-2">
               View Account
             </button>
           </div>
