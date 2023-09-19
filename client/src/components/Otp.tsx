@@ -8,9 +8,10 @@ import Notifications from "./Notifications";
 
 type OtpProps = {
   otpType: string; // email or phone
+  stateChanger: (value: number) => void;
 };
 
-const Otp = ({ otpType }: OtpProps) => {
+const Otp = ({ otpType, stateChanger }: OtpProps) => {
   const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
@@ -77,7 +78,14 @@ const Otp = ({ otpType }: OtpProps) => {
       setError(true);
     }
     // TODO: check if OTP is valid
+    stateChanger(1);
+
   };
+
+  const handleResend = () => {
+    console.log("resend");
+  }
+
 
   return (
     <div>
@@ -143,7 +151,7 @@ const Otp = ({ otpType }: OtpProps) => {
         </p>
         <p id="otp-text" className="my-3">
           Did not receive the OTP?{" "}
-          <a href="#" aria-label="Resend OTP">
+          <a onClick={handleResend} aria-label="Resend OTP">
             Resend OTP
           </a>
         </p>

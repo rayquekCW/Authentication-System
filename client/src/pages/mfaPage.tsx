@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
 import Setup from "../components/mfaSetupSteps/Setup";
+import Otp from "../components/Otp";
 
 const MfaPage = () => {
 
@@ -21,19 +22,26 @@ const MfaPage = () => {
         switch (steps) {
             case 0:
                 return (
+                    <div className='my-5 text-center'>
+                        <Otp otpType="email" stateChanger={setSteps} />
+                    </div>
+                )
+
+            case 1:
+                return (
                     <div className='my-5'>
                         <MFASetupPrompt stateChanger={setSteps} email={email} logoURL={logoURL} />
                     </div>
                 );
 
-            case 1:
+            case 2:
                 return (
                     <div className='my-5'>
                         <Setup requireSetup={true} stateChanger={setSteps} />
                     </div>
                 );
 
-            case 2:
+            case 3:
                 return (
                     <div className='my-5'>
                         <h3>Setup Complete!</h3>

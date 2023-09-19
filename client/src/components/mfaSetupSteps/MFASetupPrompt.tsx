@@ -31,7 +31,7 @@ const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
                             <h1 className=''>More Information is required</h1>
                             <p>Your organization needs more information to keep your account secure</p>
                             <p>Click the button below to setup MFA for your account.</p>
-                            <button className="btn defaultBtn" onClick={() => stateChanger(1)}>Setup MFA</button>
+                            <button className="btn defaultBtn" onClick={() => stateChanger(2)}>Setup MFA</button>
                         </div>
                     </div>
                     <div className="col-md-1"></div>

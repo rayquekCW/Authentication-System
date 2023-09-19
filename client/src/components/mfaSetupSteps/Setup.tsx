@@ -50,7 +50,7 @@ const Setup: React.FC<Setup> = ({ stateChanger }) => {
         console.log('verifyOTP');
 
         // TODO: if the OTP is correct, change the state to 2
-        stateChanger(2);
+        stateChanger(3);
     }
 
     return (
