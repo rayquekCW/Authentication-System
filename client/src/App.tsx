@@ -6,6 +6,7 @@ import '../src/styles/styles.scss';
 import SetPassword from './pages/setPassword';
 import ProfilePage from './pages/profilePage';
 import MfaPage from './pages/mfaPage';
+import HomePage from './pages/homePage';
 
 const App = () => {
 	return (
@@ -16,6 +17,7 @@ const App = () => {
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/password" element={<SetPassword />} />
 					<Route path="/mfa" element={<MfaPage />} />
+					<Route path="/home" element={<HomePage />} />
 				</Routes>
 			</Router>
 		</>

@@ -18,7 +18,7 @@ const MfaPage = () => {
 
     const handleRedirectToHomePage = () => {
         // Redirect the user to the homepage
-        navigate('/');
+        navigate('/home');
     };
 
     const renderComponents = () => {
@@ -55,7 +55,7 @@ const MfaPage = () => {
                                     <h3>Setup Complete!</h3>
                                     <p>You have successfully set up MFA for your account.</p>
                                     <p>Click the button below to go back to the login page.</p>
-                                    <button className="btn defaultBtn" onClick={handleRedirectToHomePage}>Login</button>
+                                    <button className="btn defaultBtn" onClick={handleRedirectToHomePage}>Continue</button>
                                 </div>
                                 <div className="col-md-1"></div>
                             </div>
