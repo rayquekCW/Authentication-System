@@ -6,13 +6,15 @@ import { useState } from 'react';
 type Setup = {
     requireSetup: boolean;
     stateChanger: (value: number) => void;
+    logoURL: string;
 }
 
-const Setup: React.FC<Setup> = ({ stateChanger }) => {
+const Setup: React.FC<Setup> = ({ logoURL, stateChanger }) => {
 
     const [requestOTP, setRequestOTP] = useState(false);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
+    const logoData = logoURL || '../src/assets/posb.svg';
 
     /**
      * The function `handlePhoneNumberChange` is used to update the `phoneNumber` state based on the value
@@ -54,10 +56,11 @@ const Setup: React.FC<Setup> = ({ stateChanger }) => {
     }
 
     return (
-        <div className="container text-start border" style={{ backgroundColor: 'white' }}>
+        <div className="container text-start" style={{ backgroundColor: 'white' }}>
             <div className="row">
                 <div className="col-md-1"></div>
                 <div className="col mx-2 my-2 py-5">
+                    <img src={logoData} style={{ width: '150px' }} alt="Logo" />
                     <h1>Additional security verification</h1>
                     <p>Secure your account by adding phone verification to your password</p>
                     {requestOTP ? (

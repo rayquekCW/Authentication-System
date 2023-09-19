@@ -18,7 +18,7 @@ const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
 
     return (
         <>
-            <div className="container text-start border " style={{
+            <div className="container text-start " style={{
                 backgroundColor: 'white',
             }}>
                 <div className="row">
