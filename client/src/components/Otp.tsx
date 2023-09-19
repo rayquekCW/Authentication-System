@@ -65,7 +65,7 @@ const Otp = ({ otpType }: OtpProps) => {
     }
   };
 
-  const handleLogin = () => {
+  const handleVerify = () => {
     // if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
     if (time <= 0) {
       setMsg("OTP is invalid");
@@ -150,10 +150,10 @@ const Otp = ({ otpType }: OtpProps) => {
         <button
           className="btn defaultBtn"
           id="login"
-          onClick={handleLogin}
+          onClick={handleVerify}
           aria-label="Login"
         >
-          <span className="btn-text">Login</span>
+          <span className="btn-text">Verify</span>
         </button>
       </div>
       <div className="container text-center">
