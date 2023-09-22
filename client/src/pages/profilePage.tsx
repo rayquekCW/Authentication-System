@@ -2,45 +2,53 @@ import { useState, SyntheticEvent } from "react";
 import NavBar from "../components/NavBar";
 import Otp from "../components/Otp.tsx";
 import { AiOutlineClose } from 'react-icons/ai';
-import { Link,useNavigate } from 'react-router-dom';
-
-
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProfilePage = () => {
   const [showMfaPopup, setShowMfaPopup] = useState(false);
-  const [showConfirmPopup, setShowConfirmPopup] = useState(false);
-  const [mfaCode, setMfaCode] = useState("");
+  const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
+  const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleMfaSubmit = (e: SyntheticEvent) => {
-    e.preventDefault();
-    // Add logic to verify the 6-digit MFA code
-    // If successful, proceed with account deletion
-    // Otherwise, show an error message
-
-    setShowMfaPopup(false);
-  };
-
-  const handleConfirmButtonClick = () => {
-    setShowMfaPopup(true);
+  const handleStateChange = (newState: number) => {
+    // Handle state change logic
   }
 
   const handleDeleteButtonClick = () => {
-    setShowConfirmPopup(true);
-  }
+    setShowDeleteConfirmPopup(true);
+  };
+
+  const handleChangeButtonClick = () => {
+    setShowChangeConfirmPopup(true);
+  };
+
+  const handleDeleteConfirmButtonClick = () => {
+    setShowMfaPopup(true);
+  };
+  const handleChangeConfirmButtonClick = () => {
+    setShowMfaPopup(true);
+  };
+
 
   const closePopup = () => {
     setShowMfaPopup(false);
-    setShowConfirmPopup(false);
-  }
+    setShowDeleteConfirmPopup(false);
+    setShowChangeConfirmPopup(false);
+  };
 
-  const handleLogout = () => { }
-
+  const handleLogout = () => {
+    window.location.href = "/";
+  };
 
   return (
     <>
       <NavBar />
+      <div
+        className={`overlay ${
+          showMfaPopup || showDeleteConfirmPopup || showChangeConfirmPopup
+            ? "active"
+            : ""
+        }`}
+      ></div>
       <div className="container bg-light shadow-sm mt-4 p-4">
         <div className="row p-3">
           <div className="col-md-4 col-12">
@@ -48,9 +56,15 @@ const ProfilePage = () => {
           </div>
           <div className="col-md-8 col-12 d-flex justify-content-end">
             <div className="col-3 text-end">
-              <button className="defaultBtn" style={{ width: 'auto' }} onClick={handleLogout}>
-                Log Out
-              </button>
+              <Link to="/">
+                <button
+                  className="defaultBtn"
+                  style={{ width: "auto" }}
+                  onClick={handleLogout}
+                >
+                  Log Out
+                </button>
+              </Link>
             </div>
           </div>
         </div>
@@ -58,45 +72,38 @@ const ProfilePage = () => {
           <tr>
             <th className="text-start p-3">Full Name</th>
             <td className="text-start p-3">Dennis</td>
-            <td className="text-start p-3">Dennis</td>
           </tr>
           <tr>
             <th className="text-start p-3">ID</th>
             <td className="text-start p-3">9392020</td>
-
-            <td className="text-start p-3">9392020</td>
-
           </tr>
           <tr>
             <th className="text-start p-3">Email</th>
             <td className="text-start p-3">user@gmail.com</td>
-
-            <td className="text-start p-3">user@gmail.com</td>
-
           </tr>
           <tr>
             <th className="text-start p-3">Phone Number</th>
             <td className="text-start p-3">839292849</td>
-
-            <td className="text-start p-3">839292849</td>
-
           </tr>
           <tr>
             <th className="text-start p-3">Birth Date</th>
             <td className="text-start p-3">20-0-2000</td>
-
-            <td className="text-start p-3">20-0-2000</td>
-
           </tr>
         </table>
         <div className="row justify-content-end">
           <div className="col-12 col-lg-4 text-md-end">
-         
-              <button className="defaultBtn me-3" style={{ width: 'auto' }} onClick={() => navigate('/password', {state: {isChangePassword:true,isVerified:false}})}>
-                Change Password
-              </button>
-       
-            <button className="cancelBtn me-3" onClick={handleDeleteButtonClick} style={{ width: 'auto' }}>
+            <button
+              className="defaultBtn me-3"
+              style={{ width: "auto" }}
+              onClick={handleChangeButtonClick}
+            >
+              Change Password
+            </button>
+            <button
+              className="cancelBtn me-3"
+              onClick={handleDeleteButtonClick}
+              style={{ width: "auto" }}
+            >
               Delete Account
             </button>
           </div>
@@ -112,43 +119,84 @@ const ProfilePage = () => {
         <div className="row p-3">
           <div className="col-md-4 col-12">
             <div className="form-check text-start">
-              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
-              <label className="form-check-label">
-                Phone Number
-              </label>
+              <input
+                className="form-check-input"
+                type="radio"
+                id="mfaBiometrics"
+                name="mfaOption"
+              />
+              <label className="form-check-label">Phone Number</label>
             </div>
           </div>
         </div>
         <div className="row p-3">
           <div className="col-md-4 col-12">
             <div className="form-check text-start">
-              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
-              <label className="form-check-label">
-                Email
-              </label>
+              <input
+                className="form-check-input"
+                type="radio"
+                id="mfaBiometrics"
+                name="mfaOption"
+              />
+              <label className="form-check-label">Email</label>
             </div>
           </div>
         </div>
         <div className="row p-3">
           <div className="col-md-4 col-12 pr-4">
             <div className="form-check text-start">
-              <input className="form-check-input" type="radio" id="mfaBiometrics" name="mfaOption" />
-              <label className="form-check-label">
-                Biometrics
-              </label>
+              <input
+                className="form-check-input"
+                type="radio"
+                id="mfaBiometrics"
+                name="mfaOption"
+              />
+              <label className="form-check-label">Biometrics</label>
             </div>
           </div>
         </div>
       </div>
-      {showConfirmPopup && (
+
+      {showDeleteConfirmPopup && (
         <div className="popup d-flex justify-content-center align-items-center">
           <div className="popup-content text-center">
             <h1>Delete Account</h1>
             <h6>Are you sure you want to delete your Account?</h6>
-            <button className="defaultBtn me-2" style={{ width: 'auto' }} onClick={handleConfirmButtonClick}>
+            <button
+              className="defaultBtn me-2"
+              style={{ width: "auto" }}
+              onClick={handleDeleteConfirmButtonClick}
+            >
               Yes
             </button>
-            <button className="cancelBtn" style={{ width: 'auto' }} onClick={closePopup}>
+            <button
+              className="cancelBtn"
+              style={{ width: "auto" }}
+              onClick={closePopup}
+            >
+              No
+            </button>
+          </div>
+        </div>
+      )}
+
+      {showChangeConfirmPopup && (
+        <div className="popup d-flex justify-content-center align-items-center">
+          <div className="popup-content text-center">
+            <h1>Change Password</h1>
+            <h6>Are you sure you want to change your Password?</h6>
+            <button
+              className="defaultBtn me-2"
+              style={{ width: "auto" }}
+              onClick={handleChangeConfirmButtonClick}
+            >
+              Yes
+            </button>
+            <button
+              className="cancelBtn"
+              style={{ width: "auto" }}
+              onClick={closePopup}
+            >
               No
             </button>
           </div>
@@ -163,8 +211,8 @@ const ProfilePage = () => {
             </button>
           </div>
           <div className="popup-content">
-            <div className='my-5'>
-              <Otp otpType={"email"} />
+            <div className="my-5">
+              <Otp stateChanger={handleStateChange} otpType={"email"} />
             </div>
           </div>
         </div>
