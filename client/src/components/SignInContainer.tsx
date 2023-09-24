@@ -7,8 +7,25 @@ type SignInContainerProps = {
 };
 
 const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
+	const [email, setEmail] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const navigate = useNavigate();
+
+	function validateEmail(email: string) {
+		var emailCheck = email.split('@');
+		return (
+			emailCheck.length === 2 &&
+			emailCheck[0].length > 0 &&
+			emailCheck[1].length > 0
+		);
+	}
+
+	function checkPhoneNumber(userEmail: string) {
+		//TODO: check to backend if phone number exists in user table
+		if (userEmail) {
+			return true;
+		}
+	}
 
 	return (
 		<>
@@ -28,6 +45,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 							placeholder="Email"
 							aria-label="email"
 							aria-describedby="signin-email"
+							onChange={(e) => setEmail(e.target.value)}
 						/>
 					</div>
 					<div className="input-group mb-3 w-75">
@@ -66,7 +84,22 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						or <Link to="/">Sign In with SSO</Link>
 					</p>
 				</div>
-				<button className="defaultBtn" onClick={() => navigate('/mfa', {state: {email: '', logoUrl: ''}})}>Sign In</button> {/* state is a placeholder for now */}
+				<button
+					className={`defaultBtn ${
+						validateEmail(email) ? '' : 'disabled'
+					}`}
+					onClick={
+						() =>
+							validateEmail(email) &&
+							checkPhoneNumber(email) &&
+							navigate('/mfa', {state: {email: '', logoUrl: ''}})
+						// state is a placeholder for now
+						// TODO: replace with actual state
+					}
+					disabled={!validateEmail(email)}
+				>
+					Sign In
+				</button>{' '}
 			</div>
 		</>
 	);

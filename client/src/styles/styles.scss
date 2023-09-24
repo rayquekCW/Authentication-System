@@ -1,19 +1,19 @@
-@import "./variable";
+@import './variable';
 
 @font-face {
-  font-family: $baseFont;
-  src: url("./fonts/Gotham\ Book.otf") format("opentype");
+	font-family: $baseFont;
+	src: url('./fonts/Gotham\ Book.otf') format('opentype');
 }
 
 html {
-  font-size: $font-base-rem;
+	font-size: $font-base-rem;
 }
 
 body {
-  font-family: $baseFont;
-  font-weight: $font-base-weight;
-  font-size: $font-size-base;
-  color: $dark;
+	font-family: $baseFont;
+	font-weight: $font-base-weight;
+	font-size: $font-size-base;
+	color: $dark;
 }
 
 h1,
@@ -22,200 +22,216 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: $baseFont;
-  font-weight: $font-header-weight;
-  line-height: $font-variable-line-height;
-  overflow-wrap: break-word;
+	font-family: $baseFont;
+	font-weight: $font-header-weight;
+	line-height: $font-variable-line-height;
+	overflow-wrap: break-word;
 }
 
 h1 {
-  font-size: $font-size-h1;
+	font-size: $font-size-h1;
 }
 
 h2 {
-  font-size: $font-size-h2;
+	font-size: $font-size-h2;
 }
 
 h3 {
-  font-size: $font-size-h3;
+	font-size: $font-size-h3;
 }
 
 p {
-  font-size: $font-size-base;
+	font-size: $font-size-base;
 }
 /* Height */
 
 .vh-80 {
-  height: 80vh;
+	height: 80vh;
 }
 
 /* Backgrounds */
 .bg-primary {
-  background-color: $primaryBrandColor;
+	background-color: $primaryBrandColor;
 }
 
 .bg-secondary {
-  background-color: $secondaryBrandColor;
+	background-color: $secondaryBrandColor;
 }
 
 .navbar {
-  height: 5rem;
+	height: 5rem;
 }
 
 /* Text */
 
 .text-primary {
-  color: $primaryBrandColor;
+	color: $primaryBrandColor;
 }
 
 .text-secondary {
-  color: $secondaryBrandColor;
+	color: $secondaryBrandColor;
 }
 
 .caption {
-  font-size: $font-size-caption;
+	font-size: $font-size-caption;
 }
 
 .font-tiny {
-  font-size: $font-size-tiny;
+	font-size: $font-size-tiny;
 }
 
 .bank-name {
-  color: $primaryBrandColor;
+	color: $primaryBrandColor;
 }
 
 .bank-slogan {
-  color: $secondaryBrandColor;
+	color: $secondaryBrandColor;
 }
 
 /* Buttons */
 
 .cancelBtn {
-  color: $primaryBrandColor;
-  border: none;
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
-  width: 50%;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: darkgray;
-  }
+	background-color: red;
+	color: #ffffff;
+	border: none;
+	margin-top: 0.5rem;
+	padding: 0.5rem 1rem;
+	width: 50%;
+	border-radius: 5px;
+	transition: background-color 0.3s;
+	&:hover {
+		background-color: darkred;
+		color: #ffffff;
+	}
 }
 
 .defaultBtn {
-  background-color: $primaryBrandColor;
-  color: #ffffff;
-  border: none;
-  margin-top: 0.5rem;
-  padding: 0.5rem 1rem;
-  width: 50%;
-  border-radius: 5px;
-  transition: background-color 0.3s;
-  &:hover {
-    background-color: $hoverColor;
-    color: #ffffff;
-  }
+	background-color: $primaryBrandColor;
+	color: #ffffff;
+	border: none;
+	margin-top: 0.5rem;
+	padding: 0.5rem 1rem;
+	width: 50%;
+	border-radius: 5px;
+	transition: background-color 0.3s;
+	&:hover {
+		background-color: $hoverColor;
+		color: #ffffff;
+	}
+	&.disabled {
+		background-color: rgb(173, 173, 173);
+	}
+	background-color: $primaryBrandColor;
+	color: #ffffff;
+	border: none;
+	margin-top: 0.5rem;
+	padding: 0.5rem 1rem;
+	width: 50%;
+	border-radius: 5px;
+	transition: background-color 0.3s;
+	&:hover {
+		background-color: $hoverColor;
+		color: #ffffff;
+	}
 }
 
 .mfaBtn {
-  color: $primaryBrandColor;
-  border-color: $primaryBrandColor;
-  transition: background-color 0.3s;
-  @media (min-width: 320px) {
-    width: 100%;
-  }
-  @media (min-width: 768px) {
-    width: 40%;
-  }
-  &:hover {
-    background-color: $hoverColor;
-    color: #ffffff;
-  }
+	color: $primaryBrandColor;
+	border-color: $primaryBrandColor;
+	transition: background-color 0.3s;
+	@media (min-width: 320px) {
+		width: 100%;
+	}
+	@media (min-width: 768px) {
+		width: 40%;
+	}
+	&:hover {
+		background-color: $hoverColor;
+		color: #ffffff;
+	}
 }
 
 .seePasswordBtn {
-  cursor: pointer;
-  background-color: #ffffff;
+	cursor: pointer;
+	background-color: #ffffff;
 }
 
+.overlay {
+	position: fixed;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	background-color: $primaryBrandColor;
+	opacity: 50%;
+	z-index: 999;
+	display: none;
+}
+
+.overlay.active {
+	display: block;
+}
 /* Images */
 
 .bank-logo {
-  width: 35%;
+	width: 35%;
 }
 
 .bank-navbar {
-  width: 6%;
+	width: 6%;
 }
 
 /* Misc */
 
 .cursor-pointer {
-  cursor: pointer;
-}
-
-.overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: $primaryBrandColor;
-  opacity: 50%;
-  z-index: 999;
-  display: none;
-}
-
-.overlay.active {
-  display: block;
+	cursor: pointer;
 }
 
 .popup {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  z-index: 9999;
-  background-color: #f8f9fa; /* Set to table bg color */
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-  padding: 50px;
-  border-radius: 10px;
-  min-width: 600px;
-  min-height: 300px;
+	position: fixed;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	z-index: 9999;
+	background-color: #f8f9fa; /* Set to table bg color */
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+	padding: 50px;
+	border-radius: 10px;
+	min-width: 600px;
+	min-height: 300px;
 }
 
 .popup-content {
-  text-align: center;
+	text-align: center;
 }
 
 .popup-content h2 {
-  margin-bottom: 20px;
+	margin-bottom: 20px;
 }
 
 .popup-content button {
-  margin-top: 10px;
+	margin-top: 10px;
 }
 
 .passwordDesign {
-  background-image: url("https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80");
-  @media (min-width: 320px) {
-    font-size: calc(0.5em + 0.5vw);
-  }
-  @media (min-width: 766px) {
-    font-size: calc(0.4em + 0.5vw);
-    background-size: cover;
-  }
-  @media (min-width: 2040px) {
-    font-size: calc(0.4em + 0.5vw);
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-  .heightDesign {
-    height: 100vh;
-    background-color: #ffffff;
-  }
-  .boxInput {
-    background-color: #ffffff;
-  }
+	background-image: url('https://images.unsplash.com/photo-1505273471770-de630b5d5c5d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+	@media (min-width: 320px) {
+		font-size: calc(0.5em + 0.5vw);
+	}
+	@media (min-width: 766px) {
+		font-size: calc(0.4em + 0.5vw);
+		background-size: cover;
+	}
+	@media (min-width: 2040px) {
+		font-size: calc(0.4em + 0.5vw);
+		background-size: contain;
+		background-repeat: no-repeat;
+	}
+	.heightDesign {
+		height: 100vh;
+		background-color: #ffffff;
+	}
+	.boxInput {
+		background-color: #ffffff;
+	}
 }
