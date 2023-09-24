@@ -47,7 +47,7 @@ const Otp = ({otpType, stateChanger}: OtpProps) => {
 	const phoneNumberExists = (phoneNumber: number) => {
 		//TODO: check to backend if phone number exists in user table
 		if (phoneNumber) {
-			return true;
+			return false;
 		}
 	};
 
