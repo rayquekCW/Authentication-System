@@ -7,6 +7,8 @@ import SetPassword from './pages/setPassword';
 import ProfilePage from './pages/profilePage';
 import MfaPage from './pages/mfaPage';
 import HomePage from './pages/homePage';
+import CustomerManagementLogin from './pages/CmLogin';
+import CustomerManagementDashboard from './pages/CmDashboard';
 
 const App = () => {
 	return (
@@ -18,6 +20,8 @@ const App = () => {
 					<Route path="/password" element={<SetPassword />} />
 					<Route path="/mfa" element={<MfaPage />} />
 					<Route path="/home" element={<HomePage />} />
+					<Route path="/cmlogin" element={<CustomerManagementLogin />} />
+					<Route path="/cmdashboard" element={<CustomerManagementDashboard />} />
 				</Routes>
 			</Router>
 		</>
