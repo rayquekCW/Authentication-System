@@ -11,7 +11,7 @@ type MFAsetup = {
 // Create component to setup MFA with some text and a button and takes in a email prop
 const MFASetupPrompt = ({ stateChanger, email, logoURL }: MFAsetup) => {
     // if email is provided, use that, otherwise use "No email provided"
-    const emailData = email || 'placeholder@gmail.com';
+    const emailData = email || 'x*********@gmail.com';
 
     // if logoURL is provided, use that, otherwise use "../src/assets/logo.png"
     const logoData = logoURL || '../src/assets/posb.svg';

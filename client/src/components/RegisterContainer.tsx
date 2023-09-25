@@ -19,7 +19,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 				id="registerContainer"
 				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
 			>
-				<h2 className="mb-3">Register</h2>
+				<h1 className="mb-3">Register</h1>
 				<div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
 					<div className="input-group mb-3 w-75">
 						<span className="input-group-text" id="register-email">
@@ -48,7 +48,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 					</div>
 				</div>
 				<div>
-					<p className="caption">Already have an account?</p>
+					<h5 className="caption">Already have an account?</h5>
 					<p className="caption">
 						Login
 						<span

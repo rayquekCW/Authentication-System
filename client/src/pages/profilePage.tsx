@@ -1,6 +1,6 @@
-import { useState, SyntheticEvent } from "react";
+import { useState } from "react";
 import NavBar from "../components/NavBar";
-import Otp from "../components/Otp.tsx";
+import MultiFactAuth from "../components/MultiFactAuth";
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -8,10 +8,7 @@ const ProfilePage = () => {
   const [showMfaPopup, setShowMfaPopup] = useState(false);
   const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
   const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
-
-  const handleStateChange = (newState: number) => {
-    // Handle state change logic
-  }
+  const navigate = useNavigate();
 
   const handleDeleteButtonClick = () => {
     setShowDeleteConfirmPopup(true);
@@ -24,8 +21,9 @@ const ProfilePage = () => {
   const handleDeleteConfirmButtonClick = () => {
     setShowMfaPopup(true);
   };
+
   const handleChangeConfirmButtonClick = () => {
-    setShowMfaPopup(true);
+    navigate("/password", {state: {isChangePassword: true, isVerified: false}});
   };
 
 
@@ -212,7 +210,7 @@ const ProfilePage = () => {
           </div>
           <div className="popup-content">
             <div className="my-5">
-              <Otp stateChanger={handleStateChange} otpType={"email"} />
+              <MultiFactAuth navigateTo="/"/>
             </div>
           </div>
         </div>

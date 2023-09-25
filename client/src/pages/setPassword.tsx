@@ -1,5 +1,6 @@
+// TODO: rework password logic, dont verify on change only, on click of button need to verify too
 import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
-import {useState} from 'react';	
+import {useState, useEffect} from 'react';	
 import { useLocation,useNavigate} from 'react-router-dom';
 import OtpPassword from '../components/OtpPassword';
 import Notifications from '../components/Notifications';
@@ -15,10 +16,27 @@ const SetPassword = () => {
 	const[passwordValid,setPasswordValidStatus]=useState(false);
 	const[isSuccessful,setIsSuccessful]=useState(false);
 	const[isSubmitted,setIsSubmitted]=useState(false);
+	const [showErrorNotification, setShowErrorNotification] = useState(false);
 	const navigate = useNavigate();
 	const location = useLocation()
 	const isChange = location.state.isChangePassword
 	const isVerified = location.state.isVerified
+
+	useEffect(() => {
+		if (!isSuccessful && isSubmitted) {
+		  setShowErrorNotification(true);
+	
+		  // Set a timeout to hide the error notification after 3 seconds
+		  const timeout = setTimeout(() => {
+			setShowErrorNotification(false);
+		  }, 5000);
+	
+		  // Clear the timeout when the component is unmounted or when isSubmitted becomes false
+		  return () => {
+			clearTimeout(timeout);
+		  };
+		}
+	}, [isSuccessful, isSubmitted]);
 
 
 	const handlePasswordChange = (e: any) => {
@@ -141,12 +159,12 @@ const SetPassword = () => {
 								{(isSuccessful)?(
 									<div>
 										<Notifications message={"Password set successfully!"} isError={!isSuccessful}/>
-										<button className='defaultBtn mt-3' onClick={isChange? () => navigate('/profile') :() => navigate('/')}>Continue</button>
+										<button className='defaultBtn mt-3' onClick={isChange ? () => navigate('/profile') : () => navigate('/')}>Continue</button>
 									</div>
 								):(null)}
-								{(!isSuccessful && isSubmitted)?(
-									<Notifications message={"Invalid password or passwords do not match"} isError={!isSuccessful}/>
-								):(null)}
+								{(showErrorNotification && !isSuccessful && isSubmitted) ? (
+									<Notifications message={"Invalid password or passwords do not match"} isError={!isSuccessful} />
+								) : (null)}
 							</div>
 						</div>
 					</div>

@@ -55,6 +55,10 @@ p {
   background-color: #fa9d00;
 }
 
+.navbar {
+  height: 5rem;
+}
+
 /* Text */
 .text-primary {
   color: #0078ce;
@@ -82,9 +86,9 @@ p {
 
 /* Buttons */
 .cancelBtn {
-  background-color: red;
-  color: #ffffff;
-  border: none;
+  background-color: white;
+  color: #0078ce;
+  border: 1px solid #0078ce;
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
   width: 50%;
@@ -92,7 +96,7 @@ p {
   transition: background-color 0.3s;
 }
 .cancelBtn:hover {
-  background-color: darkred;
+  background-color: lightslategray;
   color: #ffffff;
 }
 
@@ -105,6 +109,21 @@ p {
   width: 50%;
   border-radius: 5px;
   transition: background-color 0.3s;
+  background-color: #0078ce;
+  color: #ffffff;
+  border: none;
+  margin-top: 0.5rem;
+  padding: 0.5rem 1rem;
+  width: 50%;
+  border-radius: 5px;
+  transition: background-color 0.3s;
+}
+.defaultBtn:hover {
+  background-color: #161693;
+  color: #ffffff;
+}
+.defaultBtn.disabled {
+  background-color: rgb(173, 173, 173);
 }
 .defaultBtn:hover {
   background-color: #161693;
@@ -136,9 +155,29 @@ p {
   background-color: #ffffff;
 }
 
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #0078ce;
+  opacity: 50%;
+  z-index: 999;
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
 /* Images */
 .bank-logo {
   width: 35%;
+}
+
+.bank-navbar {
+  width: 6%;
 }
 
 /* Misc */
