@@ -111,56 +111,6 @@ const ProfilePage = () => {
 				</div>
 			</div>
 
-			<div className="container bg-light shadow-sm mt-4 p-4 mb-4">
-				<div className="row p-3">
-					<div className="col-md-4 col-12 text-start">
-						<h3>MFA Verification</h3>
-					</div>
-				</div>
-				<div className="row p-3">
-					<div className="col-md-4 col-12">
-						<div className="form-check text-start">
-							<input
-								className="form-check-input"
-								type="radio"
-								id="mfaBiometrics"
-								name="mfaOption"
-							/>
-							<label className="form-check-label">
-								Phone Number
-							</label>
-						</div>
-					</div>
-				</div>
-				<div className="row p-3">
-					<div className="col-md-4 col-12">
-						<div className="form-check text-start">
-							<input
-								className="form-check-input"
-								type="radio"
-								id="mfaBiometrics"
-								name="mfaOption"
-							/>
-							<label className="form-check-label">Email</label>
-						</div>
-					</div>
-				</div>
-				<div className="row p-3">
-					<div className="col-md-4 col-12 pr-4">
-						<div className="form-check text-start">
-							<input
-								className="form-check-input"
-								type="radio"
-								id="mfaBiometrics"
-								name="mfaOption"
-							/>
-							<label className="form-check-label">
-								Biometrics
-							</label>
-						</div>
-					</div>
-				</div>
-			</div>
 
 			{showDeleteConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
