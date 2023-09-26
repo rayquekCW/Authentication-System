@@ -9,7 +9,9 @@ import MfaPage from './pages/mfaPage';
 import HomePage from './pages/homePage';
 import CustomerManagementLogin from './pages/CmLogin';
 import CustomerManagementDashboard from './pages/CmDashboard';
-import MultiFactAuth from './components/MultiFactAuth';
+import Logs from './pages/CmLogs';
+import Orders from './pages/CmOrders';
+import Pricing from './pages/CmPricing';
 
 const App = () => {
 	return (
@@ -20,7 +22,6 @@ const App = () => {
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/password" element={<SetPassword />} />
 					<Route path="/mfa" element={<MfaPage />} />
-					<Route path="/choosemfa" element={<MultiFactAuth />} />
 					<Route path="/home" element={<HomePage />} />
 					<Route
 						path="/cmlogin"
@@ -30,6 +31,17 @@ const App = () => {
 						path="/cmdashboard"
 						element={<CustomerManagementDashboard />}
 					/>
+					<Route
+						path="/cmlogin"
+						element={<CustomerManagementLogin />}
+					/>
+					<Route
+						path="/cmdashboard"
+						element={<CustomerManagementDashboard />}
+					/>
+					<Route path="/cmdashboard/orders" element={<Orders />} />
+					<Route path="/cmdashboard/logs" element={<Logs />} />
+					<Route path="/cmdashboard/pricing" element={<Pricing />} />
 				</Routes>
 			</Router>
 		</>
