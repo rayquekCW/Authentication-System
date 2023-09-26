@@ -29,6 +29,7 @@ const SetPassword = () => {
 		  // Set a timeout to hide the error notification after 3 seconds
 		  const timeout = setTimeout(() => {
 			setShowErrorNotification(false);
+			setIsSubmitted(false);
 		  }, 5000);
 	
 		  // Clear the timeout when the component is unmounted or when isSubmitted becomes false
@@ -40,15 +41,16 @@ const SetPassword = () => {
 
 
 	const handlePasswordChange = (e: any) => {
+		setIsSubmitted(false);
 		const newPassword = e.target.value;
-		const lengthValid = newPassword.length >= 9 && newPassword.length <= 64;
+		const lengthValid = newPassword.length >= 14 && newPassword.length <= 64;
 		
 		const uppercaseValid = /[A-Z]/.test(newPassword);
 		const lowercaseValid = /[a-z]/.test(newPassword);
 		const numberValid = /[0-9]/.test(newPassword);
 		const specialCharValid = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
 	  
-		const isStrengthValid = [uppercaseValid, lowercaseValid, numberValid, specialCharValid].filter(Boolean).length >= 2;
+		const isStrengthValid = [uppercaseValid, lowercaseValid, numberValid, specialCharValid].filter(Boolean).length >= 3;
 		const isPasswordValid = lengthValid && isStrengthValid;
 	  
 		setLengthCheck(lengthValid);
@@ -59,15 +61,21 @@ const SetPassword = () => {
 	};
 
 	const handleConfirmPasswordChange = (e:any) => {
+		setIsSubmitted(false);
 		const newConfirmPassword = e.target.value;
 		setConfirmPassword(newConfirmPassword);
 	};
 	
 	const handleSetPassword = () => {
+		
+		setIsSubmitted(true);
 		if (password === confirmPassword && passwordValid) {
 			setIsSuccessful(!isSuccessful);
+		}else{
+			setShowErrorNotification(true)
 		}
-		setIsSubmitted(true);
+
+		
 	};
 
 	return (
@@ -100,11 +108,11 @@ const SetPassword = () => {
 										<li
 											style={{ color: password ? (lengthCheck ? "green" : "red") : "black"  }}
 										>
-											Be between 9-64 characters
+											Be between 14-64 characters
 										</li>
 										<div style={{ color: password ? (passwordStrengthCheck ? "green" : "red") : "black" }}>
 											<li>
-												Include at least two of the following:
+												Include at least three of the following:
 											</li>
 											<ul>
 												<li>An uppercase character</li>
@@ -162,9 +170,11 @@ const SetPassword = () => {
 										<button className='defaultBtn mt-3' onClick={isChange ? () => navigate('/profile') : () => navigate('/')}>Continue</button>
 									</div>
 								):(null)}
-								{(showErrorNotification && !isSuccessful && isSubmitted) ? (
-									<Notifications message={"Invalid password or passwords do not match"} isError={!isSuccessful} />
-								) : (null)}
+								<div className='notification'>
+									{(showErrorNotification && !isSuccessful && isSubmitted) ? (
+										<Notifications message={"Invalid password or passwords do not match"} isError={!isSuccessful} />
+									) : null}
+								</div>
 							</div>
 						</div>
 					</div>
