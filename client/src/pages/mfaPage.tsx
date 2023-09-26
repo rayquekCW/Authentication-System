@@ -3,18 +3,22 @@ import {useNavigate, useLocation} from 'react-router-dom';
 import MFASetupPrompt from '../components/mfaSetupSteps/MFASetupPrompt';
 import Setup from '../components/mfaSetupSteps/Setup';
 import Otp from '../components/Otp';
+import MultiFactAuth from '../components/MultiFactAuth';
 
 const MfaPage = () => {
-	const [steps, setSteps] = useState(0);
-	const otpType = 'email';
-	const navigate = useNavigate();
 	const location = useLocation();
+	const [steps, setSteps] = useState(location.state.step);
+	const navigate = useNavigate();
 
 	const email = location.state.email;
 	const logoURL = location.state.logoURL;
 
 	// if logoURL is provided, use that, otherwise use "../src/assets/logo.png"
 	const logoData = logoURL || '../src/assets/posb.svg';
+
+	const handleSteps = (step: number) => {
+		setSteps(step);
+	};
 
 	const handleRedirectToHomePage = () => {
 		// Redirect the user to the homepage
@@ -31,7 +35,7 @@ const MfaPage = () => {
 			case 0:
 				return (
 					<div className="my-5 text-center">
-						<Otp otpType={checkOtpType()} stateChanger={setSteps} />
+						<MultiFactAuth handleSteps={handleSteps} />
 					</div>
 				);
 
@@ -93,7 +97,19 @@ const MfaPage = () => {
 						</div>
 					</div>
 				);
-
+			case 4:
+				return (
+					<div className="my-5 text-center">
+						<Otp
+							otpType={checkOtpType()}
+							stateChanger={setSteps}
+							step={1}
+						/>
+					</div>
+				);
+			case 5:
+				handleRedirectToHomePage();
+				return null;
 			default:
 				return null; // Handle unexpected steps or provide a default case
 		}

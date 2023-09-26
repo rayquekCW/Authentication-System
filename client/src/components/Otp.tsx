@@ -10,9 +10,11 @@ import Notifications from './Notifications';
 type OtpProps = {
 	otpType: string; // email or phone
 	stateChanger: (value: number) => void;
+	step?: number;
+	navigateTo?: string;
 };
 
-const Otp = ({otpType, stateChanger}: OtpProps) => {
+const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
 	const isEmail = otpType === 'email' ? true : false; // check if OTP is sent to email or phone
 
 	const [otp, setOtp] = useState(['', '', '', '', '', '']); // 6 digit OTP
@@ -42,13 +44,6 @@ const Otp = ({otpType, stateChanger}: OtpProps) => {
 		return `${String(minutes).padStart(2, '0')}:${String(
 			remainingSeconds
 		).padStart(2, '0')}`;
-	};
-
-	const phoneNumberExists = (phoneNumber: number) => {
-		//TODO: check to backend if phone number exists in user table
-		if (phoneNumber) {
-			return false;
-		}
 	};
 
 	// handle input change of OTP
@@ -92,11 +87,11 @@ const Otp = ({otpType, stateChanger}: OtpProps) => {
 			setMsg('OTP is invalid');
 			setError(true);
 		}
-		// TODO: check if OTP is valid
-		if (phoneNumberExists(12345678)) {
-			navigate('/home');
+		//FIXME: change situation
+		if (navigateTo) {
+			navigate(navigateTo);
 		}
-		stateChanger(1);
+		stateChanger(step ? step : 5);
 	};
 
 	const handleResend = () => {

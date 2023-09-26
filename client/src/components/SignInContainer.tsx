@@ -20,10 +20,13 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 		);
 	}
 
-	function checkPhoneNumber(userEmail: string) {
-		//TODO: check to backend if phone number exists in user table
-		if (userEmail) {
-			return true;
+	function requireMFASetup() {
+		//TODO: check for backend if user has set up MFA
+		const hasSetUpMFA = true;
+		if (hasSetUpMFA) {
+			navigate('/mfa', {state: {email: '', logoUrl: '', step: 0}});
+		} else {
+			navigate('/mfa', {state: {email: '', logoUrl: '', step: 4}});
 		}
 	}
 
@@ -89,10 +92,8 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						validateEmail(email) ? '' : 'disabled'
 					}`}
 					onClick={
-						() =>
-							validateEmail(email) &&
-							checkPhoneNumber(email) &&
-							navigate('/mfa', {state: {email: '', logoUrl: ''}})
+						() => validateEmail(email) && requireMFASetup()
+						// navigate('/mfa', {state: {email: '', logoUrl: ''}})
 						// state is a placeholder for now
 						// TODO: replace with actual state
 					}
