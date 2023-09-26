@@ -9,9 +9,9 @@ import MfaPage from './pages/mfaPage';
 import HomePage from './pages/homePage';
 import CustomerManagementLogin from './pages/CmLogin';
 import CustomerManagementDashboard from './pages/CmDashboard';
-import Logs from './pages/logs';
-import Orders from './pages/orders';
-import Pricing from './pages/pricing';
+import Logs from './pages/CmLogs';
+import Orders from './pages/CmOrders';
+import Pricing from './pages/CmPricing';
 
 const App = () => {
 	return (

@@ -1,12 +1,10 @@
-// import { useState } from 'react';
 
 const Pricing = () => {
-    // const [userRole, setUserRole] = useState("admin");
 
     return (
         
             <>
-            <h1>You are authorised to see this.</h1>
+            <h1 className="m-5">You are authorised to see this.</h1>
                 <div className="row text-center align-items-end" >
                     <div className="col-lg-4 mb-5 mb-lg-0">
                         <div className="bg-white p-5 rounded-lg shadow">

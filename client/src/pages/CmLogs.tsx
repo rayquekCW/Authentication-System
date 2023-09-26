@@ -1,7 +1,5 @@
-// import { useState } from 'react';
 
 const Logs = () => {
-    // const [userRole, setUserRole] = useState("admin");
 
     return (
         <div>

@@ -1,7 +1,5 @@
-// import { useState } from 'react';
 
 const Orders = () => {
-    // const [userRole, setUserRole] = useState("admin");
 
     return (
         <div>
