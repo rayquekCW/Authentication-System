@@ -9,6 +9,9 @@ import MfaPage from './pages/mfaPage';
 import HomePage from './pages/homePage';
 import CustomerManagementLogin from './pages/CmLogin';
 import CustomerManagementDashboard from './pages/CmDashboard';
+import Logs from './pages/logs';
+import Orders from './pages/orders';
+import Pricing from './pages/pricing';
 
 const App = () => {
 	return (
@@ -22,6 +25,9 @@ const App = () => {
 					<Route path="/home" element={<HomePage />} />
 					<Route path="/cmlogin" element={<CustomerManagementLogin />} />
 					<Route path="/cmdashboard" element={<CustomerManagementDashboard />} />
+					<Route path="/cmdashboard/orders" element={<Orders />} />
+					<Route path="/cmdashboard/logs" element={<Logs />} />
+					<Route path="/cmdashboard/pricing" element={<Pricing />} />
 				</Routes>
 			</Router>
 		</>
