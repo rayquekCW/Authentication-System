@@ -7,8 +7,8 @@ import SetPassword from './pages/setPassword';
 import ProfilePage from './pages/profilePage';
 import MfaPage from './pages/mfaPage';
 import HomePage from './pages/homePage';
-import CustomerManagementLogin from './pages/CmLogin';
 import CustomerManagementDashboard from './pages/CmDashboard';
+import Enrollment from './pages/CmEnrollment';
 import Logs from './pages/CmLogs';
 import Orders from './pages/CmOrders';
 import Pricing from './pages/CmPricing';
@@ -23,25 +23,12 @@ const App = () => {
 					<Route path="/password" element={<SetPassword />} />
 					<Route path="/mfa" element={<MfaPage />} />
 					<Route path="/home" element={<HomePage />} />
-					<Route
-						path="/cmlogin"
-						element={<CustomerManagementLogin />}
-					/>
-					<Route
-						path="/cmdashboard"
-						element={<CustomerManagementDashboard />}
-					/>
-					<Route
-						path="/cmlogin"
-						element={<CustomerManagementLogin />}
-					/>
-					<Route
-						path="/cmdashboard"
-						element={<CustomerManagementDashboard />}
-					/>
-					<Route path="/cmdashboard/orders" element={<Orders />} />
-					<Route path="/cmdashboard/logs" element={<Logs />} />
-					<Route path="/cmdashboard/pricing" element={<Pricing />} />
+					{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
+					<Route path="/cm-dashboard" element={<CustomerManagementDashboard />} />
+					<Route path="/cm-enrollment" element={<Enrollment />} />
+					<Route path="/cm-logs" element={<Logs />} />
+					<Route path="/cm-orders" element={<Orders />} />
+					<Route path="/cm-pricing" element={<Pricing />} />
 				</Routes>
 			</Router>
 		</>
