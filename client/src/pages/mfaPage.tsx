@@ -12,7 +12,6 @@ const MfaPage = () => {
 
 	const email = location.state.email;
 	const logoURL = location.state.logoURL;
-
 	// if logoURL is provided, use that, otherwise use "../src/assets/logo.png"
 	const logoData = logoURL || '../src/assets/posb.svg';
 
@@ -25,17 +24,15 @@ const MfaPage = () => {
 		navigate('/home');
 	};
 
-	const checkOtpType = () => {
-		//TODO: check for backend what type of otp has the user set
-		return 'email';
-	};
-
 	const renderComponents = () => {
 		switch (steps) {
 			case 0:
 				return (
 					<div className="my-5 text-center">
-						<MultiFactAuth handleSteps={handleSteps} />
+						<MultiFactAuth
+							handleSteps={handleSteps}
+							email={email}
+						/>
 					</div>
 				);
 
@@ -101,9 +98,10 @@ const MfaPage = () => {
 				return (
 					<div className="my-5 text-center">
 						<Otp
-							otpType={checkOtpType()}
+							otpType="email"
 							stateChanger={setSteps}
 							step={1}
+							email={email}
 						/>
 					</div>
 				);

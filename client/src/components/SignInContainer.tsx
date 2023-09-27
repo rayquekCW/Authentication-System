@@ -26,11 +26,11 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 		if (hasSetUpMFA) {
 			// TODO: replace with actual state
 			navigate('/mfa', {
-				state: {email: '', logoUrl: '', step: 0},
+				state: {email: email, logoUrl: '', step: 0},
 			});
 		} else {
 			navigate('/mfa', {
-				state: {email: '', logoUrl: '', step: 4},
+				state: {email: email, logoUrl: '', step: 4},
 			});
 		}
 	}

@@ -3,9 +3,14 @@ import Otp from './Otp';
 export interface MultiFactAuthProps {
 	handleSteps: (step: number) => void;
 	navigateTo?: string;
+	email?: string;
 }
 
-const MultiFactAuth = ({handleSteps, navigateTo}: MultiFactAuthProps) => {
+const MultiFactAuth = ({
+	handleSteps,
+	navigateTo,
+	email,
+}: MultiFactAuthProps) => {
 	const [otpType, setOtpType] = useState(''); // email or phone
 	const [typeSelected, setTypeSelected] = useState(false); // true if otpType is selected, false if not
 
@@ -76,6 +81,7 @@ const MultiFactAuth = ({handleSteps, navigateTo}: MultiFactAuthProps) => {
 					otpType={otpType}
 					stateChanger={handleSteps}
 					navigateTo={navigateTo}
+					email={email}
 				/>
 			)}
 		</div>

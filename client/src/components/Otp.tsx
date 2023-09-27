@@ -12,11 +12,11 @@ type OtpProps = {
 	stateChanger: (value: number) => void;
 	step?: number;
 	navigateTo?: string;
+	email?: string;
 };
 
-const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
+const Otp = ({otpType, stateChanger, step, navigateTo, email}: OtpProps) => {
 	const isEmail = otpType === 'email' ? true : false; // check if OTP is sent to email or phone
-
 	const [otp, setOtp] = useState(['', '', '', '', '', '']); // 6 digit OTP
 	const inputRefs = useRef<Array<HTMLInputElement | null>>(
 		Array(6).fill(null)
@@ -26,9 +26,9 @@ const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
 	const [error, setError] = useState(false); // true if error, false if not
 	const navigate = useNavigate();
 
-	// TODO: replace with actual isAdmin
-	const isAdmin = true;
-	if (isAdmin) {
+	const adminEmails = ['superAdmin@gmail.com', 'admin@gmail.com'];
+
+	if (email && adminEmails.includes(email)) {
 		navigateTo = '/cm-dashboard';
 	}
 
@@ -94,10 +94,8 @@ const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
 			setError(true);
 		}
 		//TODO: check if OTP is valid and change adminType accordingly
-		if (navigateTo && isAdmin) {
-			navigate(navigateTo, {state: {adminType: 'superAdmin'}});
-		} else if (navigateTo && !isAdmin) {
-			navigate(navigateTo);
+		if (navigateTo) {
+			navigate(navigateTo, {state: {adminType: email?.split('@')[0]}});
 		}
 		stateChanger(step ? step : 5);
 	};
