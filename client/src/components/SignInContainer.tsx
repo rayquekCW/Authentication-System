@@ -24,9 +24,14 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 		//TODO: check for backend if user has set up MFA
 		const hasSetUpMFA = true;
 		if (hasSetUpMFA) {
-			navigate('/mfa', {state: {email: '', logoUrl: '', step: 0}});
+			// TODO: replace with actual state
+			navigate('/mfa', {
+				state: {email: '', logoUrl: '', step: 0},
+			});
 		} else {
-			navigate('/mfa', {state: {email: '', logoUrl: '', step: 4}});
+			navigate('/mfa', {
+				state: {email: '', logoUrl: '', step: 4},
+			});
 		}
 	}
 
@@ -91,12 +96,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 					className={`defaultBtn ${
 						validateEmail(email) ? '' : 'disabled'
 					}`}
-					onClick={
-						() => validateEmail(email) && requireMFASetup()
-						// navigate('/mfa', {state: {email: '', logoUrl: ''}})
-						// state is a placeholder for now
-						// TODO: replace with actual state
-					}
+					onClick={() => validateEmail(email) && requireMFASetup()}
 					disabled={!validateEmail(email)}
 				>
 					Sign In

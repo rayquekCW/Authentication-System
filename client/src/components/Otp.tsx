@@ -26,6 +26,12 @@ const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
 	const [error, setError] = useState(false); // true if error, false if not
 	const navigate = useNavigate();
 
+	// TODO: replace with actual isAdmin
+	const isAdmin = true;
+	if (isAdmin) {
+		navigateTo = '/cm-dashboard';
+	}
+
 	useEffect(() => {
 		let timer: NodeJS.Timeout; // to store the timer
 
@@ -87,8 +93,10 @@ const Otp = ({otpType, stateChanger, step, navigateTo}: OtpProps) => {
 			setMsg('OTP is invalid');
 			setError(true);
 		}
-		//FIXME: change situation
-		if (navigateTo) {
+		//TODO: check if OTP is valid and change adminType accordingly
+		if (navigateTo && isAdmin) {
+			navigate(navigateTo, {state: {adminType: 'superAdmin'}});
+		} else if (navigateTo && !isAdmin) {
 			navigate(navigateTo);
 		}
 		stateChanger(step ? step : 5);

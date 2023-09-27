@@ -16,7 +16,7 @@ import Switch from 'react-switch';
 const CmDashboard = () => {
     const location = useLocation();
     // For checking what type of admin is logged in
-    const [adminType, setAdminType] = useState(location.state); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
+    const [adminType, setAdminType] = useState(location.state.adminType); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
     const [isOpen, setIsOpen] = useState(false);
     const [showMfaPopup, setShowMfaPopup] = useState(false);
     const [showEditPopup, setShowEditPopup] = useState(false);
