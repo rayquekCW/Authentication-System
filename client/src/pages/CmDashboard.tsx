@@ -7,6 +7,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdRemoveCircle} from 'react-icons/md';
 import bankLogo from "../assets/posb.svg";
 import Sidebar from "../components/SideBar";
+import SideBarSuper from "../components/SideBarSuper";
 import MultiFactAuth from '../components/MultiFactAuth';
 import { CustomerData } from "../utils/types";
 import customersData from "../utils/customer_data.json";
@@ -15,12 +16,16 @@ import Switch from 'react-switch';
 
 const CmDashboard = () => {
     const location = useLocation();
-    // For checking what type of admin is logged in
-    const [adminType, setAdminType] = useState(location.state.adminType); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
-    const [isOpen, setIsOpen] = useState(false);
-    const [showMfaPopup, setShowMfaPopup] = useState(false);
-    const [showEditPopup, setShowEditPopup] = useState(false);
-    const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
+    if (location.state) {
+        window.localStorage.setItem('adminType', location.state.adminType);
+    }
+    const [adminType, setAdminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
+    // isSuperAdmin is true if adminType is superAdmin from local storage
+    const isSuper = adminType === 'superAdmin';
+    const [isOpen, setIsOpen] = useState<boolean>(false);
+    const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
+    const [showEditPopup, setShowEditPopup] = useState<boolean>(false);
+    const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState<boolean>(false);
     const [customers, setCustomers] = useState(customersData);
     const [currentPage, setCurrentPage] = useState(1);
     const customersPerPage = 12;
@@ -140,7 +145,7 @@ const CmDashboard = () => {
                 </div>
             </div>
             <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
-                <Sidebar handleClick={handleClick} />
+                {isSuper ? <SideBarSuper handleClick={handleClick} /> : <Sidebar handleClick={handleClick} />}
             </div>
             <h1 className="mt-5 ms-5">Customers</h1>
             <table className="table mt-4 ms-5" style={{ width: '95%', border: '1px solid lightgrey' }}>
