@@ -1,5 +1,5 @@
 // TODO: rework password logic, dont verify on change only, on click of button need to verify too
-import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
+import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa';
 import {useState, useEffect} from 'react';	
 import { useLocation,useNavigate} from 'react-router-dom';
 import OtpPassword from '../components/OtpPassword';

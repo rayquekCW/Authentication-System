@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { GiHamburgerMenu, GiPriceTag } from 'react-icons/gi';
 import { PiUserSquareFill } from 'react-icons/pi';
 import { ImFolderDownload } from 'react-icons/im';
 import { GoLog } from 'react-icons/go';
 import { BiSolidShoppingBags } from 'react-icons/bi';
-import bankLogo from "../assets/posb.svg";
+import BankLogo from "../assets/posb.svg";
 
 type SideBarProps = {
     handleClick: () => void;
@@ -19,7 +18,7 @@ const Sidebar = ({handleClick}: SideBarProps) => {
             <button className="close-button" onClick={handleClick}>
                 <GiHamburgerMenu style={{ fontSize: "25px", marginRight: '5px' }} />
             </button>
-            <img src={bankLogo} className="bank-sidebar" alt="Logo" />
+            <BankLogo />
             <ul className="ms-3">
                 <li>
                     <Link to="/cm-dashboard" style={{textDecoration: 'none'}}>
