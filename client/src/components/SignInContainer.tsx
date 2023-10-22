@@ -89,7 +89,14 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						</span>
 					</p>
 					<p className="caption">
-						or <Link to="/">Sign In with SSO</Link>
+						or{' '}
+						<Link
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
+								import.meta.env.VITE_CLIENT_ID
+							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
+						>
+							Sign In with SSO
+						</Link>
 					</p>
 				</div>
 				<button

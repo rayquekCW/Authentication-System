@@ -12,6 +12,7 @@ import Enrollment from './pages/CmEnrollment';
 import Logs from './pages/CmLogs';
 import Orders from './pages/CmOrders';
 import Pricing from './pages/CmPricing';
+import Redirect from './pages/Redirect';
 
 const App = () => {
 	return (
@@ -22,9 +23,13 @@ const App = () => {
 					<Route path="/profile" element={<ProfilePage />} />
 					<Route path="/password" element={<SetPassword />} />
 					<Route path="/mfa" element={<MfaPage />} />
+					<Route path="/bank" element={<Redirect />} />
 					<Route path="/home" element={<HomePage />} />
 					{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
-					<Route path="/cm-dashboard" element={<CustomerManagementDashboard />} />
+					<Route
+						path="/cm-dashboard"
+						element={<CustomerManagementDashboard />}
+					/>
 					<Route path="/cm-enrollment" element={<Enrollment />} />
 					<Route path="/cm-logs" element={<Logs />} />
 					<Route path="/cm-orders" element={<Orders />} />
