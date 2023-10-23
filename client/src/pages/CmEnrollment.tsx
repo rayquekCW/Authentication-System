@@ -6,12 +6,12 @@ import { IoMdLogOut } from 'react-icons/io';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import Sidebar from "../components/SideBar";
 import SideBarSuper from "../components/SideBarSuper";
-import bankLogo from "../assets/posb.svg";
+// import BankLogo from "../assets/posb.svg";
 
 const CmEnrollment = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [dragIsOver, setDragIsOver] = useState<boolean>(false);
-    const [adminType, setAdminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
+    const [adminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
     // isSuperAdmin is true if adminType is superAdmin from local storage
     const isSuper = adminType === 'superAdmin';
 
@@ -49,7 +49,7 @@ const CmEnrollment = () => {
                     <div onClick={handleClick} style={{ cursor: 'pointer' }}>
                         <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
                     </div>
-                    <img src={bankLogo} className="bank-navbar" alt="Logo" />
+                    {/* <BankLogo /> */}
                     <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
                         <li className="nav-item me-4">
                             <Link

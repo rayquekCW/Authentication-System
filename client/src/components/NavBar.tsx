@@ -1,7 +1,8 @@
 import { Link } from "react-router-dom";
 import "../styles/_variable.scss";
 import { BsList } from "react-icons/bs";
-import bankLogo from "../assets/posb.svg"; // TODO: Dynamic logo import
+// import BankLogo from "../assets/posb.svg";
+
 
 const NavBar = () => {
   const inlineStyle = {
@@ -18,7 +19,7 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
       <div className="container-fluid">
-        <img src={bankLogo} className="bank-navbar" alt="Logo" />
+        {/* <BankLogo /> */}
         <button
           className="navbar-toggler"
           type="button"

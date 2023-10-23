@@ -5,11 +5,10 @@ import { CgProfile } from 'react-icons/cg';
 import { IoMdLogOut } from 'react-icons/io';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdRemoveCircle} from 'react-icons/md';
-import bankLogo from "../assets/posb.svg";
+import BankLogo from "../assets/posb.svg";
 import Sidebar from "../components/SideBar";
 import SideBarSuper from "../components/SideBarSuper";
 import MultiFactAuth from '../components/MultiFactAuth';
-import { CustomerData } from "../utils/types";
 import customersData from "../utils/customer_data.json";
 import Pagination from 'react-bootstrap/Pagination';
 import Switch from 'react-switch';
@@ -19,14 +18,14 @@ const CmDashboard = () => {
     if (location.state) {
         window.localStorage.setItem('adminType', location.state.adminType);
     }
-    const [adminType, setAdminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
+    const [adminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
     // isSuperAdmin is true if adminType is superAdmin from local storage
     const isSuper = adminType === 'superAdmin';
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
     const [showEditPopup, setShowEditPopup] = useState<boolean>(false);
     const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState<boolean>(false);
-    const [customers, setCustomers] = useState(customersData);
+    const [customers] = useState(customersData);
     const [currentPage, setCurrentPage] = useState(1);
     const customersPerPage = 12;
     // Calculate the startIndex and endIndex based on the current page
@@ -108,7 +107,7 @@ const CmDashboard = () => {
                     <div onClick={handleClick} style={{ cursor: 'pointer' }}>
                         <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
                     </div>
-                    <img src={bankLogo} className="bank-navbar" alt="Logo" />
+                    <BankLogo />
                     <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
                         <li className="nav-item me-4">
                             <Link
