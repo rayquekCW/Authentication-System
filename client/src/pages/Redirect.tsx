@@ -1,41 +1,92 @@
 import {useSearchParams} from 'react-router-dom';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 
 function Redirect() {
 	const [searchParams, setSearchParams] = useSearchParams();
-	const [data, setData] = useState('this is supposed to be the access token');
-	useEffect(() => {
-		async function getAccessToken(code: string | null) {
-			if (code === null) return;
+	const [data, setData] = useState({
+		access_token: 'this is supposed to be the access token',
+	});
+	const [userData, setUserData] = useState({
+		name: 'this is supposed to be the user data',
+		email: 'this is supposed to be the user email',
+		given_name: 'this is supposed to be the user given name',
+		family_name: 'this is supposed to be the user family name',
+		birthdate: 'this is supposed to be the user birthdate',
+		gender: 'this is supposed to be the user gender',
+		phone_number: 'this is supposed to be the user phone number',
+	});
+	async function getAccessToken(code: string | null) {
+		if (code === null) return;
+		try {
+			const response = await fetch('http://localhost:8001/auth/token', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/json',
+				},
+				body: JSON.stringify({
+					code: code, // Pass the code from your form or wherever you get it
+				}),
+			});
+
+			if (response.ok) {
+				const data = await response.json();
+				console.log('coming from client', data);
+				setData(data); // Update the access token state
+			} else {
+				console.error(
+					`Failed to fetch access token. Status code: ${response.status}`
+				);
+			}
+		} catch (error: any) {
+			console.log(error.message);
+		}
+	}
+
+	async function getUserData(accessToken: string | null) {
+		if (accessToken === null) return;
+		try {
 			const response = await fetch(
-				'http://smurnauth-production.fly.dev/oauth/token',
+				'http://localhost:8001/auth/userinfo',
 				{
 					method: 'POST',
-					mode: 'no-cors',
-					// headers: {
-					// 	'Access-Control-Allow-Origin': '*',
-					// 	'Content-Type': 'application/json',
-					// 	origin: 'http://localhost:5173/bank',
-					// },
+					headers: {
+						'Content-Type': 'application/json',
+					},
 					body: JSON.stringify({
-						client_id: import.meta.env.VITE_CLIENT_ID,
-						client_secret: import.meta.env.VITE_CLIENT_SECRET,
-						grant_type: 'authorization_code',
-						code: code,
-						redirect_uri: 'http://localhost:5173/bank',
+						accessToken: accessToken,
 					}),
 				}
 			);
-			console.log(response);
+			if (response.ok) {
+				const data = await response.json();
+				console.log('coming from client', data);
+				setUserData(data); // Update the access token state
+			} else {
+				console.error(
+					`Failed to fetch access token. Status code: ${response.status}`
+				);
+			}
+		} catch (error) {
+			console.error('Something went wrong');
 		}
-
-		getAccessToken(searchParams.get('code'));
-	}, [searchParams.get('code')]);
+	}
 
 	return (
 		<div>
 			<h1>{searchParams.get('code')}</h1>
-			<h1>{data}</h1>
+			{/* <h1>{data?.access_token}</h1> */}
+			<h1>{userData.name}</h1>
+			<h1>{userData.given_name}</h1>
+			<h1>{userData.family_name}</h1>
+			<h1>{userData.email}</h1>
+			<h1>{userData.gender}</h1>
+			<h1>{userData.phone_number}</h1>
+			<button onClick={() => getAccessToken(searchParams.get('code'))}>
+				generate access token
+			</button>
+			<button onClick={() => getUserData(data.access_token)}>
+				generate User Data
+			</button>
 		</div>
 	);
 }
