@@ -1,106 +1,122 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
-import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
-import Setup from "../components/mfaSetupSteps/Setup";
-import Otp from "../components/Otp";
-import MultiFactAuth from "../components/MultiFactAuth";
+// import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
+// import Setup from "../components/mfaSetupSteps/Setup";
+// import Otp from "../components/Otp";
+// import MultiFactAuth from "../components/MultiFactAuth";
+import { AccountContext } from '../services/Account'
 
 const MfaPage = () => {
   const location = useLocation();
-  const [steps, setSteps] = useState(location.state.step);
   const navigate = useNavigate();
+  const [userCode, setUserCode] = useState('')
+  const [enabled, setEnabled] = useState(false)
+  const [image, setImage] = useState('')
 
-  const email = location.state.email;
-  const logoURL = location.state.logoURL;
-  // if logoURL is provided, use that, otherwise use "../src/assets/logo.png"
-  const logoData = logoURL || "../src/assets/posb.svg";
+  const { getSession } = useContext(AccountContext) || {};
 
-  const handleSteps = (step: number) => {
-    setSteps(step);
-  };
-
-  const handleRedirectToHomePage = () => {
-    // Redirect the user to the homepage
-    navigate("/home");
-  };
-
-  const renderComponents = () => {
-    switch (steps) {
-      case 0:
-        return (
-          <div className="my-5 text-center">
-            <MultiFactAuth handleSteps={handleSteps} email={email} />
-          </div>
-        );
-
-      case 1:
-        return (
-          <div className="my-5">
-            <MFASetupPrompt
-              stateChanger={setSteps}
-              email={email}
-              logoURL={logoURL}
-            />
-          </div>
-        );
-
-      case 2:
-        return (
-          <div className="my-5">
-            <Setup
-              requireSetup={true}
-              stateChanger={setSteps}
-              logoURL={logoURL}
-            />
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="my-5">
-            <div
-              className="container text-start"
-              style={{ backgroundColor: "white" }}
-            >
-              <div className="row">
-                <div className="col-md-1"></div>
-                <div className="col mx-2 my-2">
-                  <img src={logoData} style={{ width: "150px" }} alt="Logo" />
-                  <h3>Setup Complete!</h3>
-                  <p>You have successfully set up MFA for your account.</p>
-                  <p>Click the button below to go back to the login page.</p>
-                  <button
-                    className="btn defaultBtn"
-                    onClick={handleRedirectToHomePage}
-                  >
-                    Continue
-                  </button>
-                </div>
-                <div className="col-md-1"></div>
-              </div>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="my-5 text-center">
-            <Otp
-              otpType="email"
-              stateChanger={setSteps}
-              step={1}
-              email={email}
-            />
-          </div>
-        );
-      case 5:
-        handleRedirectToHomePage();
-        return null;
-      default:
-        return null; // Handle unexpected steps or provide a default case
+  useEffect(() => {
+    if (getSession) {
+      getSession().then(({ mfaEnabled }) => {
+        setEnabled(mfaEnabled)
+      })
     }
-  };
+  }, [])
 
-  return <>{renderComponents()}</>;
+  const API = 'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa'
+
+  const getQRCode = () => {
+    if (getSession) {
+      getSession().then(({ accessToken, headers }) => {
+        if (typeof accessToken !== 'string') {
+          accessToken = accessToken.jwtToken
+        }
+
+        const uri = `${API}?accessToken=${accessToken}`
+        fetch(uri, {
+          headers,
+        })
+          .then((data) => data.json())
+          .then(setImage)
+          .catch(console.error)
+      }).catch(console.error);
+    }
+  }
+
+  const enableMFA = (event: any) => {
+    event.preventDefault()
+
+    console.log('USER CODE:', userCode)
+    if (getSession) {
+      getSession().then(({ user, accessToken, headers }) => {
+        if (typeof accessToken !== 'string') {
+          accessToken = accessToken.jwtToken
+        }
+
+        const uri = `${API}?accessToken=${accessToken}&userCode=${userCode}`
+        console.log(headers)
+        console.log(accessToken)
+        fetch(uri, {
+          method: 'POST',
+          headers,
+        })
+          .then((data) => data.json())
+          .then((result) => {
+            console.log(result)
+            if (result.Status && result.Status === 'SUCCESS') {
+              setEnabled(true)
+              console.log("entered")
+              const settings = {
+                PreferredMfa: true,
+                Enabled: true,
+              }
+
+              user.setUserMfaPreference(null, settings, () => { })
+            } else {
+              if (result.errorType === 'EnableSoftwareTokenMFAException') {
+                alert('Incorrect 6-digit code!')
+              } else if (result.errorType === 'InvalidParameterException') {
+                alert('Please provide a 6-digit number')
+              }
+            }
+          })
+          .catch(console.error)
+      })
+    }
+  }
+
+
+  return <>
+    <div>
+      <h1>Multi-Factor Authentication</h1>
+
+
+
+      {enabled ? (
+        <div>
+          <div>MFA is enabled</div>
+        </div>
+      ) : image ? (
+        <div>
+          <h3>Scan this QR code:</h3>
+          <img src={image} />
+
+          <form onSubmit={enableMFA}>
+            <input
+              value={userCode}
+              onChange={(event) => setUserCode(event.target.value)}
+              required
+            />
+
+            <button type="submit">Confirm Code</button>
+          </form>
+        </div>
+      ) : (
+        <button onClick={getQRCode}>Enable MFA</button>
+      )}
+    </div>
+
+  </>;
 };
 
 export default MfaPage;

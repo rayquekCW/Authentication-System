@@ -104,7 +104,7 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
       getUser().confirmPassword(otpJoined, password, {
         onSuccess: (data) => {
           console.log("onSuccess:", data);
-          navigate("/");
+          navigate("/mfa");
         },
         onFailure: (err) => {
           console.error("onFailure:", err);

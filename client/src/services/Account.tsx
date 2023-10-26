@@ -6,7 +6,7 @@ import Pool from './UserPool';
 // Define the type for the context value
 type AccountContextValue = {
   authenticate: (Username: string, Password: string) => Promise<unknown>;
-  getSession: () => Promise<void>;
+  getSession: () => Promise<any>;
   logout: () => void;
 };
 
