@@ -4,8 +4,8 @@ import { AiFillExclamationCircle } from 'react-icons/ai';
 import { CgProfile } from 'react-icons/cg';
 import { IoMdLogOut } from 'react-icons/io';
 import { GiHamburgerMenu } from 'react-icons/gi';
-import Sidebar from "../components/SideBar";
-import SideBarSuper from "../components/SideBarSuper";
+import Sidebar from "../../components/SideBar";
+import SideBarSuper from "../../components/SideBarSuper";
 // import BankLogo from "../assets/posb.svg";
 
 const Logs = () => {

@@ -1,13 +1,8 @@
 import { useState, useEffect, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-// import MFASetupPrompt from "../components/mfaSetupSteps/MFASetupPrompt";
-// import Setup from "../components/mfaSetupSteps/Setup";
-// import Otp from "../components/Otp";
-// import MultiFactAuth from "../components/MultiFactAuth";
+import { useNavigate } from "react-router-dom";
 import { AccountContext } from '../services/Account'
 
 const MfaPage = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [userCode, setUserCode] = useState('')
   const [enabled, setEnabled] = useState(false)

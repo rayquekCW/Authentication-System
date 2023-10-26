@@ -50,10 +50,10 @@ const ProfilePage = () => {
 			<NavBar />
 			<div
 				className={`overlay ${showMfaPopup ||
-						showDeleteConfirmPopup ||
-						showChangeConfirmPopup
-						? 'active'
-						: ''
+					showDeleteConfirmPopup ||
+					showChangeConfirmPopup
+					? 'active'
+					: ''
 					}`}
 			></div>
 			<div className="container bg-light shadow-sm mt-4 p-4">

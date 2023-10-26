@@ -5,11 +5,11 @@ import { CgProfile } from 'react-icons/cg';
 import { IoMdLogOut } from 'react-icons/io';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import { MdRemoveCircle} from 'react-icons/md';
-import BankLogo from "../assets/posb.svg";
-import Sidebar from "../components/SideBar";
-import SideBarSuper from "../components/SideBarSuper";
-import MultiFactAuth from '../components/MultiFactAuth';
-import customersData from "../utils/customer_data.json";
+// import BankLogo from "../../assets/posb.svg";
+import Sidebar from "../../components/SideBar";
+import SideBarSuper from "../../components/SideBarSuper";
+import MultiFactAuth from '../../components/MultiFactAuth';
+import customersData from "../../utils/customer_data.json";
 import Pagination from 'react-bootstrap/Pagination';
 import Switch from 'react-switch';
 
@@ -107,7 +107,7 @@ const CmDashboard = () => {
                     <div onClick={handleClick} style={{ cursor: 'pointer' }}>
                         <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
                     </div>
-                    <BankLogo />
+                    {/* <BankLogo /> */}
                     <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
                         <li className="nav-item me-4">
                             <Link
