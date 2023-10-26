@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import PatientListPage from '../src/components/exampleComponent'; // example of a component
-import LoginPage from './pages/loginPage';
+import LoginPage from './pages/LoginPage';
 import './App.css';
 import '../src/styles/styles.scss';
-import SetPassword from './pages/setPassword';
-import ProfilePage from './pages/profilePage';
-import MfaPage from './pages/mfaPage';
-import HomePage from './pages/homePage';
+import SetPassword from './pages/SetPassword';
+import ProfilePage from './pages/ProfilePage';
+import MfaPage from './pages/MfaPage';
+import HomePage from './pages/HomePage';
 import CustomerManagementDashboard from './pages/CmDashboard';
 import Enrollment from './pages/CmEnrollment';
 import Logs from './pages/CmLogs';
