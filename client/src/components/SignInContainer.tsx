@@ -1,16 +1,27 @@
-import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
-import {useState} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
+import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from 'react-icons/fa';
+import { useState, useContext } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { AccountContext } from "../services/Account";
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
 };
 
-const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
+const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
-	const navigate = useNavigate();
 
+	const { authenticate } = useContext(AccountContext) || {};
+	// const navigate = useNavigate();
+
+	/**
+	 * The function `validateEmail` checks if an email address is valid by ensuring it has a non-empty
+	 * local part and domain part separated by an '@' symbol.
+	 * @param {string} email - The email parameter is a string that represents an email address.
+	 * @returns a boolean value. It returns true if the email is valid (contains exactly one '@' symbol and
+	 * has non-empty strings before and after the '@' symbol), and false otherwise.
+	 */
 	function validateEmail(email: string) {
 		var emailCheck = email.split('@');
 		return (
@@ -21,22 +32,34 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	}
 
 	function requireMFASetup() {
-		//TODO: check for backend if user has set up MFA
-		const hasSetUpMFA = true;
-		if (hasSetUpMFA) {
-			// TODO: replace with actual state
-			navigate('/mfa', {
-				state: {email: email, logoUrl: '', step: 0},
-			});
-		} else {
-			navigate('/mfa', {
-				state: {email: email, logoUrl: '', step: 4},
-			});
+		// //TODO: check for backend if user has set up MFA
+		// const hasSetUpMFA = true;
+		// if (hasSetUpMFA) {
+		// 	// TODO: replace with actual state
+		// 	navigate('/mfa', {
+		// 		state: { email: email, logoUrl: '', step: 0 },
+		// 	});
+		// } else {
+		// 	navigate('/mfa', {
+		// 		state: { email: email, logoUrl: '', step: 4 },
+		// 	});
+		// }
+
+		if (authenticate) {
+			authenticate(email, password)
+				.then((data: any) => {
+					// data is suppose to be the cognito user
+					console.log("Logged in!", data);
+				})
+				.catch((err: any) => {
+					console.error("Failed to login!", err);
+				});
 		}
 	}
 
 	return (
 		<>
+
 			<div
 				id="signInContainer"
 				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
@@ -66,6 +89,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 							placeholder="Password"
 							aria-label="Password"
 							aria-describedby="basic-addon2"
+							onChange={(event) => setPassword(event.target.value)}
 						/>
 						<button
 							className="input-group-text"
@@ -91,24 +115,23 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 					<p className="caption">
 						or{' '}
 						<Link
-							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
-								import.meta.env.VITE_CLIENT_ID
-							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID
+								}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
 						>
 							Sign In with SSO
 						</Link>
 					</p>
 				</div>
 				<button
-					className={`defaultBtn ${
-						validateEmail(email) ? '' : 'disabled'
-					}`}
+					className={`defaultBtn ${validateEmail(email) ? '' : 'disabled'
+						}`}
 					onClick={() => validateEmail(email) && requireMFASetup()}
 					disabled={!validateEmail(email)}
 				>
 					Sign In
 				</button>{' '}
 			</div>
+
 		</>
 	);
 };
