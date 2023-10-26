@@ -1,18 +1,21 @@
 import { useState, useRef, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 import {
   faMobileScreen,
   faEnvelopeOpenText,
 } from "@fortawesome/free-solid-svg-icons";
 import Notifications from "./Notifications";
+import UserPool from "../services/UserPool";
+import { CognitoUser } from "amazon-cognito-identity-js";
 
 type OtpProps = {
   otpType: string; // email or phone
-  isChange:boolean;// change password or set password
+  email: string;
+  password: string;
 };
 
-const OtpPassword = ({ otpType,isChange }: OtpProps) => {
+const OtpPassword = ({ otpType, email, password }: OtpProps) => {
   const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
 
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
@@ -20,6 +23,14 @@ const OtpPassword = ({ otpType,isChange }: OtpProps) => {
   const [time, setTime] = useState(300); // 5 minutes timer
   const [msg, setMsg] = useState(""); // message to be displayed
   const [error, setError] = useState(false); // true if error, false if not
+  const [maskedEmail, setMaskedEmail] = useState(""); // masked email to be displayed
+
+  const getUser = () => {
+    return new CognitoUser({
+      Username: email.toLowerCase(),
+      Pool: UserPool,
+    });
+  };
 
   useEffect(() => {
     let timer: NodeJS.Timeout; // to store the timer
@@ -29,24 +40,29 @@ const OtpPassword = ({ otpType,isChange }: OtpProps) => {
       timer = setTimeout(() => setTime(time - 1), 1000);
     }
 
-    return () => clearTimeout(timer); // clear the timer when the component unmounts
-  }, [time]);
+    // Mask the email
+    const splitEmail = email.split("@");
+    const maskedEmail = splitEmail[0].slice(0, 1) + "******@" + splitEmail[1];
+    setMaskedEmail(maskedEmail);
+
+    return () => clearTimeout(timer); // clear the timer and update the masked email when the component unmounts
+  }, [time, email]);
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
 
     return `${String(minutes).padStart(2, "0")}:${String(
-      remainingSeconds,
+      remainingSeconds
     ).padStart(2, "0")}`;
   };
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   // handle input change of OTP
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    index: number,
+    index: number
   ) => {
     const value = e.target.value;
 
@@ -81,6 +97,22 @@ const OtpPassword = ({ otpType,isChange }: OtpProps) => {
       setError(true);
     }
     // TODO: check if OTP is valid
+    console.log(password);
+    console.log(email);
+    const otpJoined = otp.join("");
+    if (otpJoined.length === 6) {
+      getUser().confirmPassword(otpJoined, password, {
+        onSuccess: (data) => {
+          console.log("onSuccess:", data);
+          navigate("/");
+        },
+        onFailure: (err) => {
+          console.error("onFailure:", err);
+          setMsg("OTP is invalid");
+          setError(true);
+        },
+      });
+    }
   };
 
   return (
@@ -95,7 +127,7 @@ const OtpPassword = ({ otpType,isChange }: OtpProps) => {
             aria-label="Envelope Icon"
           />
           <p id="otp-text" className="my-3">
-            A one-time password has been sent to xav******@gmail.com.
+            A one-time password has been sent to {maskedEmail}.
             {/* to be replaced with user's email */}
           </p>
         </>
@@ -156,7 +188,6 @@ const OtpPassword = ({ otpType,isChange }: OtpProps) => {
           id="login"
           onClick={() => {
             handleLogin();
-            navigate('/password', { state: { isChangePassword: isChange, isVerified: true } });
           }}
           aria-label="Login"
         >
