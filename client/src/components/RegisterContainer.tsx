@@ -47,18 +47,22 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 				}
 				console.log("Email is sent");
 
-				// else send the email to forgetPassword
-				getUser().forgotPassword({
-					onSuccess: (data) => {
-						console.log("onSuccess:", data);
-						navigate("/password", {
-							state: { isChangePassword: false, isVerified: false },
-						});
-					},
-					onFailure: (err) => {
-						console.error("onFailure:", err);
-					},
+				navigate("/password", {
+					state: { isChangePassword: false, isVerified: false },
 				});
+				// ! Only for production
+				// else send the email to forgetPassword
+				// getUser().forgotPassword({
+				// 	onSuccess: (data) => {
+				// 		console.log("onSuccess:", data);
+				// 		navigate("/password", {
+				// 			state: { isChangePassword: false, isVerified: false },
+				// 		});
+				// 	},
+				// 	onFailure: (err) => {
+				// 		console.error("onFailure:", err);
+				// 	},
+				// });
 			});
 	}
 
