@@ -1,16 +1,21 @@
 import { createContext, ReactNode } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
+import AWS from 'aws-sdk';
 import Pool from './UserPool';
+
 // Define the type for the context value
 type AccountContextValue = {
-  authenticate: (Username: string, Password: string) => Promise<void>;
+  authenticate: (Username: string, Password: string) => Promise<unknown>;
   getSession: () => Promise<void>;
   logout: () => void;
 };
 
+const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' })
 const AccountContext = createContext<AccountContextValue | undefined>(undefined);
 
 const Account: React.FC<{ children: ReactNode }> = (props) => {
+
+  // 
   const getSession = async () =>
     await new Promise<void>((resolve, reject) => {
       const user = Pool.getCurrentUser();
@@ -19,6 +24,9 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
           if (err) {
             reject();
           } else {
+            const accessToken = session.accessToken.jwtToken;
+
+            /*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
             const attributes = await new Promise<Record<string, string>>((resolve, reject) => {
               user.getUserAttributes((err, attributes) => {
                 if (err) {
@@ -36,8 +44,33 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
               });
             });
 
+            /* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
+            const mfaEnabled = await new Promise((resolve) => {
+              cognito.getUser(
+                {
+                  AccessToken: accessToken,
+                },
+                (err, data) => {
+                  if (err) resolve(false)
+                  else
+                    resolve(
+                      data.UserMFASettingList &&
+                      data.UserMFASettingList.includes('SOFTWARE_TOKEN_MFA')
+                    )
+                }
+              )
+            })
+
+            const token = session.getIdToken().getJwtToken()
+
             resolve({
               user,
+              accessToken,
+              mfaEnabled,
+              headers: {
+                'x-api-key': attributes['custom:apikey'],
+                Authorization: token,
+              },
               ...session,
               ...attributes,
             });
@@ -67,6 +100,20 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
         newPasswordRequired: (data) => {
           console.log('newPasswordRequired:', data);
           resolve(data);
+        },
+
+        totpRequired: () => {
+          const token = prompt('Please enter your 6-digit token')
+          if (token) {
+            user.sendMFACode(
+              token,
+              {
+                onSuccess: () => (window.location.href = window.location.href),
+                onFailure: () => alert('Incorrect code!'),
+              },
+              'SOFTWARE_TOKEN_MFA'
+            )
+          }
         },
       });
     });

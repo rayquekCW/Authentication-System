@@ -15,7 +15,6 @@ const Setup: React.FC<Setup> = ({ logoURL, stateChanger }) => {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [verificationCode, setVerificationCode] = useState('');
     const logoData = logoURL || '../src/assets/posb.svg';
-
     /**
      * The function `handlePhoneNumberChange` is used to update the `phoneNumber` state based on the value
      * of an input field, validate if the input is a valid phone number
