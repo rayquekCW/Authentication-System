@@ -1,8 +1,10 @@
-import {useState} from 'react';
+import { useState, useContext } from 'react';
 import NavBar from '../components/NavBar';
 import MultiFactAuth from '../components/MultiFactAuth';
-import {AiOutlineClose} from 'react-icons/ai';
-import {Link, useNavigate} from 'react-router-dom';
+import { AiOutlineClose } from 'react-icons/ai';
+import { Link, useNavigate } from 'react-router-dom';
+import { AccountContext } from '../services/Account';
+
 
 const ProfilePage = () => {
 	const [showMfaPopup, setShowMfaPopup] = useState(false);
@@ -24,7 +26,7 @@ const ProfilePage = () => {
 
 	const handleChangeConfirmButtonClick = () => {
 		navigate('/password', {
-			state: {isChangePassword: true, isVerified: false},
+			state: { isChangePassword: true, isVerified: false },
 		});
 	};
 
@@ -34,21 +36,25 @@ const ProfilePage = () => {
 		setShowChangeConfirmPopup(false);
 	};
 
+	const { logout } = useContext(AccountContext) || {};
+
 	const handleLogout = () => {
-		window.location.href = '/';
+		if (logout) {
+			logout();
+			navigate('/');
+		}
 	};
 
 	return (
 		<>
 			<NavBar />
 			<div
-				className={`overlay ${
-					showMfaPopup ||
-					showDeleteConfirmPopup ||
-					showChangeConfirmPopup
+				className={`overlay ${showMfaPopup ||
+						showDeleteConfirmPopup ||
+						showChangeConfirmPopup
 						? 'active'
 						: ''
-				}`}
+					}`}
 			></div>
 			<div className="container bg-light shadow-sm mt-4 p-4">
 				<div className="row p-3">
@@ -60,7 +66,7 @@ const ProfilePage = () => {
 							<Link to="/">
 								<button
 									className="defaultBtn"
-									style={{width: 'auto'}}
+									style={{ width: 'auto' }}
 									onClick={handleLogout}
 								>
 									Log Out
@@ -95,7 +101,7 @@ const ProfilePage = () => {
 					<div className="col-12 col-lg-4 text-md-end">
 						<button
 							className="defaultBtn me-3"
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 							onClick={handleChangeButtonClick}
 						>
 							Change Password
@@ -103,7 +109,7 @@ const ProfilePage = () => {
 						<button
 							className="cancelBtn me-3"
 							onClick={handleDeleteButtonClick}
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 						>
 							Delete Account
 						</button>
@@ -119,14 +125,14 @@ const ProfilePage = () => {
 						<h6>Are you sure you want to delete your Account?</h6>
 						<button
 							className="defaultBtn me-2"
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 							onClick={handleDeleteConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 							onClick={closePopup}
 						>
 							No
@@ -142,14 +148,14 @@ const ProfilePage = () => {
 						<h6>Are you sure you want to change your Password?</h6>
 						<button
 							className="defaultBtn me-2"
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 							onClick={handleChangeConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{width: 'auto'}}
+							style={{ width: 'auto' }}
 							onClick={closePopup}
 						>
 							No

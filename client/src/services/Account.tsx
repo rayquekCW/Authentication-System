@@ -108,7 +108,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
             user.sendMFACode(
               token,
               {
-                onSuccess: () => (window.location.href = window.location.href),
+                onSuccess: () => {resolve(true)},
                 onFailure: () => alert('Incorrect code!'),
               },
               'SOFTWARE_TOKEN_MFA'

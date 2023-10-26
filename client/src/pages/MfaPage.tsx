@@ -13,7 +13,7 @@ const MfaPage = () => {
   const [enabled, setEnabled] = useState(false)
   const [image, setImage] = useState('')
 
-  const { getSession } = useContext(AccountContext) || {};
+  const { getSession, logout } = useContext(AccountContext) || {};
 
   useEffect(() => {
     if (getSession) {
@@ -72,6 +72,13 @@ const MfaPage = () => {
               }
 
               user.setUserMfaPreference(null, settings, () => { })
+
+              if (logout) {
+                logout();
+                navigate('/');
+              }
+
+
             } else {
               if (result.errorType === 'EnableSoftwareTokenMFAException') {
                 alert('Incorrect 6-digit code!')

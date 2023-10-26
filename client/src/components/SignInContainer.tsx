@@ -13,7 +13,7 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 	const [showPassword, setShowPassword] = useState(false);
 
 	const { authenticate } = useContext(AccountContext) || {};
-	// const navigate = useNavigate();
+	const navigate = useNavigate();
 
 	/**
 	 * The function `validateEmail` checks if an email address is valid by ensuring it has a non-empty
@@ -32,24 +32,12 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 	}
 
 	function requireMFASetup() {
-		// //TODO: check for backend if user has set up MFA
-		// const hasSetUpMFA = true;
-		// if (hasSetUpMFA) {
-		// 	// TODO: replace with actual state
-		// 	navigate('/mfa', {
-		// 		state: { email: email, logoUrl: '', step: 0 },
-		// 	});
-		// } else {
-		// 	navigate('/mfa', {
-		// 		state: { email: email, logoUrl: '', step: 4 },
-		// 	});
-		// }
-
 		if (authenticate) {
 			authenticate(email, password)
 				.then((data: any) => {
 					// data is suppose to be the cognito user
 					console.log("Logged in!", data);
+					navigate('/home');
 				})
 				.catch((err: any) => {
 					console.error("Failed to login!", err);
