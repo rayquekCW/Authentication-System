@@ -83,6 +83,7 @@ const SetPassword = () => {
     setIsSubmitted(true);
     if (password === confirmPassword && passwordValid) {
       setIsSuccessful(true);
+			
       // ! Only for production
       // else send the email to forgetPassword
       // getUser().forgotPassword({
