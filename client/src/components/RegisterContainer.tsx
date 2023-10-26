@@ -1,17 +1,47 @@
-import {FaAt, FaCalendar} from 'react-icons/fa';
-import {Link, useNavigate} from 'react-router-dom';
+import { FaAt, FaCalendar } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { formatDate } from "../utils/formatDate";
 
 type RegisterContainerProps = {
 	handleSignIn: () => void;
 };
 
-const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
+const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 	let navigate = useNavigate();
 	var today = new Date();
 	var dd = today.getDate();
-	var mm = String(today.getMonth() + 1).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, "0");
 	var yyyy = today.getFullYear();
-	var maxDate = yyyy + '-' + mm + '-' + dd;
+	var maxDate = yyyy + "-" + mm + "-" + dd;
+
+	const [email, setEmail] = useState("");
+	const [dob, setDob] = useState("");
+
+	function verify() {
+		const API =
+			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validate";
+
+		const uri = `${API}?email=${email}&birthdate=${dob}`;
+
+		fetch(uri, {
+			method: "POST",
+		})
+			.then((data) => data.json())
+			.then((result) => {
+				// if result has a errorType, then the user is not verified
+				// TODO - To update the lambda function to return properly if have time
+				if (result.errorType) {
+					console.log("User is not correct");
+					return;
+				}
+				console.log("Email is sent");
+
+				navigate("/password", {
+					state: { isChangePassword: false, isVerified: false, email: email },
+				});
+			});
+	}
 
 	return (
 		<>
@@ -31,6 +61,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 							placeholder="Email"
 							aria-label="Email"
 							aria-describedby="register-email"
+							onChange={(e) => setEmail(e.target.value)}
 						/>
 					</div>
 					<div className="input-group mb-3 w-75">
@@ -44,6 +75,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 							aria-label="dob"
 							aria-describedby="register-dob"
 							max={maxDate}
+							onChange={(e) => setDob(formatDate(e.target.value))}
 						/>
 					</div>
 				</div>
@@ -55,7 +87,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 							className="text-primary cursor-pointer"
 							onClick={handleSignIn}
 						>
-							{' '}
+							{" "}
 							here!
 						</span>
 					</p>
@@ -63,10 +95,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 						or <Link to="/">Sign In with SSO</Link>
 					</p>
 				</div>
-				<button
-					className="defaultBtn"
-					onClick={() => navigate('/password', {state: {isChangePassword:false,isVerified:false}})}
-				>
+				<button className="defaultBtn" onClick={() => verify()}>
 					Sign Up!
 				</button>
 			</div>

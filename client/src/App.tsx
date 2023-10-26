@@ -1,17 +1,17 @@
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 // import PatientListPage from '../src/components/exampleComponent'; // example of a component
-import LoginPage from './pages/loginPage';
+import LoginPage from './pages/LoginPage';
 import './App.css';
 import '../src/styles/styles.scss';
-import SetPassword from './pages/setPassword';
-import ProfilePage from './pages/profilePage';
-import MfaPage from './pages/mfaPage';
-import HomePage from './pages/homePage';
-import CustomerManagementDashboard from './pages/CmDashboard';
-import Enrollment from './pages/CmEnrollment';
-import Logs from './pages/CmLogs';
-import Orders from './pages/CmOrders';
-import Pricing from './pages/CmPricing';
+import SetPassword from './pages/SetPassword';
+import ProfilePage from './pages/ProfilePage';
+import MfaPage from './pages/MfaPage';
+import HomePage from './pages/HomePage';
+import CustomerManagementDashboard from './pages/admin/CmDashboard';
+import Enrollment from './pages/admin/CmEnrollment';
+import Logs from './pages/admin/CmLogs';
+import Orders from './pages/admin/CmOrders';
+import Pricing from './pages/admin/CmPricing';
 import Redirect from './pages/Redirect';
 import { Account } from './services/Account';
 
