@@ -19,6 +19,7 @@ const CmEnrollment = () => {
   const [fileSet, setFileSet] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
 
+
   const inlineStyle = {
     fontSize: "16px",
     backgroundColor: "#0078CE",
@@ -161,12 +162,10 @@ const CmEnrollment = () => {
     const fileContent = await selectedFile.arrayBuffer();
     const base64File = arrayBufferToBase64(fileContent);
 
-    
     const payload = {
       file: base64File,
       filename: selectedFile.name,
     };
-
     console.log("Sending payload:", payload);
     const LAMBDA_ENDPOINT =
       "https://xr6gnon0x3.execute-api.ap-southeast-1.amazonaws.com/dev/store-csv";
@@ -185,6 +184,7 @@ const CmEnrollment = () => {
       console.error("Error uploading the file:", error);
     }
   };
+
 
 
   return (
@@ -236,7 +236,6 @@ const CmEnrollment = () => {
         )}
       </div>
       <h1 className="mt-5 ms-5">Enrollment</h1>
-
       <div
         className="mt-5 ms-5 mb-5"
         onDrop={handleDrop}
@@ -286,3 +285,4 @@ const CmEnrollment = () => {
 };
 
 export default CmEnrollment;
+
