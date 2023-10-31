@@ -19,6 +19,7 @@
 		"@mui/material": "^5.14.7",
 		"@popperjs/core": "^2.11.8",
 		"@types/react-icons": "^3.0.0",
+		"aws-jwt-verify": "^4.0.0",
 		"amazon-cognito-identity-js": "^6.3.6",
 		"aws-sdk": "^2.1483.0",
 		"axios": "^1.5.0",
