@@ -2,6 +2,7 @@ import { createContext, ReactNode } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import AWS from 'aws-sdk';
 import Pool from './UserPool';
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 // Define the type for the context value
 type AccountContextValue = {
@@ -9,6 +10,12 @@ type AccountContextValue = {
   getSession: () => Promise<any>;
   logout: () => void;
 };
+
+const verifier = CognitoJwtVerifier.create({
+    userPoolId: Pool.getUserPoolId(),
+    tokenUse: "access",
+    clientId: Pool.getClientId(),
+  });
 
 const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'ap-southeast-1' })
 const AccountContext = createContext<AccountContextValue | undefined>(undefined);
@@ -25,6 +32,14 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
             reject();
           } else {
             const accessToken = session.accessToken.jwtToken;
+            try {
+                const payload =  verifier.verify(
+                    accessToken // the JWT as string
+                );
+                console.log("Token is valid. Payload:", payload);
+            } catch {
+                console.log("Token not valid!");
+            }
 
             /*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
             const attributes = await new Promise<Record<string, string>>((resolve, reject) => {
