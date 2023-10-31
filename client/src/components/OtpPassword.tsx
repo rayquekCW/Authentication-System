@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router-dom";
 import {
@@ -8,6 +8,7 @@ import {
 import Notifications from "./Notifications";
 import UserPool from "../services/UserPool";
 import { CognitoUser } from "amazon-cognito-identity-js";
+import { AccountContext } from "../services/Account";
 
 type OtpProps = {
   otpType: string; // email or phone
@@ -16,8 +17,9 @@ type OtpProps = {
 };
 
 const OtpPassword = ({ otpType, email, password }: OtpProps) => {
-  const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
+  const { authenticate } = useContext(AccountContext) || {};
 
+  const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
   const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
   const inputRefs = useRef<Array<HTMLInputElement | null>>(Array(6).fill(null)); // to store references to the 6 input fields
   const [time, setTime] = useState(300); // 5 minutes timer
@@ -25,6 +27,7 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
   const [error, setError] = useState(false); // true if error, false if not
   const [maskedEmail, setMaskedEmail] = useState(""); // masked email to be displayed
 
+  // get the user
   const getUser = () => {
     return new CognitoUser({
       Username: email.toLowerCase(),
@@ -34,7 +37,6 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 
   useEffect(() => {
     let timer: NodeJS.Timeout; // to store the timer
-
     // if time is greater than 0, decrement time by 1 every second
     if (time > 0) {
       timer = setTimeout(() => setTime(time - 1), 1000);
@@ -48,6 +50,14 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
     return () => clearTimeout(timer); // clear the timer and update the masked email when the component unmounts
   }, [time, email]);
 
+  /**
+   * The `formatTime` function takes a number of seconds and returns a formatted string representing the
+   * time in minutes and seconds.
+   * @param {number} seconds - The `seconds` parameter in the `formatTime` function represents the total
+   * number of seconds that you want to format.
+   * @returns The function `formatTime` returns a string in the format "mm:ss", where "mm" represents the
+   * minutes and "ss" represents the remaining seconds.
+   */
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -59,7 +69,18 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 
   const navigate = useNavigate();
 
-  // handle input change of OTP
+
+  /**
+   * The `handleInputChange` function is used to handle the input change event for an OTP (One-Time
+   * Password) input field in a React component, validating the input and updating the OTP value
+   * accordingly.
+   * @param e - The `e` parameter is of type `React.ChangeEvent<HTMLInputElement>`, which represents the
+   * event object for the input change event. It contains information about the event, such as the target
+   * element and the new value of the input field.
+   * @param {number} index - The `index` parameter represents the index of the input field in the OTP
+   * (One-Time Password) array. It is used to identify which input field is being changed and update the
+   * corresponding value in the OTP array.
+   */
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     index: number
@@ -85,6 +106,10 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
     }
   };
 
+  /**
+   * The handleLogin function checks if the OTP is valid and if it is, it confirms the password and logs
+   * the user in, then creates an API key and navigates to the MFA page.
+   */
   const handleLogin = () => {
     // if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
     if (time <= 0) {
@@ -96,15 +121,31 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
       setMsg("OTP is invalid");
       setError(true);
     }
-    // TODO: check if OTP is valid
-    console.log(password);
-    console.log(email);
+
     const otpJoined = otp.join("");
     if (otpJoined.length === 6) {
       getUser().confirmPassword(otpJoined, password, {
         onSuccess: (data) => {
           console.log("onSuccess:", data);
-          navigate("/mfa");
+          if (authenticate) {
+            authenticate(email, password)
+              .then((data: any) => {
+                const sub = data.accessToken.payload.sub
+                const API = "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-create-api-key"
+                const URI = `${API}?sub=${sub}`
+
+                // create an API key and assign to the user
+                fetch(URI, {
+                  method: "POST",
+                }).then(() =>
+                  //set delay to 1.5 second to allow time for the api key to be created
+                  setTimeout(() => navigate("/mfa"), 1500)
+                )
+              })
+              .catch((err: any) => {
+                console.log(err);
+              });
+          }
         },
         onFailure: (err) => {
           console.error("onFailure:", err);

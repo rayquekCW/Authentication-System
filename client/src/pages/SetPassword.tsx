@@ -7,6 +7,7 @@ import OtpPassword from "../components/OtpPassword";
 import Notifications from "../components/Notifications";
 import MFAPassword from "../components/MFAPassword";
 
+
 const SetPassword = () => {
 	const [password, setPassword] = useState("");
 	const [confirmPassword, setConfirmPassword] = useState("");
@@ -24,6 +25,7 @@ const SetPassword = () => {
 	const isChange = location.state.isChangePassword;
 	const isVerified = location.state.isVerified;
 	const email = location.state.email;
+	
 
 	// Effect for showing/hiding error notification
 	useEffect(() => {
@@ -86,14 +88,14 @@ const SetPassword = () => {
 
 			// ! Only for production
 			// else send the email to forgetPassword
-			// getUser().forgotPassword({
-			// 	onSuccess: (data) => {
-			// 		console.log("onSuccess:", data);
-			// 	},
-			// 	onFailure: (err) => {
-			// 		console.error("onFailure:", err);
-			// 	},
-			// });
+			getUser().forgotPassword({
+				onSuccess: () => {
+					console.log("onSuccess: The reset email has been sent!");
+				},
+				onFailure: (err) => {
+					console.error("onFailure:", err);
+				},
+			});
 		} else {
 			setShowErrorNotification(true);
 		}
