@@ -7,7 +7,6 @@ const MfaPage = () => {
   const [userCode, setUserCode] = useState('')
   const [enabled, setEnabled] = useState(false)
   const [image, setImage] = useState('')
-
   const { getSession, logout } = useContext(AccountContext) || {};
 
   useEffect(() => {
@@ -20,6 +19,10 @@ const MfaPage = () => {
 
   const API = 'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa'
 
+  /**
+   * The function `getQRCode` retrieves a QR code image by making a request to an API using an access
+   * token obtained from a session.
+   */
   const getQRCode = () => {
     if (getSession) {
       getSession().then(({ accessToken, headers }) => {
@@ -38,10 +41,17 @@ const MfaPage = () => {
     }
   }
 
+  /**
+   * The above function enables multi-factor authentication (MFA) for a user by making a POST request
+   * to an API endpoint with the user's access token and user code.
+   * @param {any} event - The `event` parameter is an object that represents the event that triggered
+   * the function. It is typically an event object that is passed to an event handler function. In this
+   * case, the function is an event handler for a form submission, so the `event` object would contain
+   * information about the form submission
+   */
   const enableMFA = (event: any) => {
     event.preventDefault()
 
-    console.log('USER CODE:', userCode)
     if (getSession) {
       getSession().then(({ user, accessToken, headers }) => {
         if (typeof accessToken !== 'string') {
@@ -49,8 +59,8 @@ const MfaPage = () => {
         }
 
         const uri = `${API}?accessToken=${accessToken}&userCode=${userCode}`
-        console.log(headers)
-        console.log(accessToken)
+
+        /* Enable the MFA (TOTP) setting for the user */
         fetch(uri, {
           method: 'POST',
           headers,
@@ -59,22 +69,22 @@ const MfaPage = () => {
           .then((result) => {
             console.log(result)
             if (result.Status && result.Status === 'SUCCESS') {
-              setEnabled(true)
-              console.log("entered")
+              setEnabled(true) // Set state to enabled
+
               const settings = {
                 PreferredMfa: true,
                 Enabled: true,
               }
 
-              user.setUserMfaPreference(null, settings, () => { })
+              user.setUserMfaPreference(null, settings, () => { }) // set the MFA Setting on Cognito to enabled and assign to TOTP Preferred
 
+              // Logout user and navigate to login page
               if (logout) {
                 logout();
                 navigate('/');
               }
-
-
             } else {
+              // Handle errors alert if the user enters the wrong code
               if (result.errorType === 'EnableSoftwareTokenMFAException') {
                 alert('Incorrect 6-digit code!')
               } else if (result.errorType === 'InvalidParameterException') {
@@ -91,8 +101,6 @@ const MfaPage = () => {
   return <>
     <div>
       <h1>Multi-Factor Authentication</h1>
-
-
 
       {enabled ? (
         <div>
