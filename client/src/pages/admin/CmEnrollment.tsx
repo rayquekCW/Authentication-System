@@ -160,6 +160,7 @@ const CmEnrollment = () => {
 
     const fileContent = await selectedFile.arrayBuffer();
     const base64File = arrayBufferToBase64(fileContent);
+    const token = "token" //await getJwtToken(); // Assume this function retrieves the JWT token
 
     const payload = {
       file: base64File,
@@ -174,6 +175,7 @@ const CmEnrollment = () => {
         body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
+          'Authorization': `Bearer ${token}`
         },
       });
       const responseBody = await response.json();
@@ -183,7 +185,6 @@ const CmEnrollment = () => {
       console.error("Error uploading the file:", error);
     }
   };
-
 
 
   return (
