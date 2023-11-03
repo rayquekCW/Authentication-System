@@ -160,12 +160,13 @@ const CmEnrollment = () => {
 
     const fileContent = await selectedFile.arrayBuffer();
     const base64File = arrayBufferToBase64(fileContent);
-    const token = "token" //await getJwtToken(); // Assume this function retrieves the JWT token
 
+    
     const payload = {
       file: base64File,
       filename: selectedFile.name,
     };
+
     console.log("Sending payload:", payload);
     const LAMBDA_ENDPOINT =
       "https://xr6gnon0x3.execute-api.ap-southeast-1.amazonaws.com/dev/store-csv";
@@ -175,7 +176,6 @@ const CmEnrollment = () => {
         body: JSON.stringify(payload),
         headers: {
           "Content-Type": "application/json",
-          'Authorization': `Bearer ${token}`
         },
       });
       const responseBody = await response.json();
