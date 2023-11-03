@@ -1,4 +1,4 @@
-import { DragEvent, useState } from "react";
+import { DragEvent, useState, useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { AiFillExclamationCircle } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
@@ -6,8 +6,8 @@ import { IoMdLogOut } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import Sidebar from "../../components/SideBar";
 import SideBarSuper from "../../components/SideBarSuper";
-// import BankLogo from "../assets/posb.svg";
 import * as XLSX from "xlsx";
+import { AccountContext } from "../admin/../../services/Account";
 
 const CmEnrollment = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -18,7 +18,27 @@ const CmEnrollment = () => {
   const [filename, setFilename] = useState<string>("");
   const [fileSet, setFileSet] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
+  const [token, setToken] = useState<string>("");
+  const [role, setRole] = useState<string>("");
 
+  const accountContext = useContext(AccountContext);
+
+  useEffect(() => {
+    if (accountContext) {
+      // Now you can use accountContext.getSession
+      accountContext
+        .getSession()
+        .then((session) => {
+          setToken(session.accessToken.jwtToken);
+          setRole(session["custom:role"]);
+        })
+        .catch((error) => {
+          console.error(error); // Handle error
+        });
+    }
+  }, [accountContext]);
+
+  console.log(role);
 
   const inlineStyle = {
     fontSize: "16px",
@@ -147,14 +167,14 @@ const CmEnrollment = () => {
   };
 
   const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-    let binary = '';
+    let binary = "";
     const bytes = new Uint8Array(buffer);
     const len = bytes.byteLength;
     for (let i = 0; i < len; i++) {
-        binary += String.fromCharCode(bytes[i]);
+      binary += String.fromCharCode(bytes[i]);
     }
     return btoa(binary);
-};
+  };
 
   const handleUpload = async () => {
     if (!selectedFile) return;
@@ -163,10 +183,12 @@ const CmEnrollment = () => {
     const base64File = arrayBufferToBase64(fileContent);
 
     const payload = {
+      accessToken: token,
+      role: "super_admin",
       file: base64File,
       filename: selectedFile.name,
     };
-    console.log("Sending payload:", payload);
+
     const LAMBDA_ENDPOINT =
       "https://xr6gnon0x3.execute-api.ap-southeast-1.amazonaws.com/dev/store-csv";
     try {
@@ -178,14 +200,15 @@ const CmEnrollment = () => {
         },
       });
       const responseBody = await response.json();
-      console.log(responseBody);
-      window.alert("Upload successful!");
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }else{
+        alert("File uploaded successfully!");
+      }
     } catch (error) {
       console.error("Error uploading the file:", error);
     }
   };
-
-
 
   return (
     <div>
@@ -285,4 +308,3 @@ const CmEnrollment = () => {
 };
 
 export default CmEnrollment;
-
