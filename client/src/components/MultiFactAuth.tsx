@@ -1,5 +1,6 @@
-import {useState} from 'react';
+import {useState, useContext} from 'react';
 import Otp from './Otp';
+import { AccountContext } from '../services/Account';
 export interface MultiFactAuthProps {
 	handleSteps: (step: number) => void;
 	navigateTo?: string;
@@ -13,10 +14,14 @@ const MultiFactAuth = ({
 }: MultiFactAuthProps) => {
 	const [otpType, setOtpType] = useState(''); // email or phone
 	const [typeSelected, setTypeSelected] = useState(false); // true if otpType is selected, false if not
-
+	
+	const { deleteAccount } = useContext(AccountContext) || {};
 	const handleOtpType = (e: React.MouseEvent<HTMLButtonElement>) => {
 		const id = e.currentTarget.id;
 		switch (id) {
+			case 'googleAuth':
+				setOtpType('googleAuth');
+				break;
 			case 'phone':
 				setOtpType('phone');
 				break;
@@ -52,10 +57,10 @@ const MultiFactAuth = ({
 								<button
 									className="btn mfaBtn"
 									id="phone"
-									onClick={handleOtpType}
+									onClick={deleteAccount}
 									aria-label="Select phone as OTP type"
 								>
-									+65 ***** 5432{' '}
+									Google Auth{' '}
 									{/* to be replaced with user's phone number */}
 								</button>
 							</div>

@@ -1,4 +1,4 @@
-import { createContext, ReactNode } from 'react';
+import { createContext, ReactNode, useState } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import AWS from 'aws-sdk';
 import Pool from './UserPool';
@@ -9,6 +9,7 @@ type AccountContextValue = {
   authenticate: (Username: string, Password: string) => Promise<unknown>;
   getSession: () => Promise<any>;
   logout: () => void;
+  deleteAccount: () => void;
 };
 
 // Create a new instance of the Cognito JWT Verifier
@@ -25,6 +26,7 @@ const cognito = new AWS.CognitoIdentityServiceProvider({ region: 'ap-southeast-1
 const AccountContext = createContext<AccountContextValue | undefined>(undefined);
 
 const Account: React.FC<{ children: ReactNode }> = (props) => {
+  const [user, setUser] = useState<CognitoUser>(new CognitoUser({ Username: "", Pool }));
   /**
    * The `getSession` function retrieves the user session, verifies the access token, retrieves user
    * attributes, checks if MFA is enabled, and returns the necessary data for authentication.
@@ -116,12 +118,14 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
    * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
    * method of the `CognitoUser` object.
    */
+  
   const authenticate = async (Username: string, Password: string) =>
     await new Promise((resolve, reject) => {
-      const user = new CognitoUser({ Username, Pool });
-      const authDetails = new AuthenticationDetails({ Username, Password });
+      const userState = new CognitoUser({ Username, Pool })
+      setUser(userState);
+      const authDetailState = new AuthenticationDetails({ Username, Password });
 
-      user.authenticateUser(authDetails, {
+      userState.authenticateUser(authDetailState, {
         onSuccess: (data) => {
           console.log('onSuccess:', data);
           resolve(data);
@@ -169,11 +173,37 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
     }
   };
 
+  const deleteAccount = async () => {
+    await new Promise((resolve, reject) => {
+        const token = prompt('Please enter your 6-digit token')
+        if (token) {
+          user.sendMFACode(
+            token,
+            {
+              onSuccess: () => {
+                  user.deleteUser((err, data) => {
+                    if (err) {
+                      console.error('Error deleting user:', err.message || JSON.stringify(err));
+                    } else {
+                      console.log('User deleted successfully:', data);
+                    }
+                  });
+                resolve(true)  
+              },
+              onFailure: () => alert('Incorrect code!'),
+            },
+            'SOFTWARE_TOKEN_MFA'
+          )
+        }
+      },
+    );
+  }
   return (
     <AccountContext.Provider value={{
       authenticate,
       getSession,
       logout,
+      deleteAccount,
     }}>
       {props.children}
     </AccountContext.Provider>
