@@ -184,7 +184,7 @@ const CmEnrollment = () => {
 
     const payload = {
       accessToken: token,
-      role: "super_admin",
+      role: role,
       file: base64File,
       filename: selectedFile.name,
     };
@@ -201,6 +201,7 @@ const CmEnrollment = () => {
       });
       const responseBody = await response.json();
       if (!response.ok) {
+        alert("File upload failed!: Forbidden")
         throw new Error(`HTTP error! status: ${response.status}`);
       }else{
         alert("File uploaded successfully!");
