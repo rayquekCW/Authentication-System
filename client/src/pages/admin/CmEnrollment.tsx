@@ -199,7 +199,6 @@ const CmEnrollment = () => {
           "Content-Type": "application/json",
         },
       });
-      const responseBody = await response.json();
       if (!response.ok) {
         alert("File upload failed!: Forbidden")
         throw new Error(`HTTP error! status: ${response.status}`);
