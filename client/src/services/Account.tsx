@@ -156,8 +156,8 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
             user.sendMFACode(
               token,
               {
-                onSuccess: () => {
-                  resolve(true);
+                onSuccess: (data) => {
+                  resolve(data);
                 },
                 onFailure: () => alert("Incorrect code!"),
               },
