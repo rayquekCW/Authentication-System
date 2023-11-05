@@ -38,8 +38,6 @@ const CmEnrollment = () => {
     }
   }, [accountContext]);
 
-  console.log(role);
-
   const inlineStyle = {
     fontSize: "16px",
     backgroundColor: "#0078CE",
