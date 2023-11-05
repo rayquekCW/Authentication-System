@@ -78,6 +78,7 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
               //if isAdmin is true and isSuperAdmin is false, role equals to admin. if isAdmin is false and isSuperAdmin is true, role equals to super_admin. if both are false, role equals to user
               const API =
                 "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/update-role";
+              let sub = targetSub;
               //try catch to invoke the api with method patch and send headers and requst body
               try {
                 let sub = targetSub;
@@ -86,7 +87,7 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
                   headers: headers,
                   body: JSON.stringify({ sub, role, accessToken }),
                 });
-
+                
                 if (response.ok) {
                   const API =
                     "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
