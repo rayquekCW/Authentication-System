@@ -10,7 +10,6 @@ type AccountContextValue = {
   getSession: () => Promise<any>;
   logout: () => void;
   deleteAccount: () => void;
-  validateTOTP: () => void;
 };
 
 // Create a new instance of the Cognito JWT Verifier
@@ -153,7 +152,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
         // MFA Input Required Hook
         // TODO - To update the prompt to a modal in the future
         totpRequired: () => {
-          const token = prompt("Please enter your 6-digit token");
+          const token = prompt("Please enter your 6-digit OAUTH token");
           if (token) {
             userState.sendMFACode(
               token,
@@ -169,6 +168,27 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 
               },
               "SOFTWARE_TOKEN_MFA"
+            );
+          }
+        },
+
+        mfaRequired: () => {
+          const token = prompt("Please enter your 6-digit MFA passcode");
+          if (token) {
+            userState.sendMFACode(
+              token,
+              {
+                onSuccess: (data) => {
+                  resolve(data);
+                },
+                onFailure: (e) => {
+                  console.log("onFailure:", e)
+
+                  alert("Incorrect code!")
+                }
+
+              },
+              "SMS_MFA"
             );
           }
         },
@@ -214,29 +234,6 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
     );
   }
 
-  const validateTOTP = async () => {
-    await new Promise(async (resolve, reject) => {
-      const token = prompt('Please enter your 6-digit token')
-      console.log("here", user);
-
-      if (token) {
-        user.sendMFACode(
-          token,
-          {
-            onSuccess: () => {
-              resolve(true)
-            },
-            onFailure: (e) => {
-              alert('Incorrect code!')
-              console.log(e);
-              reject(false)
-            },
-          },
-          'SOFTWARE_TOKEN_MFA'
-        )
-      }
-    });
-  }
 
 
 
@@ -246,7 +243,6 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
       getSession,
       logout,
       deleteAccount,
-      validateTOTP,
     }}>
       {props.children}
     </AccountContext.Provider>
