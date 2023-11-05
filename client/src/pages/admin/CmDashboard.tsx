@@ -10,34 +10,45 @@ import { IoMdLogOut } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { MdRemoveCircle } from "react-icons/md";
 // import BankLogo from "../../assets/posb.svg";
-import Sidebar from "../../components/SideBar";
-import SideBarSuper from "../../components/SideBarSuper";
+import Sidebar from "../../components/navigation/SideBar";
+import SideBarSuper from "../../components/navigation/SideBarSuper";
 import MultiFactAuth from "../../components/MultiFactAuth";
 import Pagination from "react-bootstrap/Pagination";
 import Switch from "react-switch";
 import { AccountContext } from "../../services/Account";
 
 const CmDashboard = () => {
-  const { getSession } = useContext(AccountContext) || {};
+  const { getSession, validateTOTP } = useContext(AccountContext) || {};
 
-  //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
-  // isSuperAdmin is true if adminType is superAdmin from local storage
+  //TODO: Implement different protected routes based on admin types (super_admin, admin, user)
   const [adminType, setAdminType] = useState("");
   const isSuper = adminType === "super_admin";
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [userSub, setUserSub] = useState<string>("");
+
+  // For MFA Popups
   const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
   const [showEditPopup, setShowEditPopup] = useState<boolean>(false);
   const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] =
     useState<boolean>(false);
+
+  const closePopup = () => {
+    setShowMfaPopup(false);
+    setShowDeleteConfirmPopup(false);
+    setShowEditPopup(false);
+  };
+
+
+  // Handle Pagination
   const [customers, setCustomers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const customersPerPage = 12;
-  // Calculate the startIndex and endIndex based on the current page
-  const startIndex = (currentPage - 1) * customersPerPage;
+  const startIndex = (currentPage - 1) * customersPerPage; // Calculate the startIndex and endIndex based on the current page number
   const endIndex = startIndex + customersPerPage;
-  // Slice the customersData to get the customers for the current page
-  const customersToDisplay = customers.slice(startIndex, endIndex);
+  const customersToDisplay = customers.slice(startIndex, endIndex); // Slice the customersData to get the customers for the current page
+  const paginate = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
 
   // For Edit Popup
   const [isAdmin, setIsAdmin] = useState(false);
@@ -61,22 +72,19 @@ const CmDashboard = () => {
     }
   };
 
-  const paginate = (pageNumber: number) => {
-    setCurrentPage(pageNumber);
-  };
-
   const handleClick = () => {
     setIsOpen(!isOpen);
   };
 
+  // For Delete Popup
   const handleDeleteButtonClick = () => {
     setShowDeleteConfirmPopup(true);
   };
-
   const handleDeleteConfirmButtonClick = () => {
     setShowMfaPopup(true);
   };
 
+  // For Edit Popup
   const handleEditButtonClick = (userSub: string, userRole: string) => {
     setShowEditPopup(true);
     setUserSub(userSub); //userSub of selected user
@@ -88,23 +96,18 @@ const CmDashboard = () => {
       setIsSuperAdmin(false);
     }
   };
-
   const handleEditConfirmButtonClick = () => {
     setShowMfaPopup(true);
   };
 
-  const closePopup = () => {
-    setShowMfaPopup(false);
-    setShowDeleteConfirmPopup(false);
-    setShowEditPopup(false);
-  };
-
+  // TODO - Refactor this into a separate file
   const inlineStyle = {
     fontSize: "16px",
     backgroundColor: "#0078CE",
     padding: "20px",
   };
 
+  // TODO - Refactor this into a utils file
   const formatDate = (inputDate: any) => {
     const date = new Date(inputDate);
     const day = date.getDate().toString().padStart(2, "0");
@@ -112,6 +115,7 @@ const CmDashboard = () => {
     const year = date.getFullYear();
     return `${day}/${month}/${year}`;
   };
+
 
   const changeRole = async () => {
     if (getSession) {
@@ -187,9 +191,8 @@ const CmDashboard = () => {
   return (
     <div>
       <div
-        className={`overlay ${
-          showMfaPopup || showDeleteConfirmPopup ? "active" : ""
-        }`}
+        className={`overlay ${showMfaPopup || showDeleteConfirmPopup ? "active" : ""
+          }`}
       ></div>
       <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
         <div className="container-fluid">
@@ -318,6 +321,7 @@ const CmDashboard = () => {
         />
       </Pagination>
 
+      {/* This is the Edit User Popup Modal */}
       {showEditPopup && (
         <div className="popup d-flex justify-content-center align-items-center">
           <div className="popup-content text-center">
@@ -361,7 +365,7 @@ const CmDashboard = () => {
                 className="defaultBtn me-2"
                 style={{ width: "auto" }}
                 onClick={changeRole}
-                // onClick={handleEditConfirmButtonClick}
+              // onClick={handleEditConfirmButtonClick}
               >
                 Save
               </button>
@@ -377,6 +381,7 @@ const CmDashboard = () => {
         </div>
       )}
 
+      {/* This is the Delete User Popup Modal */}
       {showDeleteConfirmPopup && (
         <div className="popup d-flex justify-content-center align-items-center">
           <div className="popup-content text-center">
@@ -400,6 +405,7 @@ const CmDashboard = () => {
         </div>
       )}
 
+      {/* This is the MFA Popup Modal */}
       {showMfaPopup && (
         <div className="popup">
           <div className="col-3">
@@ -410,7 +416,7 @@ const CmDashboard = () => {
           <div className="popup-content">
             <div className="my-5">
               <MultiFactAuth
-                navigateTo="/cm-dashboard" //TODO: handle actual delete or saving
+                navigateTo="/"
                 handleSteps={() => 5}
               />
             </div>

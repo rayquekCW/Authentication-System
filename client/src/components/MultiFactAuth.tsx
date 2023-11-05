@@ -61,7 +61,7 @@ const MultiFactAuth = ({
 									aria-label="Select phone as OTP type"
 								>
 									Google Auth{' '}
-									{/* to be replaced with user's phone number */}
+									{/* TODO - to be replaced with user's phone number */}
 								</button>
 							</div>
 						</div>
@@ -74,7 +74,7 @@ const MultiFactAuth = ({
 									aria-label="Select email as OTP type"
 								>
 									x********@gmail.com{' '}
-									{/* to be replaced with user's email */}
+									{/*TODO - to be replaced with user's email */}
 								</button>
 							</div>
 						</div>
