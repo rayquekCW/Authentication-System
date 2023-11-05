@@ -1,17 +1,20 @@
 import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
 
 type SignInContainerProps = {
-  handleSignIn: () => void;
+  currentUserSub: string;
+  targetSub: string;
+  role: string;
+  updateCustomers: any;
+  closePopup: any;
 };
 
-const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
+const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, closePopup }: SignInContainerProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-
   const { authenticate, getSession } = useContext(AccountContext) || {};
   const navigate = useNavigate();
 
@@ -31,17 +34,26 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
     );
   }
 
+  /**
+   * The function `requireMFASetup` is an asynchronous function that handles the authentication process
+   * and verifies if the user is an admin before updating their role and retrieving user data.
+   * @returns The function does not explicitly return anything.
+   */
   async function requireMFASetup() {
     if (authenticate) {
       try {
         const data: any = await authenticate(email, password);
         // data is supposed to be the cognito user
+        if (data.accessToken.payload.sub !== currentUserSub) {
+          alert("You are not the current user!");
+          closePopup();
+          return
+        }
 
         //verify if user is admin
         if (getSession) {
           const { headers } = await getSession();
           const accessToken = data.accessToken.jwtToken;
-          console.log(headers);
           const API =
             "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validateAdmin";
           const uri = `${API}?accessToken=${accessToken}`;
@@ -52,20 +64,51 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
               throw new Error("Network response was not ok");
             }
             const data = await response.json();
-            console.log(data)
-            // Handle the data here
+
             if (data.role === "admin" || data.role === "super_admin") {
-              //go to admin dashboard if user is admin
-              navigate("/cm-dashboard");
+              //if isAdmin is true and isSuperAdmin is false, role equals to admin. if isAdmin is false and isSuperAdmin is true, role equals to super_admin. if both are false, role equals to user
+              const API =
+                "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/update-role";
+              //try catch to invoke the api with method patch and send headers and requst body
+              try {
+                const response = await fetch(API, {
+                  method: "PATCH",
+                  headers: headers,
+                  body: JSON.stringify({ targetSub, role, accessToken }),
+                });
+
+                if (response.ok) {
+                  const API =
+                    "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
+                  const uri = `${API}?accessToken=${accessToken}`;
+                  try {
+                    const response = await fetch(uri, { headers });
+                    if (response.ok) {
+                      const data = await response.json();
+                      updateCustomers(data.users.data);
+                      closePopup();
+
+                      // setAdminType(data.statusCode);
+                    } else {
+                      // Handle the error
+                    }
+                  } catch (error) {
+                    console.error("Error while validating admin:", error);
+                  }
+                }
+              } catch (error) {
+                console.error("Error while validating admin:", error);
+              }
+
             } else {
               //go to home if user is not admin
-              navigate("/home");
+              alert("You are not an admin!");
+              navigate("/");
             }
           } catch (error) {
             // Handle errors here
             console.error(error);
           }
-          // Now you can work with responseData
         }
       } catch (err) {
         console.error("Failed to login!", err);
@@ -77,7 +120,7 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
     <>
       <div
         id="signInContainer"
-        className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
+        className="col-md-12 col-12 d-flex align-items-center flex-column justify-content-center"
       >
         <h1 className="mb-3">Sign In</h1>
         <div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
@@ -115,29 +158,7 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
             </button>
           </div>
         </div>
-        <div>
-          <p className="caption">Don't have an account?</p>
-          <p className="caption">
-            Register with us
-            <span
-              className="text-primary cursor-pointer"
-              onClick={handleSignIn}
-            >
-              {" "}
-              here!
-            </span>
-          </p>
-          <p className="caption">
-            or{" "}
-            <Link
-              to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
-                import.meta.env.VITE_CLIENT_ID
-              }&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
-            >
-              Sign In with SSO
-            </Link>
-          </p>
-        </div>
+
         <button
           className={`defaultBtn ${validateEmail(email) ? "" : "disabled"}`}
           onClick={() => validateEmail(email) && requireMFASetup()}
