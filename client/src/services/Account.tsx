@@ -10,6 +10,7 @@ type AccountContextValue = {
   getSession: () => Promise<any>;
   logout: () => void;
   deleteAccount: () => void;
+  validateTOTP: () => void;
 };
 
 // Create a new instance of the Cognito JWT Verifier
@@ -31,6 +32,7 @@ const AccountContext = createContext<AccountContextValue | undefined>(
 
 const Account: React.FC<{ children: ReactNode }> = (props) => {
   const [user, setUser] = useState<CognitoUser>(new CognitoUser({ Username: "", Pool }));
+
   /**
    * The `getSession` function retrieves the user session, verifies the access token, retrieves user
    * attributes, checks if MFA is enabled, and returns the necessary data for authentication.
@@ -87,7 +89,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
                   else
                     resolve(
                       data.UserMFASettingList &&
-                        data.UserMFASettingList.includes("SOFTWARE_TOKEN_MFA")
+                      data.UserMFASettingList.includes("SOFTWARE_TOKEN_MFA")
                     );
                 }
               );
@@ -123,7 +125,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
    * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
    * method of the `CognitoUser` object.
    */
-  
+
   const authenticate = async (Username: string, Password: string) =>
     await new Promise((resolve, reject) => {
       const userState = new CognitoUser({ Username, Pool })
@@ -153,13 +155,18 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
         totpRequired: () => {
           const token = prompt("Please enter your 6-digit token");
           if (token) {
-            user.sendMFACode(
+            userState.sendMFACode(
               token,
               {
                 onSuccess: (data) => {
                   resolve(data);
                 },
-                onFailure: () => alert("Incorrect code!"),
+                onFailure: (e) => {
+                  console.log("onFailure:", e)
+
+                  alert("Incorrect code!")
+                }
+
               },
               "SOFTWARE_TOKEN_MFA"
             );
@@ -178,37 +185,68 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
     }
   };
 
+  /**
+   * The `deleteAccount` function deletes the current user if there is one.
+   */
   const deleteAccount = async () => {
     await new Promise((resolve, reject) => {
-        const token = prompt('Please enter your 6-digit token')
-        if (token) {
-          user.sendMFACode(
-            token,
-            {
-              onSuccess: () => {
-                  user.deleteUser((err, data) => {
-                    if (err) {
-                      console.error('Error deleting user:', err.message || JSON.stringify(err));
-                    } else {
-                      console.log('User deleted successfully:', data);
-                    }
-                  });
-                resolve(true)  
-              },
-              onFailure: () => alert('Incorrect code!'),
+      const token = prompt('Please enter your 6-digit token')
+      if (token) {
+        user.sendMFACode(
+          token,
+          {
+            onSuccess: () => {
+              user.deleteUser((err, data) => {
+                if (err) {
+                  console.error('Error deleting user:', err.message || JSON.stringify(err));
+                } else {
+                  console.log('User deleted successfully:', data);
+                }
+              });
+              resolve(true)
             },
-            'SOFTWARE_TOKEN_MFA'
-          )
-        }
-      },
+            onFailure: () => alert('Incorrect code!'),
+          },
+          'SOFTWARE_TOKEN_MFA'
+        )
+      }
+    },
     );
   }
+
+  const validateTOTP = async () => {
+    await new Promise(async (resolve, reject) => {
+      const token = prompt('Please enter your 6-digit token')
+      console.log("here", user);
+
+      if (token) {
+        user.sendMFACode(
+          token,
+          {
+            onSuccess: () => {
+              resolve(true)
+            },
+            onFailure: (e) => {
+              alert('Incorrect code!')
+              console.log(e);
+              reject(false)
+            },
+          },
+          'SOFTWARE_TOKEN_MFA'
+        )
+      }
+    });
+  }
+
+
+
   return (
     <AccountContext.Provider value={{
       authenticate,
       getSession,
       logout,
       deleteAccount,
+      validateTOTP,
     }}>
       {props.children}
     </AccountContext.Provider>
