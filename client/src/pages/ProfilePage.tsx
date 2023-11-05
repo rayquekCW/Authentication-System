@@ -1,15 +1,20 @@
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect } from 'react';
 import NavBar from '../components/navigation/NavBar';
-import MultiFactAuth from '../components/MultiFactAuth';
+import  SignInPopUp  from '../components/SignInPopup';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { AccountContext } from '../services/Account';
 
 
+
 const ProfilePage = () => {
-	const [showMfaPopup, setShowMfaPopup] = useState(false);
+	const { getSession } = useContext(AccountContext) || {};
+	const [showSignInPopUp, setShowSignInPopUp] = useState(false);
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
+	const [currentUserSub, setCurrentUserSub] = useState<string>("");
+	const [targetSub, setTargetSub] = useState<string>("");
+
 	const navigate = useNavigate();
 
 	const handleDeleteButtonClick = () => {
@@ -21,7 +26,7 @@ const ProfilePage = () => {
 	};
 
 	const handleDeleteConfirmButtonClick = () => {
-		setShowMfaPopup(true);
+		setShowSignInPopUp(true);
 	};
 
 	const handleChangeConfirmButtonClick = () => {
@@ -31,7 +36,7 @@ const ProfilePage = () => {
 	};
 
 	const closePopup = () => {
-		setShowMfaPopup(false);
+		setShowSignInPopUp(false);
 		setShowDeleteConfirmPopup(false);
 		setShowChangeConfirmPopup(false);
 	};
@@ -45,11 +50,42 @@ const ProfilePage = () => {
 		}
 	};
 
+	useEffect(() => {
+		if (getSession) {
+		  getSession()
+			.then(async (sessionData) => {
+			  // Sets the current user's details
+			  // Calls the api to retrieve all users
+			  setCurrentUserSub(sessionData.sub);
+			  const accessToken = sessionData.accessToken.jwtToken;
+			  const headers = sessionData.headers;
+			  const API =
+				"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
+			  const uri = `${API}?accessToken=${accessToken}`;
+			  try {
+				const response = await fetch(uri, { headers });
+	
+				if (response.ok) {
+				  const data = await response.json();
+				} else {
+				  console.error("Error retrieving user data");
+				}
+	
+			  } catch (error) {
+				console.error("Error while validating admin:", error);
+			  }
+			})
+			.catch((error) => {
+			  console.error("Error while getting access token:", error);
+			});
+		}
+	  }, []);
+
 	return (
 		<>
 			<NavBar />
 			<div
-				className={`overlay ${showMfaPopup ||
+				className={`overlay ${showSignInPopUp ||
 					showDeleteConfirmPopup ||
 					showChangeConfirmPopup
 					? 'active'
@@ -164,7 +200,7 @@ const ProfilePage = () => {
 				</div>
 			)}
 
-			{showMfaPopup && (
+			{showSignInPopUp && (
 				<div className="popup">
 					<div className="col-3">
 						<button className="cancelBtn" onClick={closePopup}>
@@ -173,10 +209,7 @@ const ProfilePage = () => {
 					</div>
 					<div className="popup-content">
 						<div className="my-5">
-							<MultiFactAuth
-								navigateTo="/"
-								handleSteps={() => 5}
-							/>
+							<SignInPopUp currentUserSub={currentUserSub} targetSub="" role="user" updateCustomers="" closePopup={closePopup} isDeleteAccount={true}/>
 						</div>
 					</div>
 				</div>
@@ -186,3 +219,5 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+
+

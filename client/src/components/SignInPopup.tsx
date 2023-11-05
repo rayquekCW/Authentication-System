@@ -9,13 +9,14 @@ type SignInContainerProps = {
   role: string;
   updateCustomers: any;
   closePopup: any;
+  isDeleteAccount?: boolean;
 };
 
-const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, closePopup }: SignInContainerProps) => {
+const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePopup, isDeleteAccount = false }: SignInContainerProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { authenticate, getSession } = useContext(AccountContext) || {};
+  const { authenticate, getSession, deleteAccount } = useContext(AccountContext) || {};
   const navigate = useNavigate();
 
   /**
@@ -40,6 +41,14 @@ const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, clo
    * @returns The function does not explicitly return anything.
    */
   async function requireMFASetup() {
+    if (isDeleteAccount) {
+      if (deleteAccount) {
+        await deleteAccount(email, password, currentUserSub);
+        closePopup();
+        navigate("/");
+      }
+      return
+    }
     if (authenticate) {
       try {
         const data: any = await authenticate(email, password);
@@ -71,10 +80,11 @@ const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, clo
                 "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/update-role";
               //try catch to invoke the api with method patch and send headers and requst body
               try {
+                let sub = targetSub;
                 const response = await fetch(API, {
                   method: "PATCH",
                   headers: headers,
-                  body: JSON.stringify({ targetSub, role, accessToken }),
+                  body: JSON.stringify({ sub, role, accessToken }),
                 });
 
                 if (response.ok) {
@@ -91,6 +101,7 @@ const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, clo
                       // setAdminType(data.statusCode);
                     } else {
                       // Handle the error
+                      console.error("Error while retrieving user data");
                     }
                   } catch (error) {
                     console.error("Error while validating admin:", error);
@@ -171,4 +182,4 @@ const SignInContainer = ({ currentUserSub, targetSub, role, updateCustomers, clo
   );
 };
 
-export default SignInContainer;
+export default SignInPopUp;
