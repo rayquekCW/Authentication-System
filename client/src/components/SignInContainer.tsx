@@ -53,8 +53,9 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
               throw new Error("Network response was not ok");
             }
             const data = await response.json();
+            console.log(data)
             // Handle the data here
-            if (data.statusCode === 200) {
+            if (data.role === "admin" || data.role === "super_admin") {
               //go to admin dashboard if user is admin
               navigate("/cm-dashboard");
             } else {

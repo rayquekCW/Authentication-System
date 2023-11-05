@@ -1,5 +1,5 @@
 import { useState, useContext } from 'react';
-import NavBar from '../components/NavBar';
+import NavBar from '../components/navigation/NavBar';
 import MultiFactAuth from '../components/MultiFactAuth';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
