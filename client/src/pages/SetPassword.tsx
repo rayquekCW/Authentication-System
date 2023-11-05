@@ -201,9 +201,10 @@ const SetPassword = () => {
 										/>
 									</div>
 								)}
-								{isChange && isSuccessful && (
+								{/* TODO - Look at this, not sure if need to refactor */}
+								{/* {isChange && isSuccessful && (
 									<MFAPassword isChange={isChange} />
-								)}
+								)} */}
 								{!isChange && isSuccessful && (
 									<OtpPassword
 										otpType="email"

@@ -1,4 +1,4 @@
-import NavBar from '../components/NavBar';
+import NavBar from '../components/navigation/NavBar';
 import {useNavigate} from 'react-router-dom';
 
 const HomePage = () => {
