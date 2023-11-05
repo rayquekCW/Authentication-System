@@ -4,17 +4,14 @@ import { AiFillExclamationCircle } from "react-icons/ai";
 import { CgProfile } from "react-icons/cg";
 import { IoMdLogOut } from "react-icons/io";
 import { GiHamburgerMenu } from "react-icons/gi";
-import Sidebar from "../../components/SideBar";
-import SideBarSuper from "../../components/SideBarSuper";
 import * as XLSX from "xlsx";
 import { AccountContext } from "../admin/../../services/Account";
+import Sidebar from "../../components/navigation/SideBar";
+import SideBarSuper from "../../components/navigation/SideBarSuper";
 
 const CmEnrollment = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [dragIsOver, setDragIsOver] = useState<boolean>(false);
-  const [adminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
-  // isSuperAdmin is true if adminType is superAdmin from local storage
-  const isSuper = adminType === "superAdmin";
   const [filename, setFilename] = useState<string>("");
   const [fileSet, setFileSet] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
@@ -37,6 +34,11 @@ const CmEnrollment = () => {
         });
     }
   }, [accountContext]);
+
+  console.log(role);
+
+  const isSuper = role;
+
 
   const inlineStyle = {
     fontSize: "16px",
