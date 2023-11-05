@@ -9,7 +9,8 @@ type AccountContextValue = {
   authenticate: (Username: string, Password: string) => Promise<unknown>;
   getSession: () => Promise<any>;
   logout: () => void;
-  deleteAccount: () => void;
+  deleteAccount: (Username: string, Password: string, CurrentUserSub: String) => void;
+  validateTOTP: () => void;
 };
 
 // Create a new instance of the Cognito JWT Verifier
@@ -201,6 +202,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
   const logout = () => {
     const user = Pool.getCurrentUser();
     if (user) {
+      window.localStorage.clear();
       user.signOut();
     }
   };
@@ -208,27 +210,25 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
   /**
    * The `deleteAccount` function deletes the current user if there is one.
    */
-  const deleteAccount = async () => {
-    await new Promise((resolve, reject) => {
-      const token = prompt('Please enter your 6-digit token')
-      if (token) {
-        user.sendMFACode(
-          token,
-          {
-            onSuccess: () => {
-              user.deleteUser((err, data) => {
-                if (err) {
-                  console.error('Error deleting user:', err.message || JSON.stringify(err));
-                } else {
-                  console.log('User deleted successfully:', data);
-                }
-              });
-              resolve(true)
-            },
-            onFailure: () => alert('Incorrect code!'),
-          },
-          'SOFTWARE_TOKEN_MFA'
-        )
+  const deleteAccount = async (Username: string, Password: string, CurrentUserSub: String) => {
+    await new Promise(async (resolve, reject) => {
+      const result : any = await authenticate(Username, Password)
+      if (result) {
+        if (result.accessToken.payload.sub !== CurrentUserSub) {
+          alert("You are not the current user!");
+          logout();
+          resolve(true)
+          return
+        }
+        user.deleteUser((err, data) => {
+          if (err) {
+            console.error('Error deleting user:', err.message || JSON.stringify(err));
+          } else {
+            console.log('User deleted successfully:', data);
+          }
+        });
+        window.localStorage.clear();
+        resolve(true)
       }
     },
     );
