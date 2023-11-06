@@ -1,45 +1,65 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AccountContext } from '../services/Account'
+import { AccountContext } from "../services/Account";
 
 const MfaPage = () => {
   const navigate = useNavigate();
-  const [userCode, setUserCode] = useState('')
-  const [enabled, setEnabled] = useState(false)
-  const [image, setImage] = useState('')
+  const [userCode, setUserCode] = useState("");
+  const [enabled, setEnabled] = useState(false);
+  const [image, setImage] = useState("");
+  const [showImage, setShowImage] = useState(false);
   const { getSession, logout } = useContext(AccountContext) || {};
 
   useEffect(() => {
     if (getSession) {
       getSession().then(({ mfaEnabled }) => {
-        setEnabled(mfaEnabled)
-      })
+        setEnabled(mfaEnabled);
+      });
     }
-  }, [])
+  }, []);
 
-  const API = 'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa'
+  const API =
+    "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa";
 
-  /**
-   * The function `getQRCode` retrieves a QR code image by making a request to an API using an access
-   * token obtained from a session.
-   */
+  const MAX_RETRIES = 20; // Set the maximum number of retries
+  let retryCount = 0;
+
   const getQRCode = () => {
     if (getSession) {
       getSession().then(({ accessToken, headers }) => {
-        if (typeof accessToken !== 'string') {
-          accessToken = accessToken.jwtToken
+        if (typeof accessToken !== "string") {
+          accessToken = accessToken.jwtToken;
         }
-
-        const uri = `${API}?accessToken=${accessToken}`
-        fetch(uri, {
-          headers,
-        })
-          .then((data) => data.json())
-          .then(setImage)
-          .catch(console.error)
-      }).catch(console.error);
+        const uri = `${API}?accessToken=${accessToken}`;
+        const fetchWithRetry = () => {
+          try {
+            fetch(uri, {
+              headers,
+            })
+              .then((data) => {
+                if (data.status === 403) {
+                  if (retryCount < MAX_RETRIES) {
+                    retryCount++;
+                    console.log("Retrying...");
+                    setTimeout(fetchWithRetry, 1000); // Retry after a delay (1 second in this example)
+                  }
+                } else {
+                  retryCount = 0; // Reset retry count on success
+                  setShowImage(true);
+                  data.json().then(setImage);
+                }
+              })
+              .catch((error) => {
+                const mute = "error";
+              });
+          } catch (err) {
+            console.log("error");
+          }
+        };
+        fetchWithRetry(); // Initial fetch
+      });
     }
-  }
+  };
 
   /**
    * The above function enables multi-factor authentication (MFA) for a user by making a POST request
@@ -50,83 +70,83 @@ const MfaPage = () => {
    * information about the form submission
    */
   const enableMFA = (event: any) => {
-    event.preventDefault()
+    event.preventDefault();
 
     if (getSession) {
       getSession().then(({ user, accessToken, headers }) => {
-        if (typeof accessToken !== 'string') {
-          accessToken = accessToken.jwtToken
+        if (typeof accessToken !== "string") {
+          accessToken = accessToken.jwtToken;
         }
 
-        const uri = `${API}?accessToken=${accessToken}&userCode=${userCode}`
+        const uri = `${API}?accessToken=${accessToken}&userCode=${userCode}`;
 
         /* Enable the MFA (TOTP) setting for the user */
         fetch(uri, {
-          method: 'POST',
+          method: "POST",
           headers,
         })
           .then((data) => data.json())
           .then((result) => {
-            console.log(result)
-            if (result.Status && result.Status === 'SUCCESS') {
-              setEnabled(true) // Set state to enabled
+            console.log(result);
+            if (result.Status && result.Status === "SUCCESS") {
+              setEnabled(true); // Set state to enabled
 
               const settings = {
                 PreferredMfa: true,
                 Enabled: true,
-              }
+              };
 
-              user.setUserMfaPreference(null, settings, () => { }) // set the MFA Setting on Cognito to enabled and assign to TOTP Preferred
+              user.setUserMfaPreference(null, settings, () => {}); // set the MFA Setting on Cognito to enabled and assign to TOTP Preferred
 
               // Logout user and navigate to login page
               if (logout) {
                 logout();
-                navigate('/');
+                navigate("/");
               }
             } else {
               // Handle errors alert if the user enters the wrong code
-              if (result.errorType === 'EnableSoftwareTokenMFAException') {
-                alert('Incorrect 6-digit code!')
-              } else if (result.errorType === 'InvalidParameterException') {
-                alert('Please provide a 6-digit number')
+              if (result.errorType === "EnableSoftwareTokenMFAException") {
+                alert("Incorrect 6-digit code!");
+              } else if (result.errorType === "InvalidParameterException") {
+                alert("Please provide a 6-digit number");
               }
             }
           })
-          .catch(console.error)
-      })
+          .catch(console.error);
+      });
     }
-  }
+  };
 
+  return (
+    <>
+      <div>
+        <h1>Multi-Factor Authentication</h1>
 
-  return <>
-    <div>
-      <h1>Multi-Factor Authentication</h1>
+        {enabled ? (
+          <div>
+            <div>MFA is enabled</div>
+          </div>
+        ) : showImage ? (
+          <div>
+            <h3>Scan this QR code:</h3>
+            <img src={image} />
 
-      {enabled ? (
-        <div>
-          <div>MFA is enabled</div>
-        </div>
-      ) : image ? (
-        <div>
-          <h3>Scan this QR code:</h3>
-          <img src={image} />
+            <form onSubmit={enableMFA}>
+              <input
+                value={userCode}
+                onChange={(event) => setUserCode(event.target.value)}
+                required
+              />
 
-          <form onSubmit={enableMFA}>
-            <input
-              value={userCode}
-              onChange={(event) => setUserCode(event.target.value)}
-              required
-            />
-
-            <button type="submit">Confirm Code</button>
-          </form>
-        </div>
-      ) : (
-        <button onClick={getQRCode}>Enable MFA</button>
-      )}
-    </div>
-
-  </>;
+              <button type="submit">Confirm Code</button>
+            </form>
+          </div>
+        ) : (
+          <button onClick={getQRCode}>Enable MFA</button>
+        )}
+      </div>
+    </>
+  );
 };
 
 export default MfaPage;

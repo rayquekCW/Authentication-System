@@ -39,12 +39,12 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 
         //verify if user is admin
         if (getSession) {
-          const { headers } = await getSession();
-          const accessToken = data.accessToken.jwtToken;
+          const { headers, accessToken } = await getSession();
+          const accessTokens = accessToken.jwtToken;
           console.log(headers);
           const API =
             "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validateAdmin";
-          const uri = `${API}?accessToken=${accessToken}`;
+          const uri = `${API}?accessToken=${accessTokens}`;
           try {
             const response = await fetch(uri, { headers });
 
