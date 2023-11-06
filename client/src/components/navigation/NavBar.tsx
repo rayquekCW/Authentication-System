@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import "../styles/_variable.scss";
+import "../../styles/_variable.scss"
 import { BsList } from "react-icons/bs";
 // import BankLogo from "../assets/posb.svg";
 

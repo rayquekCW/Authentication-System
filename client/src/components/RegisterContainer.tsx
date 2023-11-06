@@ -18,6 +18,10 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 	const [email, setEmail] = useState('');
 	const [dob, setDob] = useState('');
 
+	/**
+	 * The function verifies a user's email and birthdate by making a POST request to an API and then
+	 * navigates to a password page if the user is verified.
+	 */
 	function verify() {
 		const API =
 			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validate';
@@ -34,8 +38,10 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 					console.log('User is not correct');
 					return;
 				}
-				console.log('Email is sent');
 
+				/* if result has a statusCode, then the user is verified
+				 * navigate to the setPassword page
+				 */
 				navigate('/password', {
 					state: {
 						isChangePassword: false,

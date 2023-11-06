@@ -91,8 +91,8 @@ const SetPassword = () => {
 			// ! Only for production
 			// else send the email to forgetPassword
 			getUser().forgotPassword({
-				onSuccess: (data) => {
-					console.log('onSuccess:', data);
+				onSuccess: () => {
+					console.log('onSuccess: The reset email has been sent!');
 				},
 				onFailure: (err) => {
 					console.error('onFailure:', err);
@@ -236,9 +236,10 @@ const SetPassword = () => {
 										/>
 									</div>
 								)}
-								{isChange && isSuccessful && (
+								{/* TODO - Look at this, not sure if need to refactor */}
+								{/* {isChange && isSuccessful && (
 									<MFAPassword isChange={isChange} />
-								)}
+								)} */}
 								{!isChange && isSuccessful && (
 									<OtpPassword
 										otpType="email"
