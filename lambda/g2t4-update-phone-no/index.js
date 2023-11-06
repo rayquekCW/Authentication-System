@@ -124,9 +124,14 @@ const main = async (event) => {
 	// Update user role
 	const response = await updatePhoneNumber(sub, event.phoneNumber);
 	console.log(response);
-	const verificationResponse = await sendVerificationCode(accessTokenJWT);
-	console.log(verificationResponse);
-	return response, verificationResponse;
+	if (response.statusCode === 200) {
+		const verificationResponse = await sendVerificationCode(accessTokenJWT);
+		console.log(verificationResponse);
+		return verificationResponse;
+	}
+	
+
+	return response;
 };
 
 exports.handler = main;

@@ -133,6 +133,8 @@ const CmDashboard = () => {
           // Calls the api to retrieve all users
           setCurrentUserSub(sessionData.sub);
           const accessToken = sessionData.accessToken.jwtToken;
+          console.log(sessionData);
+          
           const headers = sessionData.headers;
           const API =
             "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
