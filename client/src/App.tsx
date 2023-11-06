@@ -15,6 +15,7 @@ import Pricing from './pages/admin/CmPricing';
 import Redirect from './pages/Redirect';
 import {Account} from './services/Account';
 import {CookiesProvider} from 'react-cookie';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
 	return (
@@ -28,7 +29,9 @@ const App = () => {
 							<Route path="/password" element={<SetPassword />} />
 							<Route path="/mfa" element={<MfaPage />} />
 							<Route path="/bank" element={<Redirect />} />
-							<Route path="/home" element={<HomePage />} />
+							<Route element={<ProtectedRoute />}>
+								<Route path="/home" element={<HomePage />} />
+							</Route>
 							{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
 							<Route
 								path="/cm-dashboard"

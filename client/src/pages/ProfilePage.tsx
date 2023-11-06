@@ -24,7 +24,7 @@ const ProfilePage = () => {
 	const [showMfaPopup, setShowMfaPopup] = useState(false);
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
-	const [, setCookie] = useCookies();
+	const [cookie, setCookie, removeCookie] = useCookies();
 
 	const navigate = useNavigate();
 
@@ -57,18 +57,46 @@ const ProfilePage = () => {
 	const handleLogout = () => {
 		if (logout) {
 			logout();
+			removeCookie('userData');
 			navigate('/');
 		}
 	};
 
 	const checkForData = () => {
 		if (getSession) {
-			getSession().then((session: any) => {
-				if (session) {
-					const userData = session.idToken.payload;
-					setUserData(userData);
-				}
-			});
+			getSession()
+				.then(async (sessionData) => {
+					console.log(sessionData);
+					const accessToken = sessionData.accessToken.jwtToken;
+					console.log(accessToken);
+					setUserData({
+						sub: sessionData.sub,
+						name:
+							sessionData.given_name +
+							' ' +
+							sessionData.family_name,
+						email: sessionData.email,
+						given_name: sessionData.given_name,
+						family_name: sessionData.family_name,
+						birthdate: sessionData.birthdate,
+						gender: '',
+						phone_number: NaN,
+					});
+				})
+				.catch((error) => {
+					// if no accessToken then user is not logged in
+					console.error('Error while getting access token:', error);
+					if (cookie.userData) {
+						console.log('have cookie');
+						setUserData(cookie.userData);
+					} else if (searchParams.get('code') != null) {
+						console.log('have code');
+						getUserData();
+					} else {
+						//NOT LOGGED IN IN ANY WAY
+						navigate('/');
+					}
+				});
 		}
 	};
 
@@ -91,7 +119,6 @@ const ProfilePage = () => {
 			);
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data.access_token);
 				try {
 					const verifyTokenResponse = await fetch(
 						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',
@@ -124,7 +151,6 @@ const ProfilePage = () => {
 							);
 							if (response2.ok) {
 								const userData = await response2.json();
-								console.log(userData);
 								setUserData(userData);
 								setCookie('userData', userData, {
 									path: '/',
@@ -149,6 +175,7 @@ const ProfilePage = () => {
 	};
 
 	useEffect(() => {
+		checkForData();
 		getUserData();
 	}, []);
 
@@ -198,7 +225,9 @@ const ProfilePage = () => {
 						<tr>
 							<th className="text-start p-3">Phone Number</th>
 							<td className="text-start p-3">
-								{userData?.phone_number}
+								{userData?.phone_number
+									? userData.phone_number
+									: 'Not Set'}
 							</td>
 						</tr>
 						<tr>

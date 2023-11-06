@@ -42,7 +42,6 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 	const getSession = async () =>
 		await new Promise<void>((resolve, reject) => {
 			const user = Pool.getCurrentUser();
-
 			if (user) {
 				// Get the session from the user
 				user.getSession(async (err: any, session: any) => {
