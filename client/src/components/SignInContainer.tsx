@@ -1,18 +1,18 @@
-import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from 'react-icons/fa';
-import { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { AccountContext } from "../services/Account";
+import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
+import {useState, useContext} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
+import {AccountContext} from '../services/Account';
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
 };
 
-const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
+const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 
-	const { authenticate } = useContext(AccountContext) || {};
+	const {authenticate} = useContext(AccountContext) || {};
 	const navigate = useNavigate();
 
 	/**
@@ -36,18 +36,18 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 			authenticate(email, password)
 				.then((data: any) => {
 					// data is suppose to be the cognito user
-					console.log("Logged in!", data);
+					console.log('Logged in!', data);
 					navigate('/home');
 				})
 				.catch((err: any) => {
-					console.error("Failed to login!", err);
+					console.error('Failed to login!', err);
+					navigate('/mfa');
 				});
 		}
 	}
 
 	return (
 		<>
-
 			<div
 				id="signInContainer"
 				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
@@ -77,7 +77,9 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							placeholder="Password"
 							aria-label="Password"
 							aria-describedby="basic-addon2"
-							onChange={(event) => setPassword(event.target.value)}
+							onChange={(event) =>
+								setPassword(event.target.value)
+							}
 						/>
 						<button
 							className="input-group-text"
@@ -103,23 +105,24 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 					<p className="caption">
 						or{' '}
 						<Link
-							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID
-								}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
+								import.meta.env.VITE_CLIENT_ID
+							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
 						>
 							Sign In with SSO
 						</Link>
 					</p>
 				</div>
 				<button
-					className={`defaultBtn ${validateEmail(email) ? '' : 'disabled'
-						}`}
+					className={`defaultBtn ${
+						validateEmail(email) ? '' : 'disabled'
+					}`}
 					onClick={() => validateEmail(email) && requireMFASetup()}
 					disabled={!validateEmail(email)}
 				>
 					Sign In
 				</button>{' '}
 			</div>
-
 		</>
 	);
 };
