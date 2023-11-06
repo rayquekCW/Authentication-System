@@ -5,6 +5,7 @@ import {AiOutlineClose} from 'react-icons/ai';
 import {Link, useNavigate} from 'react-router-dom';
 import {AccountContext} from '../services/Account';
 import {useSearchParams} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
 
 interface UserDataProps {
 	sub: string;
@@ -23,8 +24,7 @@ const ProfilePage = () => {
 	const [showMfaPopup, setShowMfaPopup] = useState(false);
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
-
-	const {authenticate} = useContext(AccountContext) || {};
+	const [, setCookie] = useCookies();
 
 	const navigate = useNavigate();
 
@@ -52,12 +52,23 @@ const ProfilePage = () => {
 		setShowChangeConfirmPopup(false);
 	};
 
-	const {logout} = useContext(AccountContext) || {};
+	const {logout, getSession} = useContext(AccountContext) || {};
 
 	const handleLogout = () => {
 		if (logout) {
 			logout();
 			navigate('/');
+		}
+	};
+
+	const checkForData = () => {
+		if (getSession) {
+			getSession().then((session: any) => {
+				if (session) {
+					const userData = session.idToken.payload;
+					setUserData(userData);
+				}
+			});
 		}
 	};
 
@@ -115,6 +126,10 @@ const ProfilePage = () => {
 								const userData = await response2.json();
 								console.log(userData);
 								setUserData(userData);
+								setCookie('userData', userData, {
+									path: '/',
+									maxAge: 3600,
+								});
 							}
 						} catch (error: any) {
 							console.log(error.message);
@@ -130,17 +145,6 @@ const ProfilePage = () => {
 			}
 		} catch (error: any) {
 			console.log('error');
-		}
-	};
-
-	const forceSignIn = async (userData: UserDataProps) => {
-		if (userData != undefined) {
-			if (authenticate) {
-				authenticate(userData.email, userData.sub).then((data: any) => {
-					// data is suppose to be the cognito user
-					console.log('Logged in!', data);
-				});
-			}
 		}
 	};
 

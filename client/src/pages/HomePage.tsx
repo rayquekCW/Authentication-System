@@ -1,7 +1,10 @@
 import NavBar from '../components/NavBar';
 import {useNavigate} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
 
 const HomePage = () => {
+	const [cookies] = useCookies();
+	const userData = cookies['userData'];
 	const navigate = useNavigate();
 	return (
 		<>
@@ -10,7 +13,7 @@ const HomePage = () => {
 				<div className="row p-3">
 					<div className="col-md-4 col-12 text-start">
 						<h5>Welcome Back</h5>
-						<h4>Maurice Ho</h4>
+						<h4>{userData.name}</h4>
 						<br></br>
 						<h6>
 							Would you like to personalise your name?{' '}
