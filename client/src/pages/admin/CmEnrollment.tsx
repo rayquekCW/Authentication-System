@@ -8,6 +8,7 @@ import * as XLSX from "xlsx";
 import { AccountContext } from "../admin/../../services/Account";
 import Sidebar from "../../components/navigation/SideBar";
 import SideBarSuper from "../../components/navigation/SideBarSuper";
+import BankLogo from "../../assets/posb.svg";
 
 const CmEnrollment = () => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -219,7 +220,7 @@ const CmEnrollment = () => {
               style={{ fontSize: "25px", color: "white", marginRight: "5px" }}
             />
           </div>
-          {/* <BankLogo /> */}
+          <img src={BankLogo} alt="bank-logo" width={100}/>
           <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
             <li className="nav-item me-4">
               <Link className="nav-link" to="" style={{ color: "white" }}>

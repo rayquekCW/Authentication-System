@@ -6,7 +6,7 @@ import { IoMdLogOut } from 'react-icons/io';
 import { GiHamburgerMenu } from 'react-icons/gi';
 import Sidebar from "../../components/navigation/SideBar";
 import SideBarSuper from "../../components/navigation/SideBarSuper";
-// import BankLogo from "../assets/posb.svg";
+import BankLogo from "../../assets/posb.svg";
 
 const Logs = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -32,7 +32,7 @@ const Logs = () => {
                     <div onClick={handleClick} style={{ cursor: 'pointer' }}>
                         <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
                     </div>
-                    {/* <BankLogo /> */}
+                    <img src={BankLogo} alt="bank-logo" width={100}/>
                     <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
                         <li className="nav-item me-4">
                             <Link
