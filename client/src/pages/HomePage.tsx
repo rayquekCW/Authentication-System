@@ -1,4 +1,4 @@
-import NavBar from '../components/NavBar';
+import NavBar from '../components/navigation/NavBar';
 import UserLogoutPopup from '../components/UserLogout';
 import {useNavigate} from 'react-router-dom';
 import {useCookies} from 'react-cookie';

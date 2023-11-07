@@ -139,8 +139,6 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
           console.log("onSuccess:");
           navigate("/mfa")
           resolve(data);
-          sessionStorage.setItem("access_token", data.getAccessToken().getJwtToken())
-          sessionStorage.setItem("refresh_token", data.getRefreshToken().getToken())
         },
 
         onFailure: (err) => {
