@@ -137,7 +137,6 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
       userState.authenticateUser(authDetailState, {
         onSuccess: (data) => {
           console.log("onSuccess:");
-          navigate("/mfa")
           resolve(data);
         },
 

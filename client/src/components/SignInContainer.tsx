@@ -43,7 +43,13 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 
 				//verify if user is admin
 				if (getSession) {
-					const { headers, accessToken } = await getSession();
+
+					const { headers, accessToken, mfaEnabled } = await getSession();
+
+					if (!mfaEnabled) {
+						return navigate("/mfa");
+					}
+
 					const accessTokens = accessToken.jwtToken;
 
 					const API =
@@ -56,14 +62,15 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							throw new Error("Network response was not ok");
 						}
 						const data = await response.json();
-						
+
 						if (data.role === "admin" || data.role === "super_admin") {
 							//go to admin dashboard if user is admin
-							navigate("/cm-dashboard");
-						} else {
-							//go to home if user is not admin
-							navigate("/home");
+							return navigate("/cm-dashboard");
 						}
+
+						//go to home if user is not admin
+						navigate("/home");
+
 					} catch (error) {
 						console.error(error);
 					}
