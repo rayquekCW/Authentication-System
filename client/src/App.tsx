@@ -18,8 +18,8 @@ import { Account } from './services/Account';
 const App = () => {
 	return (
 		<>
-			<Account>
-				<Router>
+			<Router>
+				<Account>
 					<Routes>
 						<Route path="/" element={<LoginPage />} />
 						<Route path="/profile" element={<ProfilePage />} />
@@ -37,8 +37,9 @@ const App = () => {
 						<Route path="/cm-orders" element={<Orders />} />
 						<Route path="/cm-pricing" element={<Pricing />} />
 					</Routes>
-				</Router>
-			</Account>
+				</Account>
+			</Router>
+
 		</>
 	);
 };
