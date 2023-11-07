@@ -1,4 +1,4 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 // import PatientListPage from '../src/components/exampleComponent'; // example of a component
 import LoginPage from './pages/LoginPage';
 import './App.css';
@@ -12,33 +12,44 @@ import Enrollment from './pages/admin/CmEnrollment';
 import Logs from './pages/admin/CmLogs';
 import Orders from './pages/admin/CmOrders';
 import Pricing from './pages/admin/CmPricing';
-import Redirect from './pages/Redirect';
-import { Account } from './services/Account';
+import {Account} from './services/Account';
+import {CookiesProvider} from 'react-cookie';
+import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
 	return (
 		<>
-			<Account>
-				<Router>
-					<Routes>
-						<Route path="/" element={<LoginPage />} />
-						<Route path="/profile" element={<ProfilePage />} />
-						<Route path="/password" element={<SetPassword />} />
-						<Route path="/mfa" element={<MfaPage />} />
-						<Route path="/bank" element={<Redirect />} />
-						<Route path="/home" element={<HomePage />} />
-						{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
-						<Route
-							path="/cm-dashboard"
-							element={<CustomerManagementDashboard />}
-						/>
-						<Route path="/cm-enrollment" element={<Enrollment />} />
-						<Route path="/cm-logs" element={<Logs />} />
-						<Route path="/cm-orders" element={<Orders />} />
-						<Route path="/cm-pricing" element={<Pricing />} />
-					</Routes>
-				</Router>
-			</Account>
+			<CookiesProvider>
+				<Account>
+					<Router>
+						<Routes>
+							<Route path="/" element={<LoginPage />} />
+							<Route path="/password" element={<SetPassword />} />
+							<Route path="/mfa" element={<MfaPage />} />
+							<Route path="/profile" element={<ProfilePage />} />
+							<Route element={<ProtectedRoute />}>
+								<Route path="/home" element={<HomePage />} />
+
+								{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
+								<Route
+									path="/cm-dashboard"
+									element={<CustomerManagementDashboard />}
+								/>
+								<Route
+									path="/cm-enrollment"
+									element={<Enrollment />}
+								/>
+								<Route path="/cm-logs" element={<Logs />} />
+								<Route path="/cm-orders" element={<Orders />} />
+								<Route
+									path="/cm-pricing"
+									element={<Pricing />}
+								/>
+							</Route>
+						</Routes>
+					</Router>
+				</Account>
+			</CookiesProvider>
 		</>
 	);
 };

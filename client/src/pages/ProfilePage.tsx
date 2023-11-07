@@ -1,15 +1,31 @@
-import { useState, useContext } from 'react';
+import {useState, useContext, useEffect} from 'react';
 import NavBar from '../components/navigation/NavBar';
 import MultiFactAuth from '../components/MultiFactAuth';
-import { AiOutlineClose } from 'react-icons/ai';
-import { Link, useNavigate } from 'react-router-dom';
-import { AccountContext } from '../services/Account';
+import {AiOutlineClose} from 'react-icons/ai';
+import {Link, useNavigate} from 'react-router-dom';
+import {AccountContext} from '../services/Account';
+import {useSearchParams} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
 
+interface UserDataProps {
+	sub: string;
+	name: string;
+	email: string;
+	given_name: string;
+	family_name: string;
+	birthdate: string;
+	gender: string;
+	phone_number: number;
+}
 
 const ProfilePage = () => {
+	const [searchParams] = useSearchParams();
+	const [userData, setUserData] = useState<UserDataProps>();
 	const [showMfaPopup, setShowMfaPopup] = useState(false);
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
+	const [cookie, setCookie, removeCookie] = useCookies();
+
 	const navigate = useNavigate();
 
 	const handleDeleteButtonClick = () => {
@@ -26,7 +42,7 @@ const ProfilePage = () => {
 
 	const handleChangeConfirmButtonClick = () => {
 		navigate('/password', {
-			state: { isChangePassword: true, isVerified: false },
+			state: {isChangePassword: true, isVerified: false},
 		});
 	};
 
@@ -36,25 +52,144 @@ const ProfilePage = () => {
 		setShowChangeConfirmPopup(false);
 	};
 
-	const { logout } = useContext(AccountContext) || {};
+	const {logout, getSession} = useContext(AccountContext) || {};
 
 	const handleLogout = () => {
 		if (logout) {
 			logout();
+			removeCookie('userData');
 			navigate('/');
 		}
 	};
+
+	const checkForData = () => {
+		if (getSession) {
+			getSession()
+				.then(async (sessionData) => {
+					console.log(sessionData);
+					const accessToken = sessionData.accessToken.jwtToken;
+					console.log(accessToken);
+					setUserData({
+						sub: sessionData.sub,
+						name:
+							sessionData.given_name +
+							' ' +
+							sessionData.family_name,
+						email: sessionData.email,
+						given_name: sessionData.given_name,
+						family_name: sessionData.family_name,
+						birthdate: sessionData.birthdate,
+						gender: '',
+						phone_number: NaN,
+					});
+				})
+				.catch((error) => {
+					// if no accessToken then user is not logged in
+					console.error('Error while getting access token:', error);
+					if (cookie.userData) {
+						console.log('have cookie');
+						setUserData(cookie.userData);
+					} else if (searchParams.get('code') != null) {
+						console.log('have code');
+						getUserData();
+					} else {
+						//NOT LOGGED IN IN ANY WAY
+						navigate('/');
+					}
+				});
+		}
+	};
+
+	const getUserData = async () => {
+		//get data from session
+		if (searchParams.get('code') === null) return;
+		if (userData != undefined) return;
+		try {
+			const response = await fetch(
+				'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-authtoken',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						code: searchParams.get('code'),
+					}),
+				}
+			);
+			if (response.ok) {
+				const data = await response.json();
+				try {
+					const verifyTokenResponse = await fetch(
+						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',
+						{
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								token: data.access_token,
+							}),
+						}
+					);
+					if (!verifyTokenResponse.ok) {
+						alert('Invalid Token');
+					} else {
+						console.log('token verified');
+						try {
+							const response2 = await fetch(
+								'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/auth_userprofile',
+								{
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										accessToken: data.access_token,
+									}),
+								}
+							);
+							if (response2.ok) {
+								const userData = await response2.json();
+								setUserData(userData);
+								setCookie('userData', userData, {
+									path: '/',
+									maxAge: 3600,
+								});
+							}
+						} catch (error: any) {
+							console.log(error.message);
+						}
+					}
+				} catch {
+					console.log('error');
+				}
+			} else {
+				console.error(
+					`Failed to fetch access token. Status code: ${response.status}`
+				);
+			}
+		} catch (error: any) {
+			console.log('error');
+		}
+	};
+
+	useEffect(() => {
+		checkForData();
+		getUserData();
+	}, []);
 
 	return (
 		<>
 			<NavBar />
 			<div
-				className={`overlay ${showMfaPopup ||
+				className={`overlay ${
+					showMfaPopup ||
 					showDeleteConfirmPopup ||
 					showChangeConfirmPopup
-					? 'active'
-					: ''
-					}`}
+						? 'active'
+						: ''
+				}`}
 			></div>
 			<div className="container bg-light shadow-sm mt-4 p-4">
 				<div className="row p-3">
@@ -66,7 +201,7 @@ const ProfilePage = () => {
 							<Link to="/">
 								<button
 									className="defaultBtn"
-									style={{ width: 'auto' }}
+									style={{width: 'auto'}}
 									onClick={handleLogout}
 								>
 									Log Out
@@ -75,33 +210,39 @@ const ProfilePage = () => {
 						</div>
 					</div>
 				</div>
-				<table className="table table-bordered h-50 text-center">
-					<tr>
-						<th className="text-start p-3">Full Name</th>
-						<td className="text-start p-3">Dennis</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">ID</th>
-						<td className="text-start p-3">9392020</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Email</th>
-						<td className="text-start p-3">user@gmail.com</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Phone Number</th>
-						<td className="text-start p-3">839292849</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Birth Date</th>
-						<td className="text-start p-3">20-0-2000</td>
-					</tr>
+				<table className="table h-50 text-center">
+					<tbody>
+						<tr>
+							<th className="text-start p-3">Full Name</th>
+							<td className="text-start p-3">{userData?.name}</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Email</th>
+							<td className="text-start p-3">
+								{userData?.email}
+							</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Phone Number</th>
+							<td className="text-start p-3">
+								{userData?.phone_number
+									? userData.phone_number
+									: 'Not Set'}
+							</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Birth Date</th>
+							<td className="text-start p-3">
+								{userData?.birthdate}
+							</td>
+						</tr>
+					</tbody>
 				</table>
 				<div className="row justify-content-end">
 					<div className="col-12 col-lg-4 text-md-end">
 						<button
 							className="defaultBtn me-3"
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 							onClick={handleChangeButtonClick}
 						>
 							Change Password
@@ -109,14 +250,13 @@ const ProfilePage = () => {
 						<button
 							className="cancelBtn me-3"
 							onClick={handleDeleteButtonClick}
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 						>
 							Delete Account
 						</button>
 					</div>
 				</div>
 			</div>
-
 
 			{showDeleteConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
@@ -125,14 +265,14 @@ const ProfilePage = () => {
 						<h6>Are you sure you want to delete your Account?</h6>
 						<button
 							className="defaultBtn me-2"
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 							onClick={handleDeleteConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 							onClick={closePopup}
 						>
 							No
@@ -148,14 +288,14 @@ const ProfilePage = () => {
 						<h6>Are you sure you want to change your Password?</h6>
 						<button
 							className="defaultBtn me-2"
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 							onClick={handleChangeConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{ width: 'auto' }}
+							style={{width: 'auto'}}
 							onClick={closePopup}
 						>
 							No

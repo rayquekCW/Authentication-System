@@ -1,7 +1,51 @@
 import NavBar from '../components/navigation/NavBar';
 import {useNavigate} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+import {AccountContext} from '../services/Account';
+import {useState, useContext, useEffect} from 'react';
 
 const HomePage = () => {
+	const [cookies] = useCookies();
+	const [userData, setUserData] = useState(cookies['userData']);
+	const {getSession} = useContext(AccountContext) || {};
+
+	const checkForData = () => {
+		if (!userData) {
+			if (getSession) {
+				getSession()
+					.then(async (sessionData) => {
+						console.log(sessionData);
+						const accessToken = sessionData.accessToken.jwtToken;
+						console.log(accessToken);
+						setUserData({
+							sub: sessionData.sub,
+							name:
+								sessionData.given_name +
+								' ' +
+								sessionData.family_name,
+							email: sessionData.email,
+							given_name: sessionData.given_name,
+							family_name: sessionData.family_name,
+							birthdate: sessionData.birthdate,
+							gender: '',
+							phone_number: NaN,
+						});
+					})
+					.catch((error) => {
+						// if no accessToken then user is not logged in
+						console.error(
+							'Error while getting access token:',
+							error
+						);
+					});
+			}
+		}
+	};
+
+	useEffect(() => {
+		checkForData();
+	}, []);
+
 	const navigate = useNavigate();
 	return (
 		<>
@@ -10,7 +54,7 @@ const HomePage = () => {
 				<div className="row p-3">
 					<div className="col-md-4 col-12 text-start">
 						<h5>Welcome Back</h5>
-						<h4>Maurice Ho</h4>
+						<h4>{userData?.name}</h4>
 						<br></br>
 						<h6>
 							Would you like to personalise your name?{' '}
@@ -75,26 +119,28 @@ const HomePage = () => {
 					</div>
 				</div>
 				<table className="table table-bordered h-50 text-center">
-					<tr>
-						<th className="text-start">
-							POSB Passbook Savings Accounts{' '}
-						</th>
-						<td className="text-start">234-23455-6</td>
-						<td>
-							{' '}
-							S$1,020,010,000.01
-							<h6>Available Balance</h6>
-						</td>
-					</tr>
-					<tr>
-						<th className="text-start">DBS Multiplier </th>
-						<td className="text-start">454-234455-7</td>
-						<td>
-							{' '}
-							S$54,020,010,000.01
-							<h6>Available Balance</h6>
-						</td>
-					</tr>
+					<tbody>
+						<tr>
+							<th className="text-start">
+								POSB Passbook Savings Accounts{' '}
+							</th>
+							<td className="text-start">234-23455-6</td>
+							<td>
+								{' '}
+								S$1,020,010,000.01
+								<h6>Available Balance</h6>
+							</td>
+						</tr>
+						<tr>
+							<th className="text-start">DBS Multiplier </th>
+							<td className="text-start">454-234455-7</td>
+							<td>
+								{' '}
+								S$54,020,010,000.01
+								<h6>Available Balance</h6>
+							</td>
+						</tr>
+					</tbody>
 				</table>
 				<h5 className="text-end pt-4 pe-4">
 					{' '}
