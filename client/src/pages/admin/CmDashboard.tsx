@@ -86,10 +86,11 @@ const CmDashboard = () => {
   };
 
   // For Delete Popup
-  const handleDeleteButtonClick = (userSub: string, userRole: string) => {
+  const handleDeleteButtonClick = (userSub: string) => {
     setUserSub(userSub);
     setShowDeleteConfirmPopup(true);
   };
+
   const handleDeleteConfirmButtonClick = () => {
     setShowMfaPopup(true);
   };
@@ -135,7 +136,7 @@ const CmDashboard = () => {
           setCurrentUserSub(sessionData.sub);
           const accessToken = sessionData.accessToken.jwtToken;
           console.log(sessionData);
-          
+
           const headers = sessionData.headers;
           const API =
             "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
@@ -174,7 +175,7 @@ const CmDashboard = () => {
               style={{ fontSize: "25px", color: "white", marginRight: "5px" }}
             />
           </div>
-          <img src={BankLogo} alt="bank-logo" width={100}/>
+          <img src={BankLogo} alt="bank-logo" width={100} />
           <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
             <li className="nav-item me-4">
               <Link className="nav-link" to="" style={{ color: "white" }}>
@@ -258,11 +259,10 @@ const CmDashboard = () => {
                     </button>
                     <button
                       className="btn btn-secondary ms-2"
-                      onClick={() =>handleDeleteButtonClick(
-                        customer.Username,
-                        customer.UserRole
+                      onClick={() => handleDeleteButtonClick(
+                        customer.Username
                       )
-                    }
+                      }
                     >
                       <MdRemoveCircle />
                     </button>
@@ -391,7 +391,7 @@ const CmDashboard = () => {
           </div>
           <div className="popup-content">
             <div className="my-5">
-              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={true}/>
+              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={true} />
             </div>
           </div>
         </div>

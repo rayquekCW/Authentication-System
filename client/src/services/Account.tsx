@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { createContext, ReactNode, useState } from 'react';
+import { createContext, ReactNode } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import AWS from 'aws-sdk';
 import Pool from './UserPool';
@@ -332,10 +332,6 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
       throw error;
     }
   };
-
-
-
-
 
   return (
     <AccountContext.Provider value={{
