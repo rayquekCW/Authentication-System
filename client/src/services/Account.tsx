@@ -3,7 +3,7 @@ import { createContext, ReactNode } from 'react';
 import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
 import AWS from 'aws-sdk';
 import Pool from './UserPool';
-import {CognitoJwtVerifier} from 'aws-jwt-verify';
+import { CognitoJwtVerifier } from 'aws-jwt-verify';
 
 // Define the type for the context value
 type AccountContextValue = {
@@ -16,19 +16,19 @@ type AccountContextValue = {
 
 // Create a new instance of the Cognito JWT Verifier
 const verifier = CognitoJwtVerifier.create({
-	userPoolId: Pool.getUserPoolId(),
-	tokenUse: 'access',
-	clientId: Pool.getClientId(),
+  userPoolId: Pool.getUserPoolId(),
+  tokenUse: 'access',
+  clientId: Pool.getClientId(),
 });
 
 // Create a new instance of the Cognito Identity Service Provider
 const cognito = new AWS.CognitoIdentityServiceProvider({
-	region: 'ap-southeast-1',
+  region: 'ap-southeast-1',
 });
 
 // Initialize the context
 const AccountContext = createContext<AccountContextValue | undefined>(
-	undefined
+  undefined
 );
 
 const Account: React.FC<{ children: ReactNode }> = (props) => {
@@ -59,75 +59,75 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
               console.log("Token not valid!");
             }
 
-						/*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
-						const attributes = await new Promise<
-							Record<string, string>
-						>((resolve, reject) => {
-							user.getUserAttributes((err, attributes) => {
-								if (err) {
-									reject(err);
-								} else {
-									const results: Record<string, string> = {};
+            /*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
+            const attributes = await new Promise<
+              Record<string, string>
+            >((resolve, reject) => {
+              user.getUserAttributes((err, attributes) => {
+                if (err) {
+                  reject(err);
+                } else {
+                  const results: Record<string, string> = {};
 
-									for (let attribute of attributes || []) {
-										const {Name, Value} = attribute;
-										results[Name] = Value;
-									}
+                  for (let attribute of attributes || []) {
+                    const { Name, Value } = attribute;
+                    results[Name] = Value;
+                  }
 
-									resolve(results);
-								}
-							});
-						});
+                  resolve(results);
+                }
+              });
+            });
 
-						/* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
-						const mfaEnabled = await new Promise((resolve) => {
-							cognito.getUser(
-								{
-									AccessToken: accessToken,
-								},
-								(err, data) => {
-									if (err) resolve(false);
-									else
-										resolve(
-											data.UserMFASettingList &&
-												data.UserMFASettingList.includes(
-													'SOFTWARE_TOKEN_MFA'
-												)
-										);
-								}
-							);
-						});
+            /* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
+            const mfaEnabled = await new Promise((resolve) => {
+              cognito.getUser(
+                {
+                  AccessToken: accessToken,
+                },
+                (err, data) => {
+                  if (err) resolve(false);
+                  else
+                    resolve(
+                      data.UserMFASettingList &&
+                      data.UserMFASettingList.includes(
+                        'SOFTWARE_TOKEN_MFA'
+                      )
+                    );
+                }
+              );
+            });
 
-						/* Retrieving the JSON Web Token (JWT) from the session's ID token. */
-						const token = session.getIdToken().getJwtToken();
+            /* Retrieving the JSON Web Token (JWT) from the session's ID token. */
+            const token = session.getIdToken().getJwtToken();
 
-						resolve({
-							user,
-							accessToken,
-							mfaEnabled,
-							headers: {
-								'x-api-key': attributes['custom:apikey'],
-								Authorization: token,
-							},
-							...session,
-							...attributes,
-						});
-					}
-				});
-			} else {
-				reject();
-			}
-		});
+            resolve({
+              user,
+              accessToken,
+              mfaEnabled,
+              headers: {
+                'x-api-key': attributes['custom:apikey'],
+                Authorization: token,
+              },
+              ...session,
+              ...attributes,
+            });
+          }
+        });
+      } else {
+        reject();
+      }
+    });
 
-	/**
-	 * The `authenticate` function is used to authenticate a user with a username and password, using AWS
-	 * Cognito, and handles scenarios such as new password requirement and multi-factor authentication.
-	 * @param {string} Username - The `Username` parameter is a string that represents the username of
-	 * the user trying to authenticate. It is used to create a new `CognitoUser` object.
-	 * @param {string} Password - The `Password` parameter is a string that represents the user's
-	 * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
-	 * method of the `CognitoUser` object.
-	 */
+  /**
+   * The `authenticate` function is used to authenticate a user with a username and password, using AWS
+   * Cognito, and handles scenarios such as new password requirement and multi-factor authentication.
+   * @param {string} Username - The `Username` parameter is a string that represents the username of
+   * the user trying to authenticate. It is used to create a new `CognitoUser` object.
+   * @param {string} Password - The `Password` parameter is a string that represents the user's
+   * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
+   * method of the `CognitoUser` object.
+   */
 
   const authenticate = (Username: string, Password: string) => {
     return new Promise((resolve, reject) => {
@@ -135,16 +135,16 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
       const authDetailState = new AuthenticationDetails({ Username, Password });
 
       userState.authenticateUser(authDetailState, {
-        onSuccess: () => {
+        onSuccess: (data) => {
           console.log("onSuccess:");
           navigate("/mfa")
-          resolve("Please set up MFA!");
+          resolve(data);
         },
 
-				onFailure: (err) => {
-					console.error('onFailure:', err);
-					reject(err);
-				},
+        onFailure: (err) => {
+          console.error('onFailure:', err);
+          reject(err);
+        },
 
         newPasswordRequired: (data) => {
           console.log("newPasswordRequired:", data);
@@ -262,6 +262,40 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
               );
             }
           },
+
+          mfaRequired: () => {
+            const token = prompt("Please enter your 6-digit MFA passcode");
+            if (token) {
+              cognitoUser.sendMFACode(
+                token,
+                {
+                  onSuccess: (data: any) => {
+                    if (data.accessToken.payload.sub !== CurrentUserSub) {
+                      alert("You are not the current user!");
+                      logout();
+                      resolve(true)
+                      return
+                    }
+                    cognitoUser.deleteUser((err, data) => {
+                      if (err) {
+                        console.error('Error deleting user:', err.message || JSON.stringify(err));
+
+                      } else {
+                        console.log('User deleted successfully:', data);
+                        resolve(data);
+                      }
+                    });
+                  },
+                  onFailure: (e) => {
+                    console.error("onFailure:", e);
+                    alert("Incorrect code!");
+                    reject(e);
+                  }
+                },
+                "SMS_MFA"
+              );
+            }
+          },
         });
       }
       catch (err) {
@@ -348,4 +382,4 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
   );
 };
 
-export {Account, AccountContext};
+export { Account, AccountContext };
