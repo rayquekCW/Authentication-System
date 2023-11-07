@@ -2,7 +2,6 @@ import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
-import { verify } from "crypto";
 
 const MfaPage = () => {
   const navigate = useNavigate();

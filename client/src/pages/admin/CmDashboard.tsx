@@ -31,6 +31,7 @@ const CmDashboard = () => {
   const [userSub, setUserSub] = useState<string>('');
   const [userName, setUserName] = useState<string>('');
   const [currentUserSub, setCurrentUserSub] = useState<string>("");
+  const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false)
 
   // For MFA Popups
   const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
@@ -94,6 +95,7 @@ const CmDashboard = () => {
   const handleDeleteButtonClick = (userSub: string) => {
     setUserSub(userSub);
     setShowDeleteConfirmPopup(true);
+    setIsDeleteAccount(true);
   };
 
   const handleDeleteConfirmButtonClick = () => {
@@ -103,6 +105,7 @@ const CmDashboard = () => {
   // For Edit Popup
   const handleEditButtonClick = (userSub: string, userRole: string) => {
     setShowEditPopup(true);
+    setIsDeleteAccount(false);
     setUserSub(userSub); //userSub of selected user
     if (userRole == 'Super Admin') {
       setIsSuperAdmin(true);
@@ -405,7 +408,7 @@ const CmDashboard = () => {
           </div>
           <div className="popup-content">
             <div className="my-5">
-              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={true} />
+              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={isDeleteAccount} />
             </div>
           </div>
         </div>
