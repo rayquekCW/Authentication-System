@@ -16,7 +16,7 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { authenticate, getSession, deleteAccount } = useContext(AccountContext) || {};
+  const { authenticate, getSession, deleteAccount, deleteSelectedAccount } = useContext(AccountContext) || {};
   const navigate = useNavigate();
 
   /**
@@ -42,7 +42,18 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
    */
   async function requireMFASetup() {
     if (isDeleteAccount) {
-      if (deleteAccount) {
+      if (deleteSelectedAccount && targetSub !== "") {
+        const response =  await deleteSelectedAccount(email, password, currentUserSub, targetSub);
+        if (response) {
+          updateCustomers(response)
+          closePopup();
+          alert("Account deleted successfully!")
+        }
+        else {
+          alert("Error deleting account!")
+        }
+      }
+      else if (deleteAccount) {
         await deleteAccount(email, password, currentUserSub);
         closePopup();
         navigate("/");
