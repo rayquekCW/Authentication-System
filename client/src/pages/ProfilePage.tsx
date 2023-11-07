@@ -68,7 +68,6 @@ const ProfilePage = () => {
 	};
 
 	const checkForData = () => {
-
 		// Retrieve all keys from local storage
 		const allKeys = Object.keys(localStorage);
 		const isCognitoKeyPresent = allKeys.some(key => key.startsWith('CognitoIdentityServiceProvider')); // Check if any key matches the pattern used by Cognito Identity Service Provider
@@ -196,9 +195,8 @@ const ProfilePage = () => {
 
 	return (
 		<>
-			
+			<UserLogoutPopup />
 			<NavBar />
-			<UserLogoutPopup></UserLogoutPopup>
 			<div
 				className={`overlay ${showSignInPopUp ||
 					showDeleteConfirmPopup ||

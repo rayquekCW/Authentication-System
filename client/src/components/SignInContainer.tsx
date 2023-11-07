@@ -36,6 +36,8 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 			try {
 				const data: any = await authenticate(email, password);
 				// data is supposed to be the cognito user
+
+				// Sets the tokens into sessionStorage for activity/expriry prompt
 				sessionStorage.setItem("access_token", data.accessToken.jwtToken)
 				sessionStorage.setItem("refresh_token", data.refreshToken.token)
 
@@ -54,19 +56,17 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							throw new Error("Network response was not ok");
 						}
 						const data = await response.json();
-						// Handle the data here
+						
 						if (data.role === "admin" || data.role === "super_admin") {
 							//go to admin dashboard if user is admin
 							navigate("/cm-dashboard");
 						} else {
 							//go to home if user is not admin
-							// navigate("/home");
+							navigate("/home");
 						}
 					} catch (error) {
-						// Handle errors here
 						console.error(error);
 					}
-					// Now you can work with responseData
 				}
 			} catch (err) {
 				console.error("Failed to login!", err);

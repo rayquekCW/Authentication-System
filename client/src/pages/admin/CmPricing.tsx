@@ -7,6 +7,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import Sidebar from "../../components/navigation/SideBar";
 import SideBarSuper from "../../components/navigation/SideBarSuper";
 import BankLogo from "../../assets/posb.svg";
+import UserLogoutPopup from '../../components/UserLogout';
 
 const Pricing = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -26,143 +27,144 @@ const Pricing = () => {
 
     return (
 
-            <>
-                <div>
-                    <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-                        <div className="container-fluid">
-                            <div onClick={handleClick} style={{ cursor: 'pointer' }}>
-                                <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
-                            </div>
-                            <img src={BankLogo} alt="bank-logo" width={100}/>
-                            <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
-                                <li className="nav-item me-4">
-                                    <Link
-                                        className="nav-link"
-                                        to=""
-                                        style={{ color: "white" }}
-                                    >
-                                        {<AiFillExclamationCircle style={{ marginRight: "5px", marginBottom: "3px" }} />}
-                                        Edit Tooltips
-                                    </Link>
-                                </li>
-                                <li className="nav-item me-4">
-                                    <Link
-                                        className="nav-link"
-                                        to=""
-                                        style={{ color: "white" }}
-                                    >
-                                        <CgProfile style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                        Ray Quek
-                                    </Link>
-                                </li>
-                                <li className="nav-item me-4">
-                                {/* TODO: Logout functionality */}
-                                    <Link
-                                        className="nav-link"
-                                        to="/"
-                                        style={{ color: "white" }}
-                                    >
-                                        <IoMdLogOut style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                        Logout
-                                    </Link>
-                                </li>
-                            </ul>
+        <>
+            <UserLogoutPopup />
+            <div>
+                <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
+                    <div className="container-fluid">
+                        <div onClick={handleClick} style={{ cursor: 'pointer' }}>
+                            <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
                         </div>
+                        <img src={BankLogo} alt="bank-logo" width={100} />
+                        <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
+                            <li className="nav-item me-4">
+                                <Link
+                                    className="nav-link"
+                                    to=""
+                                    style={{ color: "white" }}
+                                >
+                                    {<AiFillExclamationCircle style={{ marginRight: "5px", marginBottom: "3px" }} />}
+                                    Edit Tooltips
+                                </Link>
+                            </li>
+                            <li className="nav-item me-4">
+                                <Link
+                                    className="nav-link"
+                                    to=""
+                                    style={{ color: "white" }}
+                                >
+                                    <CgProfile style={{ marginRight: "5px", marginBottom: "3px" }} />
+                                    Ray Quek
+                                </Link>
+                            </li>
+                            <li className="nav-item me-4">
+                                {/* TODO: Logout functionality */}
+                                <Link
+                                    className="nav-link"
+                                    to="/"
+                                    style={{ color: "white" }}
+                                >
+                                    <IoMdLogOut style={{ marginRight: "5px", marginBottom: "3px" }} />
+                                    Logout
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
+                </div>
                 <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
                     {isSuper ? <SideBarSuper handleClick={handleClick} /> : <Sidebar handleClick={handleClick} />}
                 </div>
                 <h1 className="mt-5 ms-5">Pricing</h1>
-                </div>
-                    <div className="row text-center align-items-end mx-3" >
-                        <div className="col-lg-4 mb-5 mb-lg-0">
-                            <div className="bg-white p-5 rounded-lg shadow">
-                                <h1 className="h6 text-uppercase font-weight-bold mb-4">Basic</h1>
-                                <h2 className="h1 font-weight-bold">$199<span className="text-small font-weight-normal ml-2">/ month</span></h2>
+            </div>
+            <div className="row text-center align-items-end mx-3" >
+                <div className="col-lg-4 mb-5 mb-lg-0">
+                    <div className="bg-white p-5 rounded-lg shadow">
+                        <h1 className="h6 text-uppercase font-weight-bold mb-4">Basic</h1>
+                        <h2 className="h1 font-weight-bold">$199<span className="text-small font-weight-normal ml-2">/ month</span></h2>
 
-                                <div className="custom-separator my-4 mx-auto bg-primary"></div>
+                        <div className="custom-separator my-4 mx-auto bg-primary"></div>
 
-                                <ul className="list-unstyled my-5 text-small text-left">
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
-                                    <li className="mb-3 text-muted">
-                                        <i className="fa fa-times mr-2"></i>
-                                        <del>Nam libero tempore</del>
-                                    </li>
-                                    <li className="mb-3 text-muted">
-                                        <i className="fa fa-times mr-2"></i>
-                                        <del>Sed ut perspiciatis</del>
-                                    </li>
-                                    <li className="mb-3 text-muted">
-                                        <i className="fa fa-times mr-2"></i>
-                                        <del>Sed ut perspiciatis</del>
-                                    </li>
-                                </ul>
-                                <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
-                            </div>
-                        </div>
-
-
-                        <div className="col-lg-4 mb-5 mb-lg-0">
-                            <div className="bg-white p-5 rounded-lg shadow">
-                                <h1 className="h6 text-uppercase font-weight-bold mb-4">Pro</h1>
-                                <h2 className="h1 font-weight-bold">$399<span className="text-small font-weight-normal ml-2">/ month</span></h2>
-
-                                <div className="custom-separator my-4 mx-auto bg-primary"></div>
-
-                                <ul className="list-unstyled my-5 text-small text-left font-weight-normal">
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Nam libero tempore</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                    <li className="mb-3 text-muted">
-                                        <i className="fa fa-times mr-2"></i>
-                                        <del>Sed ut perspiciatis</del>
-                                    </li>
-                                </ul>
-                                <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
-                            </div>
-                        </div>
-
-
-                        <div className="col-lg-4">
-                            <div className="bg-white p-5 rounded-lg shadow">
-                                <h1 className="h6 text-uppercase font-weight-bold mb-4">Enterprise</h1>
-                                <h2 className="h1 font-weight-bold">$899<span className="text-small font-weight-normal ml-2">/ month</span></h2>
-
-                                <div className="custom-separator my-4 mx-auto bg-primary"></div>
-
-                                <ul className="list-unstyled my-5 text-small text-left font-weight-normal">
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Nam libero tempore</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                    <li className="mb-3">
-                                        <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
-                                </ul>
-                                <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
-                            </div>
-                        </div>
+                        <ul className="list-unstyled my-5 text-small text-left">
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
+                            <li className="mb-3 text-muted">
+                                <i className="fa fa-times mr-2"></i>
+                                <del>Nam libero tempore</del>
+                            </li>
+                            <li className="mb-3 text-muted">
+                                <i className="fa fa-times mr-2"></i>
+                                <del>Sed ut perspiciatis</del>
+                            </li>
+                            <li className="mb-3 text-muted">
+                                <i className="fa fa-times mr-2"></i>
+                                <del>Sed ut perspiciatis</del>
+                            </li>
+                        </ul>
+                        <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
                     </div>
-                </>
+                </div>
 
-            );
+
+                <div className="col-lg-4 mb-5 mb-lg-0">
+                    <div className="bg-white p-5 rounded-lg shadow">
+                        <h1 className="h6 text-uppercase font-weight-bold mb-4">Pro</h1>
+                        <h2 className="h1 font-weight-bold">$399<span className="text-small font-weight-normal ml-2">/ month</span></h2>
+
+                        <div className="custom-separator my-4 mx-auto bg-primary"></div>
+
+                        <ul className="list-unstyled my-5 text-small text-left font-weight-normal">
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Nam libero tempore</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                            <li className="mb-3 text-muted">
+                                <i className="fa fa-times mr-2"></i>
+                                <del>Sed ut perspiciatis</del>
+                            </li>
+                        </ul>
+                        <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
+                    </div>
+                </div>
+
+
+                <div className="col-lg-4">
+                    <div className="bg-white p-5 rounded-lg shadow">
+                        <h1 className="h6 text-uppercase font-weight-bold mb-4">Enterprise</h1>
+                        <h2 className="h1 font-weight-bold">$899<span className="text-small font-weight-normal ml-2">/ month</span></h2>
+
+                        <div className="custom-separator my-4 mx-auto bg-primary"></div>
+
+                        <ul className="list-unstyled my-5 text-small text-left font-weight-normal">
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Lorem ipsum dolor sit amet</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> At vero eos et accusamus</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Nam libero tempore</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                            <li className="mb-3">
+                                <i className="fa fa-check mr-2 text-primary"></i> Sed ut perspiciatis</li>
+                        </ul>
+                        <a href="#" className="btn btn-primary btn-block p-2 shadow rounded">Subscribe</a>
+                    </div>
+                </div>
+            </div>
+        </>
+
+    );
 }
 
-            export default Pricing;
+export default Pricing;

@@ -5,12 +5,12 @@ import { AccountContext } from "../services/Account";
 
 const MfaPage = () => {
   const navigate = useNavigate();
+  const { getSession, logout } = useContext(AccountContext) || {};
 
   // For Step 1
   const [isNumberInput, setIsNumberInput] = useState(false);
   const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('')
-  const [phoneMFA, setPhoneMFA] = useState(false)
   const [confirmationCode, setConfirmationCode] = useState('')
 
   // For Step 2
@@ -22,10 +22,13 @@ const MfaPage = () => {
   // For Step 3
   const [mfaPreference, setMfaPreference] = useState('SOFTWARE_TOKEN_MFA')
 
-  const { getSession, logout } = useContext(AccountContext) || {};
+
 
   //* Phone MFA
-  //TODO - Implement updatePhoneNumber() function
+  /**
+   * The function `updatePhoneNumber` is used to update a phone number by making a PATCH request to an
+   * API endpoint.
+   */
   const updatePhoneNumber = () => {
     console.log("phoneNumber: " + phoneNumber);
     console.log("updatePhoneNumber() function called!");
@@ -63,7 +66,10 @@ const MfaPage = () => {
     setPhoneNumber('')
   }
 
-  // TODO - Implement verifyPhoneNumberCode() function
+  /**
+   * The function `verifyPhoneNumberCode` is used to verify a phone number by making a POST request to an
+   * API with a confirmation code and access token.
+   */
   const verifyPhoneNumberCode = () => {
     console.log("confirmationCode: " + confirmationCode);
     console.log("verifyPhoneNumberCode() function called!");
@@ -71,7 +77,6 @@ const MfaPage = () => {
     const API =
       "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa-phone";
 
-    //TODO - Add API call to update the phone number
     if (getSession) {
       getSession().then(({ accessToken, headers }) => {
         if (typeof accessToken !== "string") {
@@ -105,11 +110,13 @@ const MfaPage = () => {
   }
 
   //* TOTP MFA
-
-
   const MAX_RETRIES = 20; // Set the maximum number of retries
   let retryCount = 0;
 
+  /**
+   * The function `getQRCode` makes a request to an API to retrieve a QR code image, and retries the
+   * request if it receives a 403 status code.
+   */
   const getQRCode = () => {
     const API =
       "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa";
@@ -138,9 +145,7 @@ const MfaPage = () => {
                   data.json().then(setImage);
                 }
               })
-              .catch((error) => {
-                const mute = "error";
-              });
+              .catch(() => { });
           } catch (err) {
             console.log("error");
           }
@@ -258,8 +263,6 @@ const MfaPage = () => {
 
 
   return <>
-
-
     <div className="mx-5">
 
       <div className="row justify-content-center align-items-center g-2">
@@ -404,7 +407,7 @@ const MfaPage = () => {
 
           <button
             className="btn btn-primary"
-            onClick={() => updateMfaPreference(mfaPreference)}
+            onClick={() => updateMfaPreference()}
           >
             Update
           </button>
