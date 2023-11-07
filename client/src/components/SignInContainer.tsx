@@ -4,38 +4,38 @@ import { Link, useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
 
 type SignInContainerProps = {
-  handleSignIn: () => void;
+	handleSignIn: () => void;
 };
 
-const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
+	const [email, setEmail] = useState('');
+	const [password, setPassword] = useState('');
+	const [showPassword, setShowPassword] = useState(false);
 
-  const { authenticate, getSession } = useContext(AccountContext) || {};
-  const navigate = useNavigate();
+	const {authenticate, getSession} = useContext(AccountContext) || {};
+	const navigate = useNavigate();
 
-  /**
-   * The function `validateEmail` checks if an email address is valid by ensuring it has a non-empty
-   * local part and domain part separated by an '@' symbol.
-   * @param {string} email - The email parameter is a string that represents an email address.
-   * @returns a boolean value. It returns true if the email is valid (contains exactly one '@' symbol and
-   * has non-empty strings before and after the '@' symbol), and false otherwise.
-   */
-  function validateEmail(email: string) {
-    var emailCheck = email.split("@");
-    return (
-      emailCheck.length === 2 &&
-      emailCheck[0].length > 0 &&
-      emailCheck[1].length > 0
-    );
-  }
+	/**
+	 * The function `validateEmail` checks if an email address is valid by ensuring it has a non-empty
+	 * local part and domain part separated by an '@' symbol.
+	 * @param {string} email - The email parameter is a string that represents an email address.
+	 * @returns a boolean value. It returns true if the email is valid (contains exactly one '@' symbol and
+	 * has non-empty strings before and after the '@' symbol), and false otherwise.
+	 */
+	function validateEmail(email: string) {
+		var emailCheck = email.split('@');
+		return (
+			emailCheck.length === 2 &&
+			emailCheck[0].length > 0 &&
+			emailCheck[1].length > 0
+		);
+	}
 
-  async function requireMFASetup() {
-    if (authenticate) {
-      try {
-        const data: any = await authenticate(email, password);
-        // data is supposed to be the cognito user
+	async function requireMFASetup() {
+		if (authenticate) {
+			try {
+				const data: any = await authenticate(email, password);
+				// data is supposed to be the cognito user
 
         //verify if user is admin
         if (getSession) {
@@ -72,81 +72,85 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
     }
   }
 
-  return (
-    <>
-      <div
-        id="signInContainer"
-        className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
-      >
-        <h1 className="mb-3">Sign In</h1>
-        <div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
-          <div className="input-group mb-3 w-75">
-            <span className="input-group-text" id="signin-email">
-              <FaAt />
-            </span>
-            <input
-              type="email"
-              className="form-control"
-              placeholder="Email"
-              aria-label="email"
-              aria-describedby="signin-email"
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-          <div className="input-group mb-3 w-75">
-            <span className="input-group-text" id="basic-addon2">
-              <FaLock />
-            </span>
-            <input
-              type={showPassword ? "text" : "password"}
-              className="form-control"
-              placeholder="Password"
-              aria-label="Password"
-              aria-describedby="basic-addon2"
-              onChange={(event) => setPassword(event.target.value)}
-            />
-            <button
-              className="input-group-text"
-              id="seePasswordBtn"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
-            </button>
-          </div>
-        </div>
-        <div>
-          <p className="caption">Don't have an account?</p>
-          <p className="caption">
-            Register with us
-            <span
-              className="text-primary cursor-pointer"
-              onClick={handleSignIn}
-            >
-              {" "}
-              here!
-            </span>
-          </p>
-          <p className="caption">
-            or{" "}
-            <Link
-              to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
-                import.meta.env.VITE_CLIENT_ID
-              }&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
-            >
-              Sign In with SSO
-            </Link>
-          </p>
-        </div>
-        <button
-          className={`defaultBtn ${validateEmail(email) ? "" : "disabled"}`}
-          onClick={() => validateEmail(email) && requireMFASetup()}
-          disabled={!validateEmail(email)}
-        >
-          Sign In
-        </button>{" "}
-      </div>
-    </>
-  );
+	return (
+		<>
+			<div
+				id="signInContainer"
+				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
+			>
+				<h1 className="mb-3">Sign In</h1>
+				<div className="d-flex flex-column gap-3 w-100 align-items-center justify-content-center">
+					<div className="input-group mb-3 w-75">
+						<span className="input-group-text" id="signin-email">
+							<FaAt />
+						</span>
+						<input
+							type="email"
+							className="form-control"
+							placeholder="Email"
+							aria-label="email"
+							aria-describedby="signin-email"
+							onChange={(e) => setEmail(e.target.value)}
+						/>
+					</div>
+					<div className="input-group mb-3 w-75">
+						<span className="input-group-text" id="basic-addon2">
+							<FaLock />
+						</span>
+						<input
+							type={showPassword ? 'text' : 'password'}
+							className="form-control"
+							placeholder="Password"
+							aria-label="Password"
+							aria-describedby="basic-addon2"
+							onChange={(event) =>
+								setPassword(event.target.value)
+							}
+						/>
+						<button
+							className="input-group-text"
+							id="seePasswordBtn"
+							onClick={() => setShowPassword(!showPassword)}
+						>
+							{showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+						</button>
+					</div>
+				</div>
+				<div>
+					<p className="caption">Don't have an account?</p>
+					<p className="caption">
+						Register with us
+						<span
+							className="text-primary cursor-pointer"
+							onClick={handleSignIn}
+						>
+							{' '}
+							here!
+						</span>
+					</p>
+					<p className="caption">
+						or{' '}
+						<Link
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
+								import.meta.env.VITE_CLIENT_ID
+							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
+						>
+							Sign In with SSO
+						</Link>
+					</p>
+				</div>
+				<button
+					className={`defaultBtn ${
+						validateEmail(email) ? '' : 'disabled'
+					}`}
+					onClick={() => validateEmail(email) && requireMFASetup()}
+					disabled={!validateEmail(email)}
+				>
+					Sign In
+				</button>{' '}
+			</div>
+		</>
+	);
 };
 
 export default SignInContainer;

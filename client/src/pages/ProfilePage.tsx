@@ -1,60 +1,37 @@
 import { useState, useContext, useEffect } from 'react';
 import NavBar from '../components/navigation/NavBar';
-import  SignInPopUp  from '../components/SignInPopup';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { AccountContext } from '../services/Account';
+import { useSearchParams } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import SignInPopUp from '../components/SignInPopup';
 
+interface UserDataProps {
+	sub: string;
+	name: string;
+	email: string;
+	given_name: string;
+	family_name: string;
+	birthdate: string;
+	gender: string;
+	phone_number: number;
+}
 
 
 const ProfilePage = () => {
-	const { getSession } = useContext(AccountContext) || {};
-	const [showSignInPopUp, setShowSignInPopUp] = useState(false);
+	const [searchParams] = useSearchParams();
+	const [userData, setUserData] = useState<UserDataProps>();
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
+	const [cookie, setCookie, removeCookie] = useCookies();
 	const [currentUserSub, setCurrentUserSub] = useState<string>("");
-	const [targetSub, setTargetSub] = useState<string>("");
-	const [isCognitoUser, setIsCognitoUser] = useState<boolean>(false);
+	const [showSignInPopUp, setShowSignInPopUp] = useState(false)
+	const [isCognitoUser, setIsCognitoUser] = useState(false)
+
+	const { getSession, logout } = useContext(AccountContext) || {};
+
 	const navigate = useNavigate();
-
-	useEffect(() => {
-		// Retrieve all keys from local storage
-		const allKeys = Object.keys(localStorage);
-
-		// Check if any key matches the pattern used by Cognito Identity Service Provider
-		const isCognitoKeyPresent = allKeys.some(key => key.startsWith('CognitoIdentityServiceProvider'));
-	  
-		setIsCognitoUser(isCognitoKeyPresent);
-
-		if (getSession) {
-		  getSession()
-			.then(async (sessionData) => {
-			  // Sets the current user's details
-			  // Calls the api to retrieve all users
-			  setCurrentUserSub(sessionData.sub);
-			  const accessToken = sessionData.accessToken.jwtToken;
-			  const headers = sessionData.headers;
-			  const API =
-				"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
-			  const uri = `${API}?accessToken=${accessToken}`;
-			  try {
-				const response = await fetch(uri, { headers });
-	
-				if (response.ok) {
-				  const data = await response.json();
-				} else {
-				  console.error("Error retrieving user data");
-				}
-	
-			  } catch (error) {
-				console.error("Error while validating admin:", error);
-			  }
-			})
-			.catch((error) => {
-			  console.error("Error while getting access token:", error);
-			});
-		}
-	  }, []);
 
 	const handleDeleteButtonClick = () => {
 		setShowDeleteConfirmPopup(true);
@@ -80,14 +57,140 @@ const ProfilePage = () => {
 		setShowChangeConfirmPopup(false);
 	};
 
-	const { logout } = useContext(AccountContext) || {};
-
 	const handleLogout = () => {
 		if (logout) {
 			logout();
+			removeCookie('userData');
 			navigate('/');
 		}
 	};
+
+	const checkForData = () => {
+
+		// Retrieve all keys from local storage
+		const allKeys = Object.keys(localStorage);
+		const isCognitoKeyPresent = allKeys.some(key => key.startsWith('CognitoIdentityServiceProvider')); // Check if any key matches the pattern used by Cognito Identity Service Provider
+		setIsCognitoUser(isCognitoKeyPresent);
+
+
+		if (getSession) {
+			getSession()
+				.then(async (sessionData: any) => {
+					console.log(sessionData);
+					const accessToken = sessionData.accessToken.jwtToken;
+					console.log(accessToken);
+					setCurrentUserSub(sessionData.sub)
+
+
+					setUserData({
+						sub: sessionData.sub,
+						name:
+							sessionData.given_name +
+							' ' +
+							sessionData.family_name,
+						email: sessionData.email,
+						given_name: sessionData.given_name,
+						family_name: sessionData.family_name,
+						birthdate: sessionData.birthdate,
+						gender: '',
+						phone_number: NaN,
+					});
+				})
+				.catch((error) => {
+					// if no accessToken then user is not logged in
+					console.error('Error while getting access token:', error);
+					if (cookie.userData) {
+						console.log('have cookie');
+						setUserData(cookie.userData);
+					} else if (searchParams.get('code') != null) {
+						console.log('have code');
+						getUserData();
+					} else {
+						//NOT LOGGED IN IN ANY WAY
+						navigate('/');
+					}
+				});
+		}
+	};
+
+	const getUserData = async () => {
+		//get data from session
+		if (searchParams.get('code') === null) return;
+		if (userData != undefined) return;
+		try {
+			const response = await fetch(
+				'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-authtoken',
+				{
+					method: 'POST',
+					headers: {
+						'Content-Type': 'application/json',
+					},
+					body: JSON.stringify({
+						code: searchParams.get('code'),
+					}),
+				}
+			);
+			if (response.ok) {
+				const data = await response.json();
+				try {
+					const verifyTokenResponse = await fetch(
+						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',
+						{
+							method: 'POST',
+							headers: {
+								'Content-Type': 'application/json',
+							},
+							body: JSON.stringify({
+								token: data.access_token,
+							}),
+						}
+					);
+					if (!verifyTokenResponse.ok) {
+						alert('Invalid Token');
+					} else {
+						console.log('token verified');
+						try {
+							const response2 = await fetch(
+								'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/auth_userprofile',
+								{
+									method: 'POST',
+									headers: {
+										'Content-Type': 'application/json',
+									},
+									body: JSON.stringify({
+										accessToken: data.access_token,
+									}),
+								}
+							);
+							if (response2.ok) {
+								const userData = await response2.json();
+								setUserData(userData);
+								setCookie('userData', userData, {
+									path: '/',
+									maxAge: 3600,
+								});
+							}
+						} catch (error: any) {
+							console.log(error.message);
+						}
+					}
+				} catch {
+					console.log('error');
+				}
+			} else {
+				console.error(
+					`Failed to fetch access token. Status code: ${response.status}`
+				);
+			}
+		} catch (error: any) {
+			console.log('error');
+		}
+	};
+
+	useEffect(() => {
+		checkForData();
+		getUserData();
+	}, []);
 
 	return (
 		<>
@@ -119,27 +222,33 @@ const ProfilePage = () => {
 						</div>
 					</div>
 				</div>
-				<table className="table table-bordered h-50 text-center">
-					<tr>
-						<th className="text-start p-3">Full Name</th>
-						<td className="text-start p-3">Dennis</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">ID</th>
-						<td className="text-start p-3">9392020</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Email</th>
-						<td className="text-start p-3">user@gmail.com</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Phone Number</th>
-						<td className="text-start p-3">839292849</td>
-					</tr>
-					<tr>
-						<th className="text-start p-3">Birth Date</th>
-						<td className="text-start p-3">20-0-2000</td>
-					</tr>
+				<table className="table h-50 text-center">
+					<tbody>
+						<tr>
+							<th className="text-start p-3">Full Name</th>
+							<td className="text-start p-3">{userData?.name}</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Email</th>
+							<td className="text-start p-3">
+								{userData?.email}
+							</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Phone Number</th>
+							<td className="text-start p-3">
+								{userData?.phone_number
+									? userData.phone_number
+									: 'Not Set'}
+							</td>
+						</tr>
+						<tr>
+							<th className="text-start p-3">Birth Date</th>
+							<td className="text-start p-3">
+								{userData?.birthdate}
+							</td>
+						</tr>
+					</tbody>
 				</table>
 				{isCognitoUser && (
 					<div className="row justify-content-end">
@@ -159,10 +268,8 @@ const ProfilePage = () => {
 								Delete Account
 							</button>
 						</div>
-					</div>
-				)}
+					</div>)}
 			</div>
-
 
 			{showDeleteConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
@@ -219,7 +326,7 @@ const ProfilePage = () => {
 					</div>
 					<div className="popup-content">
 						<div className="my-5">
-							<SignInPopUp currentUserSub={currentUserSub} targetSub="" role="user" updateCustomers="" closePopup={closePopup} isDeleteAccount={true}/>
+							<SignInPopUp currentUserSub={currentUserSub} targetSub="" role="user" updateCustomers="" closePopup={closePopup} isDeleteAccount={true} />
 						</div>
 					</div>
 				</div>

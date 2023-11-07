@@ -1,16 +1,15 @@
-import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import UserPool from "../services/UserPool";
-import { CognitoUser } from "amazon-cognito-identity-js";
-import OtpPassword from "../components/OtpPassword";
-import Notifications from "../components/Notifications";
-import MFAPassword from "../components/MFAPassword";
-
+import {useState, useEffect} from 'react';
+import {useLocation, useNavigate} from 'react-router-dom';
+import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa';
+import UserPool from '../services/UserPool';
+import {CognitoUser} from 'amazon-cognito-identity-js';
+import OtpPassword from '../components/OtpPassword';
+import Notifications from '../components/Notifications';
+import MFAPassword from '../components/MFAPassword';
 
 const SetPassword = () => {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [lengthCheck, setLengthCheck] = useState(false);
@@ -25,7 +24,6 @@ const SetPassword = () => {
 	const isChange = location.state.isChangePassword;
 	const isVerified = location.state.isVerified;
 	const email = location.state.email;
-	
 
 	// Effect for showing/hiding error notification
 	useEffect(() => {
@@ -47,7 +45,8 @@ const SetPassword = () => {
 	const handlePasswordChange = (e: any) => {
 		setIsSubmitted(false);
 		const newPassword = e.target.value;
-		const lengthValid = newPassword.length >= 14 && newPassword.length <= 64;
+		const lengthValid =
+			newPassword.length >= 14 && newPassword.length <= 64;
 
 		const uppercaseValid = /[A-Z]/.test(newPassword);
 		const lowercaseValid = /[a-z]/.test(newPassword);
@@ -55,9 +54,12 @@ const SetPassword = () => {
 		const specialCharValid = /[!@#$%^&*(),.?":{}|<>]/.test(newPassword);
 
 		const isStrengthValid =
-			[uppercaseValid, lowercaseValid, numberValid, specialCharValid].filter(
-				Boolean
-			).length >= 3;
+			[
+				uppercaseValid,
+				lowercaseValid,
+				numberValid,
+				specialCharValid,
+			].filter(Boolean).length >= 3;
 		const isPasswordValid = lengthValid && isStrengthValid;
 
 		setLengthCheck(lengthValid);
@@ -90,10 +92,10 @@ const SetPassword = () => {
 			// else send the email to forgetPassword
 			getUser().forgotPassword({
 				onSuccess: () => {
-					console.log("onSuccess: The reset email has been sent!");
+					console.log('onSuccess: The reset email has been sent!');
 				},
 				onFailure: (err) => {
-					console.error("onFailure:", err);
+					console.error('onFailure:', err);
 				},
 			});
 		} else {
@@ -116,15 +118,17 @@ const SetPassword = () => {
 								/>
 								{!isSuccessful && (
 									<div>
-										<div className="text-start">Password must:</div>
+										<div className="text-start">
+											Password must:
+										</div>
 										<ul className="text-start">
 											<li
 												style={{
 													color: password
 														? lengthCheck
-															? "green"
-															: "red"
-														: "black",
+															? 'green'
+															: 'red'
+														: 'black',
 												}}
 											>
 												Be between 14-64 characters
@@ -133,15 +137,22 @@ const SetPassword = () => {
 												style={{
 													color: password
 														? passwordStrengthCheck
-															? "green"
-															: "red"
-														: "black",
+															? 'green'
+															: 'red'
+														: 'black',
 												}}
 											>
-												<li>Include at least three of the following:</li>
+												<li>
+													Include at least three of
+													the following:
+												</li>
 												<ul>
-													<li>An uppercase character</li>
-													<li>A lowercase character</li>
+													<li>
+														An uppercase character
+													</li>
+													<li>
+														A lowercase character
+													</li>
 													<li>A number</li>
 													<li>A special character</li>
 												</ul>
@@ -149,7 +160,11 @@ const SetPassword = () => {
 										</ul>
 										<div className="input-group mb-3 w-100">
 											<input
-												type={showPassword ? "text" : "password"}
+												type={
+													showPassword
+														? 'text'
+														: 'password'
+												}
 												className="form-control"
 												placeholder="Password"
 												aria-label="Password"
@@ -159,28 +174,48 @@ const SetPassword = () => {
 											/>
 											<button
 												className="input-group-text"
-												onClick={() => setShowPassword(!showPassword)}
+												onClick={() =>
+													setShowPassword(
+														!showPassword
+													)
+												}
 											>
-												{showPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+												{showPassword ? (
+													<FaRegEyeSlash />
+												) : (
+													<FaRegEye />
+												)}
 											</button>
 										</div>
 										<div className="input-group mb-3 w-100">
 											<input
-												type={showConfirmPassword ? "text" : "password"}
+												type={
+													showConfirmPassword
+														? 'text'
+														: 'password'
+												}
 												className="form-control"
 												placeholder="Confirm Password"
 												aria-label="Password"
 												aria-describedby="basic-addon2"
 												value={confirmPassword}
-												onChange={handleConfirmPasswordChange}
+												onChange={
+													handleConfirmPasswordChange
+												}
 											/>
 											<button
 												className="input-group-text"
 												onClick={() =>
-													setShowConfirmPassword(!showConfirmPassword)
+													setShowConfirmPassword(
+														!showConfirmPassword
+													)
 												}
 											>
-												{showConfirmPassword ? <FaRegEyeSlash /> : <FaRegEye />}
+												{showConfirmPassword ? (
+													<FaRegEyeSlash />
+												) : (
+													<FaRegEye />
+												)}
 											</button>
 										</div>
 										<button
@@ -195,7 +230,7 @@ const SetPassword = () => {
 									<div>
 										<Notifications
 											message={
-												"Final verification before your password is set!"
+												'Final verification before your password is set!'
 											}
 											isError={!isSuccessful}
 										/>
@@ -213,12 +248,16 @@ const SetPassword = () => {
 									/>
 								)}
 								<div className="notification">
-									{showErrorNotification && !isSuccessful && isSubmitted && (
-										<Notifications
-											message={"Invalid password or passwords do not match"}
-											isError={!isSuccessful}
-										/>
-									)}
+									{showErrorNotification &&
+										!isSuccessful &&
+										isSubmitted && (
+											<Notifications
+												message={
+													'Invalid password or passwords do not match'
+												}
+												isError={!isSuccessful}
+											/>
+										)}
 								</div>
 							</div>
 						</div>

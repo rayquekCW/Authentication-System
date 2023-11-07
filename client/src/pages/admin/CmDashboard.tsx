@@ -16,15 +16,20 @@ import Pagination from "react-bootstrap/Pagination";
 import Switch from "react-switch";
 import { AccountContext } from "../../services/Account";
 import SignInPopup from "../../components/SignInPopup";
+import { useCookies } from 'react-cookie';
+import { useNavigate } from 'react-router-dom';
 
 const CmDashboard = () => {
-  const { getSession } = useContext(AccountContext) || {};
+  const { getSession, logout } = useContext(AccountContext) || {};
 
   //TODO: Implement different protected routes based on admin types (super_admin, admin, user)
-  const [adminType, setAdminType] = useState("");
-  const isSuper = adminType === "super_admin";
+  const [adminType, setAdminType] = useState('');
+  const [cookie, setCookie, removeCookie] = useCookies();
+  const navigate = useNavigate();
+  const isSuper = adminType === 'super_admin';
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [userSub, setUserSub] = useState<string>("");
+  const [userSub, setUserSub] = useState<string>('');
+  const [userName, setUserName] = useState<string>('');
   const [currentUserSub, setCurrentUserSub] = useState<string>("");
 
   // For MFA Popups
@@ -99,10 +104,10 @@ const CmDashboard = () => {
   const handleEditButtonClick = (userSub: string, userRole: string) => {
     setShowEditPopup(true);
     setUserSub(userSub); //userSub of selected user
-    if (userRole == "Super Admin") {
+    if (userRole == 'Super Admin') {
       setIsSuperAdmin(true);
       setIsAdmin(false);
-    } else if (userRole == "Admin") {
+    } else if (userRole == 'Admin') {
       setIsAdmin(true);
       setIsSuperAdmin(false);
     }
@@ -111,11 +116,19 @@ const CmDashboard = () => {
     setShowMfaPopup(true);
   };
 
+  const handleLogout = () => {
+    if (logout) {
+      logout();
+      removeCookie('userData');
+      navigate('/');
+    }
+  };
+
   // TODO - Refactor this into a separate file
   const inlineStyle = {
-    fontSize: "16px",
-    backgroundColor: "#0078CE",
-    padding: "20px",
+    fontSize: '16px',
+    backgroundColor: '#0078CE',
+    padding: '20px',
   };
 
   // TODO - Refactor this into a utils file
@@ -134,6 +147,7 @@ const CmDashboard = () => {
           // Sets the current user's details
           // Calls the api to retrieve all users
           setCurrentUserSub(sessionData.sub);
+          setUserName(sessionData.given_name + " " + sessionData.family_name)
           const accessToken = sessionData.accessToken.jwtToken;
           console.log(sessionData);
 
@@ -192,12 +206,12 @@ const CmDashboard = () => {
                 <CgProfile
                   style={{ marginRight: "5px", marginBottom: "3px" }}
                 />
-                Ray Quek
+                {userName}
               </Link>
             </li>
             <li className="nav-item me-4">
               {/* TODO: Logout functionality */}
-              <Link className="nav-link" to="/" style={{ color: "white" }}>
+              <Link className="nav-link" to="" style={{ color: "white" }} onClick={handleLogout}>
                 <IoMdLogOut
                   style={{ marginRight: "5px", marginBottom: "3px" }}
                 />
@@ -365,14 +379,14 @@ const CmDashboard = () => {
             <h6>Are you sure you want to deactivate this user?</h6>
             <button
               className="defaultBtn me-2"
-              style={{ width: "auto" }}
+              style={{ width: 'auto' }}
               onClick={handleDeleteConfirmButtonClick}
             >
               Yes
             </button>
             <button
               className="cancelBtn"
-              style={{ width: "auto" }}
+              style={{ width: 'auto' }}
               onClick={closePopup}
             >
               No

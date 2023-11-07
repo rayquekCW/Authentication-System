@@ -1,6 +1,8 @@
 import express from 'express';
 import serverless from 'serverless-http';
 import cors from 'cors';
+import fs from 'fs';
+import jwt from 'jsonwebtoken';
 import dotenv from 'dotenv';
 
 const app = express();
