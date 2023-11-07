@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import "../../styles/_variable.scss"
 import { BsList } from "react-icons/bs";
-// import BankLogo from "../assets/posb.svg";
+import BankLogo from "../../assets/posb.svg";
 
 
 const NavBar = () => {
@@ -19,7 +19,7 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
       <div className="container-fluid">
-        {/* <BankLogo /> */}
+        <img src={BankLogo} alt="bank-logo" width={100}/>
         <button
           className="navbar-toggler"
           type="button"

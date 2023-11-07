@@ -69,7 +69,6 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 
   const navigate = useNavigate();
 
-
   /**
    * The `handleInputChange` function is used to handle the input change event for an OTP (One-Time
    * Password) input field in a React component, validating the input and updating the OTP value
@@ -130,17 +129,18 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
           if (authenticate) {
             authenticate(email, password)
               .then((data: any) => {
-                const sub = data.accessToken.payload.sub
-                const API = "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-create-api-key"
-                const URI = `${API}?sub=${sub}`
+                const sub = data.accessToken.payload.sub;
+                const API =
+                  "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-create-api-key";
+                const URI = `${API}?sub=${sub}`;
 
                 // create an API key and assign to the user
                 fetch(URI, {
                   method: "POST",
                 }).then(() =>
                   //set delay to 1.5 second to allow time for the api key to be created
-                  setTimeout(() => navigate("/mfa"), 1500)
-                )
+                  navigate("/mfa")
+                );
               })
               .catch((err: any) => {
                 console.log(err);

@@ -1,5 +1,4 @@
-import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-// import PatientListPage from '../src/components/exampleComponent'; // example of a component
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import LoginPage from './pages/LoginPage';
 import './App.css';
 import '../src/styles/styles.scss';
@@ -12,16 +11,16 @@ import Enrollment from './pages/admin/CmEnrollment';
 import Logs from './pages/admin/CmLogs';
 import Orders from './pages/admin/CmOrders';
 import Pricing from './pages/admin/CmPricing';
-import {Account} from './services/Account';
-import {CookiesProvider} from 'react-cookie';
+import { Account } from './services/Account';
+import { CookiesProvider } from 'react-cookie';
 import ProtectedRoute from './ProtectedRoute';
 
 const App = () => {
 	return (
 		<>
 			<CookiesProvider>
-				<Account>
-					<Router>
+				<Router>
+					<Account>
 						<Routes>
 							<Route path="/" element={<LoginPage />} />
 							<Route path="/password" element={<SetPassword />} />
@@ -30,7 +29,7 @@ const App = () => {
 							<Route element={<ProtectedRoute />}>
 								<Route path="/home" element={<HomePage />} />
 
-								{/*TODO: protect the routes from non admins and differentiate based on admin roles*/}
+								{/* TODO - protect the routes from non admins and differentiate based on admin roles*/}
 								<Route
 									path="/cm-dashboard"
 									element={<CustomerManagementDashboard />}
@@ -47,8 +46,8 @@ const App = () => {
 								/>
 							</Route>
 						</Routes>
-					</Router>
-				</Account>
+					</Account>
+				</Router>
 			</CookiesProvider>
 		</>
 	);

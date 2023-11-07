@@ -1,8 +1,7 @@
-import {FaLock, FaRegEye, FaRegEyeSlash, FaAt} from 'react-icons/fa';
-import {useState, useContext} from 'react';
-import {Link, useNavigate} from 'react-router-dom';
-import {AccountContext} from '../services/Account';
-import {get} from 'http';
+import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AccountContext } from "../services/Account";
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
@@ -38,44 +37,40 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 				const data: any = await authenticate(email, password);
 				// data is supposed to be the cognito user
 
-				//verify if user is admin
-				if (getSession) {
-					const {headers} = await getSession();
-					const accessToken = data.accessToken.jwtToken;
-					console.log(headers);
-					const API =
-						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validateAdmin';
-					const uri = `${API}?accessToken=${accessToken}`;
-					try {
-						const response = await fetch(uri, {headers});
+        //verify if user is admin
+        if (getSession) {
+          const { headers, accessToken } = await getSession();
+          const accessTokens = accessToken.jwtToken;
+          console.log(headers);
+          const API =
+            "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validateAdmin";
+          const uri = `${API}?accessToken=${accessTokens}`;
+          try {
+            const response = await fetch(uri, { headers });
 
-						if (!response.ok) {
-							throw new Error('Network response was not ok');
-						}
-						const data = await response.json();
-						console.log(data);
-						// Handle the data here
-						if (
-							data.role === 'admin' ||
-							data.role === 'super_admin'
-						) {
-							//go to admin dashboard if user is admin
-							navigate('/cm-dashboard');
-						} else {
-							//go to home if user is not admin
-							navigate('/home');
-						}
-					} catch (error) {
-						// Handle errors here
-						console.error(error);
-					}
-					// Now you can work with responseData
-				}
-			} catch (err) {
-				console.error('Failed to login!', err);
-			}
-		}
-	}
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            // Handle the data here
+            if (data.role === "admin" || data.role === "super_admin") {
+              //go to admin dashboard if user is admin
+              navigate("/cm-dashboard");
+            } else {
+              //go to home if user is not admin
+              navigate("/home");
+            }
+          } catch (error) {
+            // Handle errors here
+            console.error(error);
+          }
+          // Now you can work with responseData
+        }
+      } catch (err) {
+        console.error("Failed to login!", err);
+      }
+    }
+  }
 
 	return (
 		<>
