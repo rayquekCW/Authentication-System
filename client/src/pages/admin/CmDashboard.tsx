@@ -86,7 +86,8 @@ const CmDashboard = () => {
   };
 
   // For Delete Popup
-  const handleDeleteButtonClick = () => {
+  const handleDeleteButtonClick = (userSub: string, userRole: string) => {
+    setUserSub(userSub);
     setShowDeleteConfirmPopup(true);
   };
   const handleDeleteConfirmButtonClick = () => {
@@ -257,7 +258,11 @@ const CmDashboard = () => {
                     </button>
                     <button
                       className="btn btn-secondary ms-2"
-                      onClick={handleDeleteButtonClick}
+                      onClick={() =>handleDeleteButtonClick(
+                        customer.Username,
+                        customer.UserRole
+                      )
+                    }
                     >
                       <MdRemoveCircle />
                     </button>
@@ -386,7 +391,7 @@ const CmDashboard = () => {
           </div>
           <div className="popup-content">
             <div className="my-5">
-              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} />
+              <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={true}/>
             </div>
           </div>
         </div>
