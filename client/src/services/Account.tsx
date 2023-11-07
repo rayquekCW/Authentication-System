@@ -9,8 +9,7 @@ type AccountContextValue = {
   authenticate: (Username: string, Password: string) => Promise<unknown>;
   getSession: () => Promise<any>;
   logout: () => void;
-  deleteAccount: (Username: string, Password: string, CurrentUserSub: String) => void;
-  validateTOTP: () => void;
+  deleteAccount: (Username: string, Password: string, CurrentUserSub: string) => void;
 };
 
 // Create a new instance of the Cognito JWT Verifier
@@ -210,9 +209,9 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
   /**
    * The `deleteAccount` function deletes the current user if there is one.
    */
-  const deleteAccount = async (Username: string, Password: string, CurrentUserSub: String) => {
+  const deleteAccount = async (Username: string, Password: string, CurrentUserSub: string) => {
     await new Promise(async (resolve, reject) => {
-      const result : any = await authenticate(Username, Password)
+      const result: any = await authenticate(Username, Password)
       if (result) {
         if (result.accessToken.payload.sub !== CurrentUserSub) {
           alert("You are not the current user!");
@@ -235,14 +234,12 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
   }
 
 
-
-
   return (
     <AccountContext.Provider value={{
       authenticate,
       getSession,
       logout,
-      deleteAccount,
+      deleteAccount
     }}>
       {props.children}
     </AccountContext.Provider>
