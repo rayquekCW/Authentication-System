@@ -1,10 +1,12 @@
 import NavBar from '../components/NavBar';
+import UserLogoutPopup from '../components/UserLogout';
 import {useNavigate} from 'react-router-dom';
 
 const HomePage = () => {
 	const navigate = useNavigate();
 	return (
 		<>
+            <UserLogoutPopup />
 			<NavBar />
 			<div className="container bg-light shadow-sm mt-4">
 				<div className="row p-3">

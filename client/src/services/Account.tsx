@@ -31,16 +31,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
           if (err) {
             reject();
           } else {
-            const accessToken = session.accessToken.jwtToken;
-            try {
-                const payload =  verifier.verify(
-                    accessToken // the JWT as string
-                );
-                console.log("Token is valid. Payload:", payload);
-            } catch {
-                console.log("Token not valid!");
-            }
-
+            const accessToken = session.accessToken.jwtToken;              
             /*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
             const attributes = await new Promise<Record<string, string>>((resolve, reject) => {
               user.getUserAttributes((err, attributes) => {
@@ -104,6 +95,13 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
       user.authenticateUser(authDetails, {
         onSuccess: (data) => {
           console.log('onSuccess:', data);
+          verifier.verify(data.getAccessToken().getJwtToken()).then((payload) => {
+            console.log("Token is valid");
+          }).catch((err) => {
+            console.log("Token is not valid - " + err)
+          });
+          sessionStorage.setItem("access_token", data.getAccessToken().getJwtToken())
+          sessionStorage.setItem("refresh_token", data.getRefreshToken().getToken())
           resolve(data);
         },
 

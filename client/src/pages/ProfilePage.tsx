@@ -4,6 +4,7 @@ import MultiFactAuth from '../components/MultiFactAuth';
 import { AiOutlineClose } from 'react-icons/ai';
 import { Link, useNavigate } from 'react-router-dom';
 import { AccountContext } from '../services/Account';
+import UserLogoutPopup from '../components/UserLogout';
 
 
 const ProfilePage = () => {
@@ -47,7 +48,9 @@ const ProfilePage = () => {
 
 	return (
 		<>
+			
 			<NavBar />
+			<UserLogoutPopup></UserLogoutPopup>
 			<div
 				className={`overlay ${showMfaPopup ||
 					showDeleteConfirmPopup ||
