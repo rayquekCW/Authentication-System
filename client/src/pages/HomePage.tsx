@@ -1,13 +1,14 @@
 import NavBar from '../components/navigation/NavBar';
-import {useNavigate} from 'react-router-dom';
-import {useCookies} from 'react-cookie';
-import {AccountContext} from '../services/Account';
-import {useState, useContext, useEffect} from 'react';
+import UserLogoutPopup from '../components/UserLogout';
+import { useNavigate } from 'react-router-dom';
+import { useCookies } from 'react-cookie';
+import { AccountContext } from '../services/Account';
+import { useState, useContext, useEffect } from 'react';
 
 const HomePage = () => {
 	const [cookies] = useCookies();
 	const [userData, setUserData] = useState(cookies['userData']);
-	const {getSession} = useContext(AccountContext) || {};
+	const { getSession } = useContext(AccountContext) || {};
 
 	const checkForData = () => {
 		if (!userData) {
@@ -49,6 +50,7 @@ const HomePage = () => {
 	const navigate = useNavigate();
 	return (
 		<>
+			<UserLogoutPopup />
 			<NavBar />
 			<div className="container bg-light shadow-sm mt-4">
 				<div className="row p-3">

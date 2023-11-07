@@ -1,11 +1,11 @@
 import {useState, useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
+import {useLocation} from 'react-router-dom';
 import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa';
 import UserPool from '../services/UserPool';
 import {CognitoUser} from 'amazon-cognito-identity-js';
 import OtpPassword from '../components/OtpPassword';
 import Notifications from '../components/Notifications';
-import MFAPassword from '../components/MFAPassword';
+// import MFAPassword from '../components/MFAPassword';
 
 const SetPassword = () => {
 	const [password, setPassword] = useState('');
@@ -19,10 +19,8 @@ const SetPassword = () => {
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [showErrorNotification, setShowErrorNotification] = useState(false);
 
-	const navigate = useNavigate();
 	const location = useLocation();
 	const isChange = location.state.isChangePassword;
-	const isVerified = location.state.isVerified;
 	const email = location.state.email;
 
 	// Effect for showing/hiding error notification

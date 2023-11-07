@@ -7,6 +7,8 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 import Sidebar from "../../components/navigation/SideBar";
 import SideBarSuper from "../../components/navigation/SideBarSuper";
 import BankLogo from "../../assets/posb.svg";
+import UserLogoutPopup from '../../components/UserLogout';
+
 
 const Orders = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -26,53 +28,57 @@ const Orders = () => {
 
 
     return (
-        <div>
-            <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-                <div className="container-fluid">
-                    <div onClick={handleClick} style={{ cursor: 'pointer' }}>
-                        <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
+        <>
+            <UserLogoutPopup />
+            <div>
+
+                <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
+                    <div className="container-fluid">
+                        <div onClick={handleClick} style={{ cursor: 'pointer' }}>
+                            <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
+                        </div>
+                        <img src={BankLogo} alt="bank-logo" width={100} />
+                        <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
+                            <li className="nav-item me-4">
+                                <Link
+                                    className="nav-link"
+                                    to=""
+                                    style={{ color: "white" }}
+                                >
+                                    {<AiFillExclamationCircle style={{ marginRight: "5px", marginBottom: "3px" }} />}
+                                    Edit Tooltips
+                                </Link>
+                            </li>
+                            <li className="nav-item me-4">
+                                <Link
+                                    className="nav-link"
+                                    to=""
+                                    style={{ color: "white" }}
+                                >
+                                    <CgProfile style={{ marginRight: "5px", marginBottom: "3px" }} />
+                                    Ray Quek
+                                </Link>
+                            </li>
+                            <li className="nav-item me-4">
+                                {/* TODO: Logout functionality */}
+                                <Link
+                                    className="nav-link"
+                                    to="/"
+                                    style={{ color: "white" }}
+                                >
+                                    <IoMdLogOut style={{ marginRight: "5px", marginBottom: "3px" }} />
+                                    Logout
+                                </Link>
+                            </li>
+                        </ul>
                     </div>
-                    <img src={BankLogo} alt="bank-logo" width={100}/>
-                    <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
-                        <li className="nav-item me-4">
-                            <Link
-                                className="nav-link"
-                                to=""
-                                style={{ color: "white" }}
-                            >
-                                {<AiFillExclamationCircle style={{ marginRight: "5px", marginBottom: "3px" }} />}
-                                Edit Tooltips
-                            </Link>
-                        </li>
-                        <li className="nav-item me-4">
-                            <Link
-                                className="nav-link"
-                                to=""
-                                style={{ color: "white" }}
-                            >
-                                <CgProfile style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                Ray Quek
-                            </Link>
-                        </li>
-                        <li className="nav-item me-4">
-                        {/* TODO: Logout functionality */}
-                            <Link
-                                className="nav-link"
-                                to="/"
-                                style={{ color: "white" }}
-                            >
-                                <IoMdLogOut style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                Logout
-                            </Link>
-                        </li>
-                    </ul>
                 </div>
+                <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
+                    {isSuper ? <SideBarSuper handleClick={handleClick} /> : <Sidebar handleClick={handleClick} />}
+                </div>
+                <h1 className="mt-5 ms-5">Orders</h1>
             </div>
-            <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
-                {isSuper ? <SideBarSuper handleClick={handleClick} /> : <Sidebar handleClick={handleClick} />}
-            </div>
-            <h1 className="mt-5 ms-5">Orders</h1>
-        </div>
+        </>
     )
 }
 
