@@ -1,18 +1,18 @@
-import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from 'react-icons/fa';
-import { useState, useContext } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
+import { useState, useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
 };
 
-const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
+const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 
-	const { authenticate } = useContext(AccountContext) || {};
+	const {authenticate, getSession} = useContext(AccountContext) || {};
 	const navigate = useNavigate();
 
 	/**
@@ -31,23 +31,49 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 		);
 	}
 
-	function requireMFASetup() {
+	async function requireMFASetup() {
 		if (authenticate) {
-			authenticate(email, password)
-				.then((data: any) => {
-					// data is suppose to be the cognito user
-					console.log("Logged in!", data);
-					navigate('/home');
-				})
-				.catch((err: any) => {
-					console.error("Failed to login!", err);
-				});
-		}
-	}
+			try {
+				const data: any = await authenticate(email, password);
+				// data is supposed to be the cognito user
+
+        //verify if user is admin
+        if (getSession) {
+          const { headers, accessToken } = await getSession();
+          const accessTokens = accessToken.jwtToken;
+          console.log(headers);
+          const API =
+            "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validateAdmin";
+          const uri = `${API}?accessToken=${accessTokens}`;
+          try {
+            const response = await fetch(uri, { headers });
+
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            // Handle the data here
+            if (data.role === "admin" || data.role === "super_admin") {
+              //go to admin dashboard if user is admin
+              navigate("/cm-dashboard");
+            } else {
+              //go to home if user is not admin
+              navigate("/home");
+            }
+          } catch (error) {
+            // Handle errors here
+            console.error(error);
+          }
+          // Now you can work with responseData
+        }
+      } catch (err) {
+        console.error("Failed to login!", err);
+      }
+    }
+  }
 
 	return (
 		<>
-
 			<div
 				id="signInContainer"
 				className="col-md-6 col-12 d-flex align-items-center flex-column justify-content-center"
@@ -77,7 +103,9 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							placeholder="Password"
 							aria-label="Password"
 							aria-describedby="basic-addon2"
-							onChange={(event) => setPassword(event.target.value)}
+							onChange={(event) =>
+								setPassword(event.target.value)
+							}
 						/>
 						<button
 							className="input-group-text"
@@ -103,23 +131,24 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 					<p className="caption">
 						or{' '}
 						<Link
-							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID
-								}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fbank&response_type=code&scope=openid+profile`}
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
+								import.meta.env.VITE_CLIENT_ID
+							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
 						>
 							Sign In with SSO
 						</Link>
 					</p>
 				</div>
 				<button
-					className={`defaultBtn ${validateEmail(email) ? '' : 'disabled'
-						}`}
+					className={`defaultBtn ${
+						validateEmail(email) ? '' : 'disabled'
+					}`}
 					onClick={() => validateEmail(email) && requireMFASetup()}
 					disabled={!validateEmail(email)}
 				>
 					Sign In
 				</button>{' '}
 			</div>
-
 		</>
 	);
 };
