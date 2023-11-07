@@ -17,6 +17,7 @@ const UserLogoutPopup = () => {
 
 
     function scheduleTokenExpiryCheck(): void {
+        if (showPopup) return
         if (accessToken) {
             const payload = jwtDecode(accessToken)
 
@@ -69,12 +70,14 @@ const UserLogoutPopup = () => {
         if (user && RefreshToken) {
             const token = new CognitoRefreshToken({RefreshToken});
 
-            user.refreshSession(token, (err, _session) => {
+            user.refreshSession(token, (err, session) => {
                 if (err) {
                     console.log(err);
                     handleLogout("Error refreshing session")
                 } else {
                     console.log("Session refreshed");
+                    sessionStorage.setItem("access_token", session.getAccessToken().getJwtToken())
+                    sessionStorage.setItem("refresh_token", session.getRefreshToken().getToken())
                     setShowPopup(false)
                 }
             });
