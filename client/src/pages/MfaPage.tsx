@@ -2,6 +2,7 @@ import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
+import BankLogo from "../assets/posb.svg";
 
 const MfaPage = () => {
   const navigate = useNavigate();
@@ -12,6 +13,7 @@ const MfaPage = () => {
   const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('')
   const [confirmationCode, setConfirmationCode] = useState('')
+  const [optOut, setOptOut] = useState(false)
 
   // For Step 2
   const [userCode, setUserCode] = useState("");
@@ -194,6 +196,16 @@ const MfaPage = () => {
 
               user.setUserMfaPreference(null, settings, () => { }); // set the MFA Setting on Cognito to enabled and assign to TOTP Preferred
 
+              alert("MFA Enabled!");
+
+              // if out of SMS MFA, logout user and navigate to login page
+              if (optOut) {
+                if (logout) {
+                  logout();
+                  navigate('/');
+                }
+              }
+
 
             } else {
               // Handle errors alert if the user enters the wrong code
@@ -242,6 +254,8 @@ const MfaPage = () => {
 
         user.setUserMfaPreference(smsSettings, totpSettings, () => { })
 
+        alert("MFA Preference Updated!")
+
         // Logout user and navigate to login page
         if (logout) {
           logout();
@@ -263,161 +277,209 @@ const MfaPage = () => {
 
 
   return <>
-    <div className="mx-5">
-
-      <div className="row justify-content-center align-items-center g-2">
-        <div className="col"><h1 className="mt-5">Multi-Factor Authentication</h1></div>
+    
+    <nav className="navbar navbar-expand-lg navbar-light nav-default">
+      <div className="container-fluid">
+        <img src={BankLogo} alt="bank-logo" width={100}/>
       </div>
+    </nav>
 
-      {/* Step 1 */}
-      <div id="set-up-phone-number" className="row justify-content-center align-items-center g-2 border my-5 pb-5">
-        <h2 className={isVerifiedPhone ? "py-3 bg-success" : "py-3 bg-primary"}>Step 1: Set up Phone Number MFA</h2>
 
-        {!isVerifiedPhone ?
-          <div>
-            <div id="enter-phone-number">
-              {/* Step 1A: Enter in Phone Number */}
-              <p className="">Enter your phone number to set up MFA via SMS</p>
-              {/* input box for tel */}
-              <div className="input-group">
-                <span className="input-group-text" id="phone-number-input">
-                  <FaAt />  {/* TODO - Change the logo to a phone logo*/}
-                </span>
-                <input
-                  type="tel"
-                  className="form-control"
-                  placeholder="Phone Number"
-                  value={phoneNumber}
-                  onChange={(e) => setPhoneNumber(e.target.value)}
-                />
-                <button
-                  className="btn btn-primary"
-                  onClick={updatePhoneNumber}
-                >
-                  Update
-                </button>
-              </div>
-            </div>
-            {isNumberInput && (
-              <div id="verify-phone-number" className="mt-5">
-                {/* Step 1B: Verify the Phone Number */}
-                <p className="">Verify the Phone Number</p>
-                {/* Add a input text box and validate it for 6 digits only */}
-                <div className="input-group">
-                  <span className="input-group-text" id="phone-confirmation-code">
+    <div className="row justify-content-center align-items-center">
+      <div className="col-1 col-md-3" />
+      <div className="col col-md-6">
+        <div className="row justify-content-center align-items-center">
+          <div className="col"><h1 className="mt-5 ">Multi-Factor Authentication</h1></div>
+        </div>
+
+        {/* Step 1 */}
+        <div id="set-up-phone-number" className="row justify-content-center align-items-center border my-5 ">
+          <h2 className={isVerifiedPhone ? "py-3 px-3 card-success" : "py-3 px-3 card-header"}>Step 1: Set up Phone Number MFA</h2>
+
+          {!isVerifiedPhone && !optOut ?
+            <div>
+              <div id="enter-phone-number">
+                {/* Step 1A: Enter in Phone Number */}
+                <div className="pt-3">Enter your phone number to set up MFA via SMS</div>
+                {/* input box for tel */}
+                <div className="input-group py-3">
+                  <span className="input-group-text" id="phone-number-input">
                     <FaAt />  {/* TODO - Change the logo to a phone logo*/}
                   </span>
-                  <input type="text" className="form-control" placeholder="Enter 6-digit code" value={confirmationCode} onChange={(event) => setConfirmationCode(event.target.value)} />
+                  <input
+                    type="tel"
+                    className="form-control"
+                    placeholder="Phone Number"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
+                  />
                   <button
                     className="btn btn-primary"
-                    onClick={verifyPhoneNumberCode}
+                    onClick={updatePhoneNumber}
                   >
-                    Verify
+                    Update
                   </button>
                 </div>
-              </div>)
-            }
-          </div>
-          :
-          <div>
-            {/* Display Phone Number Verified Message */}
-            <div id="phone-number-verified">
-              <p className="">SMS Phone Number Verified</p>
-            </div>
-          </div>}
+              </div>
+
+              {isNumberInput && (
+                <div id="verify-phone-number" className="">
+                  {/* Step 1B: Verify the Phone Number */}
+                  <div className="pt-3">Verify the Phone Number</div>
+                  {/* Add a input text box and validate it for 6 digits only */}
+                  <div className="input-group py-3">
+                    <span className="input-group-text" id="phone-confirmation-code">
+                      <FaAt />  {/* TODO - Change the logo to a phone logo*/}
+                    </span>
+                    <input type="text" className="form-control" placeholder="Enter 6-digit code" value={confirmationCode} onChange={(event) => setConfirmationCode(event.target.value)} />
+                    <button
+                      className="btn btn-primary"
+                      onClick={verifyPhoneNumberCode}
+                    >
+                      Verify
+                    </button>
+                  </div>
+                </div>)
+              }
 
 
-        {/* ----End of Step 1 */}
-      </div>
-
-      {/* Step 2 */}
-      <div id="set-up-totp" className="row justify-content-center align-items-center g-2 border my-5 pb-5">
-        <h2 className={enabled ? "py-3 bg-success" : "py-3 bg-primary"}>Step 2: Set up TOTP MFA</h2>
-
-        <div id="enter-totp">
-
-          {!enabled && (<div>
-            <p className="">Scan TOTP Setup QR Code to set up MFA</p>
-            <ol><li>Download Google Authenticator</li>
-              <li>Click the Generate Setup QR</li>
-              <li>Scan the Setup QR through your Google Authenticator</li>
-              <li>Key code in the G2T4 Authenticator associated to confirm</li>
-            </ol>
-          </div>)}
-
-
-          {enabled ? (
-            <div>
-              <div>Time-based OTP MFA is Set Up</div>
-            </div>
-          ) : showImage ? (
-            <div>
-              <img src={image} />
-
-              {/* Step 2B: Submit TOTP Confirmation Code */}
-              <form onSubmit={enableMFA}>
-                <div className="input-group">
-                  <input
-                    className="form-control"
-                    placeholder="Enter 6-digit code"
-                    value={userCode}
-                    onChange={(event) => setUserCode(event.target.value)}
-                    required
-                  />
-                  <button className="btn btn-primary" type="submit">Confirm Code</button>
+              {/* Checkbox to opt out of SMS MFA */}
+              <div className="">
+                <div className="form-check">
+                  <input className="form-check-input" type="checkbox" value="" id="opt-out" onChange={(event) => setOptOut(event.target.checked)} />
+                  <label className="form-check-label" htmlFor="opt-out">
+                    I would like to opt out of SMS MFA for now
+                  </label>
                 </div>
-              </form>
+              </div>
 
             </div>
-          ) : (
-            <button className="btn btn-primary" onClick={getQRCode}>
-              {/* Step 2A: Generate TOTP QR */}
-              Enable MFA
-            </button>
-          )}
+            :
+            <div>
+              {/* Display Phone Number MFA Opt out */}
+              {optOut ? <>
 
+                <div id="phone-number-mfa-opt-out" className="pt-3">
+                  <p className="">SMS Phone Number MFA Opt Out</p>
+                </div>
+
+                {/* Checkbox to opt out of SMS MFA */}
+                <div className="">
+                  <div className="form-check">
+                    <input className="form-check-input" type="checkbox" value="" id="opt-out" onChange={(event) => setOptOut(event.target.checked)} checked />
+                    <label className="form-check-label" htmlFor="opt-out">
+                      I would like to opt out of SMS MFA
+                    </label>
+                  </div>
+                </div>
+              </> :
+                (
+                  // Display Phone Number MFA Verified
+                  <div id="phone-number-verified">
+                    <p className="">SMS Phone Number Verified</p>
+                  </div>
+                )
+              }
+            </div>}
+
+
+          {/* ----End of Step 1 */}
         </div>
 
-        {/* ----End of Step 2 */}
-      </div>
+        {/* Step 2 */}
+        <div id="set-up-totp" className="row justify-content-center align-items-center border my-5">
+          <h2 className={enabled ? "py-3 px-3 card-success" : "py-3 px-3 card-header"}>Step 2: Set up TOTP MFA</h2>
 
-      {/* Step 3 */}
-      <div id="select-mfa-preference" className="row justify-content-center align-items-center g-2 border my-5 pb-5">
-        <h2 className="py-3 bg-primary">Step 3: Choose MFA Preference</h2>
+          <div id="enter-totp">
 
-        {/* Step 3A: Select Preference */}
-        <div id="select-preference">
-          <p className="">To secure your login identities, we will use OTP verification</p>
-          <p className="">Where would you like to receive it?</p>
+            {!enabled && (<div>
+              <div className="pt-3">Scan TOTP Setup QR Code to set up MFA</div>
+              <ol><li>Download Google Authenticator</li>
+                <li>Click the Generate Setup QR</li>
+                <li>Scan the Setup QR through your Google Authenticator</li>
+                <li>Key code in the G2T4 Authenticator associated to confirm</li>
+              </ol>
+            </div>)}
 
 
-          {/* 2 Radio buttons for selection between SMS or TOTP box */}
-          <div className="form-check">
-            <input className="form-check-input" type="radio" name="mfa-preference-selector" id="sms-radio" value="SMS_MFA" onChange={(event) => setMfaPreference(event.target.value)} />
-            <label className="form-check-label" htmlFor="sms-radio">
-              SMS
-            </label>
+            {enabled ? (
+              <div>
+                <p>Time-based OTP MFA is set up</p>
+              </div>
+            ) : showImage ? (
+              <div>
+                <img src={image} />
+
+                {/* Step 2B: Submit TOTP Confirmation Code */}
+                <form onSubmit={enableMFA}>
+                  <div className="input-group">
+                    <input
+                      className="form-control"
+                      placeholder="Enter 6-digit code"
+                      value={userCode}
+                      onChange={(event) => setUserCode(event.target.value)}
+                      required
+                    />
+                    <button className="btn btn-primary" type="submit">Confirm Code</button>
+                  </div>
+                </form>
+
+              </div>
+            ) : (
+              <button className="btn btn-primary" onClick={getQRCode}>
+                {/* Step 2A: Generate TOTP QR */}
+                Enable MFA
+              </button>
+            )}
+
           </div>
-          <div className="form-check">
-            <input className="form-check-input" type="radio" name="mfa-preference-selector" id="totp-radio" value="SOFTWARE_TOKEN_MFA" onChange={(event) => setMfaPreference(event.target.value)} defaultChecked />
-            <label className="form-check-label" htmlFor="totp-radio">
-              TOTP
-            </label>
-          </div>
 
-          <button
-            className="btn btn-primary"
-            onClick={() => updateMfaPreference()}
-          >
-            Update
-          </button>
-
-
+          {/* ----End of Step 2 */}
         </div>
 
-        {/* ----End of Step 3 */}
-      </div>
+        {/* Step 3 */}
+        {!optOut && enabled && isVerifiedPhone && (
+          <div id="select-mfa-preference" className="row justify-content-center align-items-center border my-5 pb-5">
+            <h2 className="py-3 px-3 card-header">Step 3: Choose MFA Preference</h2>
+
+            {/* Step 3A: Select Preference */}
+            <div id="select-preference">
+              <p className="">To secure your login identities, we will use OTP verification</p>
+              <p className="">Where would you like to receive it?</p>
+
+
+              {/* 2 Radio buttons for selection between SMS or TOTP box */}
+              <div className="form-check">
+                <input className="form-check-input" type="radio" name="mfa-preference-selector" id="sms-radio" value="SMS_MFA" onChange={(event) => setMfaPreference(event.target.value)} />
+                <label className="form-check-label" htmlFor="sms-radio">
+                  SMS
+                </label>
+              </div>
+              <div className="form-check">
+                <input className="form-check-input" type="radio" name="mfa-preference-selector" id="totp-radio" value="SOFTWARE_TOKEN_MFA" onChange={(event) => setMfaPreference(event.target.value)} defaultChecked />
+                <label className="form-check-label" htmlFor="totp-radio">
+                  TOTP
+                </label>
+              </div>
+
+              <button
+                className="btn btn-primary"
+                onClick={() => updateMfaPreference()}
+              >
+                Update
+              </button>
+
+
+            </div>
+
+            {/* ----End of Step 3 */}
+          </div>
+        )}
+      </div >
+      <div className="col-1 col-md-3" />
     </div >
+
+
 
   </>;
 };
