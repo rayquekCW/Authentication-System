@@ -93,8 +93,8 @@ p {
 
 .cancelBtn {
   background-color: white;
-  color: $primaryBrandColor;
-  border: 1px solid $primaryBrandColor;
+  color: $dark;
+  border: 0px solid $primaryBrandColor;
   margin-top: 0.5rem;
   padding: 0.5rem 1rem;
   width: 50%;
@@ -102,8 +102,8 @@ p {
   transition: background-color 0.3s;
 
   &:hover {
-    background-color: lightslategray;
-    color: #ffffff;
+    background-color: $light;
+    color: $danger;
   }
 }
 
@@ -123,7 +123,7 @@ p {
   }
 
   &.disabled {
-    background-color: rgb(173, 173, 173);
+    background-color: $disabledColor;
     cursor: not-allowed;
   }
 

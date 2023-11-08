@@ -59,7 +59,8 @@ const UserLogoutPopup = () => {
     }
 
     function handleLogout(_e: any) {
-        console.log(_e);
+        alert(_e)
+        alert("You have been logged out")
         if (logout) logout();
         localStorage.clear();
         sessionStorage.clear();
@@ -68,21 +69,18 @@ const UserLogoutPopup = () => {
 
     function refreshUser(_e: any) {
         if (user && RefreshToken) {
-            const token = new CognitoRefreshToken({RefreshToken});
+            const token = new CognitoRefreshToken({ RefreshToken });
 
             user.refreshSession(token, (err, session) => {
                 if (err) {
-                    console.log(err);
-                    handleLogout("Error refreshing session")
+                    handleLogout("Error refreshing session") 
                 } else {
-                    console.log("Session refreshed");
+                    console.log("Session refreshed"); //TODO: Remove this
                     sessionStorage.setItem("access_token", session.getAccessToken().getJwtToken())
                     sessionStorage.setItem("refresh_token", session.getRefreshToken().getToken())
                     setShowPopup(false)
                 }
             });
-            
-            // scheduleTokenExpiryCheck()
         }
     }
 
@@ -98,10 +96,10 @@ const UserLogoutPopup = () => {
                     true && (
                         <div className="popup d-flex justify-content-center align-items-center">
                             <div className="popup-content text-center">
-                                <h1>Hello, are you still there?</h1>
-                                <h6>Click yes to remain logged in!</h6>
+                                <h5>Your session is about to expire due to inactivity. Would you like to continue your session? </h5>
+                                <p>Please click 'Yes' to continue, or 'No' to log out.</p>
                                 <button
-                                    className="defaultBtn me-2"
+                                    className="defaultBtn mx-4"
                                     style={{ width: 'auto' }}
                                     onClick={refreshUser}
                                 >
