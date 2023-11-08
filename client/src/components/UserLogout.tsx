@@ -59,7 +59,6 @@ const UserLogoutPopup = () => {
     }
 
     function handleLogout(_e: any) {
-        alert(_e)
         alert("You have been logged out")
         if (logout) logout();
         localStorage.clear();
