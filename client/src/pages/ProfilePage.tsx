@@ -7,7 +7,7 @@ import { useSearchParams } from 'react-router-dom';
 import { useCookies } from 'react-cookie';
 import SignInPopUp from '../components/SignInPopup';
 import UserLogoutPopup from '../components/UserLogout';
-
+import {maskPhone} from '../utils/maskPhone'
 interface UserDataProps {
 	sub: string;
 	name: string;
@@ -16,7 +16,7 @@ interface UserDataProps {
 	family_name: string;
 	birthdate: string;
 	gender: string;
-	phone_number: number;
+	phone_number: string;
 }
 
 
@@ -30,6 +30,9 @@ const ProfilePage = () => {
 	const [currentUserSub, setCurrentUserSub] = useState<string>("");
 	const [showSignInPopUp, setShowSignInPopUp] = useState(false)
 	const [isCognitoUser, setIsCognitoUser] = useState(false)
+	const [mfaPreference, setMfaPreference] = useState('')
+	const [mfaEnabled, setMfaEnabled] = useState(false)
+	const [isPhoneVerified, setIsPhoneVerified] = useState(false)
 
 	const { getSession, logout } = useContext(AccountContext) || {};
 
@@ -81,6 +84,11 @@ const ProfilePage = () => {
 					const accessToken = sessionData.accessToken.jwtToken;
 					console.log(accessToken);
 					setCurrentUserSub(sessionData.sub)
+					setMfaEnabled(sessionData.mfaEnabled)
+					setMfaPreference(sessionData.preferredMFA)
+					setIsPhoneVerified(sessionData.phone_number_verified === "true")
+
+
 
 
 					setUserData({
@@ -94,7 +102,7 @@ const ProfilePage = () => {
 						family_name: sessionData.family_name,
 						birthdate: sessionData.birthdate,
 						gender: '',
-						phone_number: NaN,
+						phone_number: maskPhone(sessionData.phone_number),
 					});
 				})
 				.catch((error) => {
@@ -188,6 +196,45 @@ const ProfilePage = () => {
 		}
 	};
 
+	/**
+ * The function `updateMfaPreference` updates the user's multi-factor authentication preference based
+ * on the selected option.
+ */
+	const updateMfaPreference = () => {
+
+		if (getSession) {
+			getSession().then(({ user }) => {
+				let smsMfaPreferred = false;
+				let softwareTokenMfaPreferred = false;
+
+				if (mfaPreference === 'SMS_MFA') {
+					smsMfaPreferred = true;
+					softwareTokenMfaPreferred = !smsMfaPreferred;
+				}
+
+				if (mfaPreference === 'SOFTWARE_TOKEN_MFA') {
+					softwareTokenMfaPreferred = true;
+					smsMfaPreferred = !softwareTokenMfaPreferred;
+				}
+
+				const smsSettings = {
+					PreferredMfa: smsMfaPreferred,
+					Enabled: true,
+				}
+
+				const totpSettings = {
+					PreferredMfa: softwareTokenMfaPreferred,
+					Enabled: true,
+				}
+
+				user.setUserMfaPreference(smsSettings, totpSettings, () => { })
+
+				alert("MFA Preference Updated!")
+			})
+		}
+
+	}
+
 	useEffect(() => {
 		checkForData();
 		getUserData();
@@ -205,23 +252,25 @@ const ProfilePage = () => {
 					: ''
 					}`}
 			></div>
+
+
 			<div className="container bg-light shadow-sm mt-4 p-4">
 				<div className="row p-3">
-					<div className="col-md-4 col-12">
+					<div className="col-md-4 col-4">
 						<h2>Profile</h2>
 					</div>
-					<div className="col-md-8 col-12 d-flex justify-content-end">
-						<div className="col-3 text-end">
-							<Link to="/">
-								<button
-									className="defaultBtn"
-									style={{ width: 'auto' }}
-									onClick={handleLogout}
-								>
-									Log Out
-								</button>
-							</Link>
-						</div>
+					<div className="col-8 d-flex justify-content-end">
+
+						<Link to="/">
+							<button
+								className="defaultBtn"
+								style={{ width: 'auto' }}
+								onClick={handleLogout}
+							>
+								Log Out
+							</button>
+						</Link>
+
 					</div>
 				</div>
 				<table className="table h-50 text-center">
@@ -254,7 +303,7 @@ const ProfilePage = () => {
 				</table>
 				{isCognitoUser && (
 					<div className="row justify-content-end">
-						<div className="col-12 col-lg-4 text-md-end">
+						<div className="col-12 col-lg-8 text-md-end">
 							<button
 								className="defaultBtn me-3"
 								style={{ width: 'auto' }}
@@ -272,6 +321,52 @@ const ProfilePage = () => {
 						</div>
 					</div>)}
 			</div>
+
+
+			{/* MFA Preference Section */}
+			{(isCognitoUser && mfaEnabled && isPhoneVerified) && (
+				<div className='container bg-light shadow-sm mt-4 p-4'>
+					<div className="row p-3">
+						<div className="col-md-4 col-12">
+							<h2>MFA Preference</h2>
+						</div>
+
+						<div className="col-8 d-flex justify-content-end">
+							<button
+								className="defaultBtn"
+								style={{ width: 'auto' }}
+								onClick={() => updateMfaPreference()}
+							>
+								Update
+							</button>
+						</div>
+					</div>
+					<div className="row px-3">
+						<div className='pb-3'>
+							<div>To secure your login identities, we will use OTP verification</div>
+							<div>Where would you like to receive it?</div>
+						</div>
+
+						<div className='my-2'>
+							<div className="form-check pb-2">
+								<input className="form-check-input" type="radio" name="mfa-preference-selector" id="sms-radio" value="SMS_MFA" onChange={(event) => setMfaPreference(event.target.value)} checked={mfaPreference==="SMS_MFA"} />
+								<label className="form-check-label" htmlFor="sms-radio">
+									SMS
+								</label>
+							</div>
+							<div className="form-check">
+								<input className="form-check-input" type="radio" name="mfa-preference-selector" id="totp-radio" value="SOFTWARE_TOKEN_MFA" onChange={(event) => setMfaPreference(event.target.value)} checked={mfaPreference==="SOFTWARE_TOKEN_MFA"} />
+								<label className="form-check-label" htmlFor="totp-radio">
+									TOTP
+								</label>
+							</div>
+						</div>
+
+					</div>
+				</div>
+
+			)}
+
 
 			{showDeleteConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
@@ -338,5 +433,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
-
 

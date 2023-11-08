@@ -269,8 +269,11 @@ const MfaPage = () => {
 
   useEffect(() => {
     if (getSession) {
-      getSession().then(({ mfaEnabled }) => {
+      getSession().then(        
+        ({ mfaEnabled, phone_number_verified }) => {
         setEnabled(mfaEnabled)
+        setIsVerifiedPhone(phone_number_verified === 'true')
+        
       })
     }
   }, [])
@@ -296,7 +299,7 @@ const MfaPage = () => {
         <div id="set-up-phone-number" className="row justify-content-center align-items-center border my-5 ">
           <h2 className={isVerifiedPhone ? "py-3 px-3 card-success" : "py-3 px-3 card-header"}>Step 1: Set up Phone Number MFA</h2>
 
-          {!isVerifiedPhone && !optOut ?
+          {(!isVerifiedPhone && !optOut) ?
             <div>
               <div id="enter-phone-number">
                 {/* Step 1A: Enter in Phone Number */}
@@ -463,7 +466,7 @@ const MfaPage = () => {
               </div>
 
               <button
-                className="btn btn-primary"
+                className="btn btn-primary defaultBtn"
                 onClick={() => updateMfaPreference()}
               >
                 Update

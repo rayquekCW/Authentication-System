@@ -98,6 +98,22 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
               );
             });
 
+            /* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
+            const preferredMFA = await new Promise((resolve) => {
+              cognito.getUser(
+                {
+                  AccessToken: accessToken,
+                },
+                (err, data) => {
+                  if (err) resolve(false);
+                  else
+                    resolve(
+                      data.PreferredMfaSetting
+                    );
+                }
+              );
+            });
+
             /* Retrieving the JSON Web Token (JWT) from the session's ID token. */
             const token = session.getIdToken().getJwtToken();
 
@@ -105,6 +121,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
               user,
               accessToken,
               mfaEnabled,
+              preferredMFA,
               headers: {
                 'x-api-key': attributes['custom:apikey'],
                 Authorization: token,
