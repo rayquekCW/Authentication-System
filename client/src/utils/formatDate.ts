@@ -1,3 +1,10 @@
+/**
+ * The `formatDate` function takes a string representing a date in the format "yyyy-mm-dd" and returns
+ * a string representing the same date in the format "dd/mm/yyyy".
+ * @param {string} inputDate - The inputDate parameter is a string representing a date in the format
+ * "yyyy-mm-dd".
+ * @returns the formatted date string in the format "dd/mm/yyyy".
+ */
 export const formatDate = (inputDate: string) => {
 	var parts = inputDate.split("-");
 

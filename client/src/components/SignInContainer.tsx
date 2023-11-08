@@ -2,6 +2,7 @@ import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
+import { validateEmailFormat, validatePasswordFormat } from '../utils/validateFormat';
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
@@ -11,27 +12,18 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 	const [email, setEmail] = useState('');
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
+	const [errors, setErrors] = useState<string[]>([]);
 
 	const { authenticate, getSession } = useContext(AccountContext) || {};
 	const navigate = useNavigate();
 
 	/**
-	 * The function `validateEmail` checks if an email address is valid by ensuring it has a non-empty
-	 * local part and domain part separated by an '@' symbol.
-	 * @param {string} email - The email parameter is a string that represents an email address.
-	 * @returns a boolean value. It returns true if the email is valid (contains exactly one '@' symbol and
-	 * has non-empty strings before and after the '@' symbol), and false otherwise.
+	 * The function `requireMFASetup` checks if the user is authenticated, sets tokens in sessionStorage,
+	 * verifies if the user is an admin, and navigates to the appropriate page based on the user's role.
+	 * @returns The function `requireMFASetup` does not have an explicit return statement. However, it may
+	 * implicitly return a Promise if the conditions in the code are met.
 	 */
-	function validateEmail(email: string) {
-		var emailCheck = email.split('@');
-		return (
-			emailCheck.length === 2 &&
-			emailCheck[0].length > 0 &&
-			emailCheck[1].length > 0
-		);
-	}
-
-	async function requireMFASetup() {
+	async function login() {
 		if (authenticate) {
 			try {
 				const data: any = await authenticate(email, password);
@@ -41,7 +33,7 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 				sessionStorage.setItem("access_token", data.accessToken.jwtToken)
 				sessionStorage.setItem("refresh_token", data.refreshToken.token)
 
-				//verify if user is admin
+				// Verify if user role is admin
 				if (getSession) {
 
 					const { headers, accessToken, mfaEnabled } = await getSession();
@@ -58,25 +50,27 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 					try {
 						const response = await fetch(uri, { headers });
 
+						// Throw error if response is not ok
 						if (!response.ok) {
 							throw new Error("Network response was not ok");
 						}
+
 						const data = await response.json();
 
+						// Go to admin dashboard if user is admin or super admin
 						if (data.role === "admin" || data.role === "super_admin") {
-							//go to admin dashboard if user is admin
 							return navigate("/cm-dashboard");
 						}
 
-						//go to home if user is not admin
+						// Go to home if user is not admin
 						navigate("/home");
 
-					} catch (error) {
-						console.error(error);
+					} catch (error: any) {
+						setErrors([error.message]);
 					}
 				}
-			} catch (err) {
-				console.error("Failed to login!", err);
+			} catch (err: any) {
+				setErrors([err.message]);
 			}
 		}
 	}
@@ -125,10 +119,18 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 						</button>
 					</div>
 				</div>
-				<div>
-					<p className="caption">Don't have an account?</p>
+				<div className="text-center">
+
+					{/* Display error messages */}
+					{errors.map((error, index) => (
+						<p className="text-danger" key={index}>
+							{error}
+						</p>
+					))}
+
+					<h5 className="caption">Haven't activated your account?</h5>
 					<p className="caption">
-						Register with us
+						Get activated
 						<span
 							className="text-primary cursor-pointer"
 							onClick={handleSignIn}
@@ -143,19 +145,20 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID
 								}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
 						>
-							Sign In with SSO
+							Sign in with SSO
 						</Link>
 					</p>
 				</div>
 				<button
-					className={`defaultBtn ${validateEmail(email) ? '' : 'disabled'
+					className={`defaultBtn ${(validateEmailFormat(email) && validatePasswordFormat(password)) ? '' : 'disabled'
 						}`}
-					onClick={() => validateEmail(email) && requireMFASetup()}
-					disabled={!validateEmail(email)}
+					onClick={() => login()}
+					disabled={(!validateEmailFormat(email) || !validatePasswordFormat(password))}
 				>
 					Sign In
 				</button>{' '}
 			</div>
+
 		</>
 	);
 };

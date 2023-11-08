@@ -1,13 +1,14 @@
-import {FaAt, FaCalendar} from 'react-icons/fa';
-import {Link, useNavigate} from 'react-router-dom';
-import {useState} from 'react';
-import {formatDate} from '../utils/formatDate';
+import { FaAt, FaCalendar } from 'react-icons/fa';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { formatDate } from '../utils/formatDate';
+import { validateEmailFormat, validateDateFormat } from '../utils/validateFormat';
 
 type RegisterContainerProps = {
 	handleSignIn: () => void;
 };
 
-const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
+const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 	let navigate = useNavigate();
 	var today = new Date();
 	var dd = today.getDate();
@@ -17,10 +18,12 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 
 	const [email, setEmail] = useState('');
 	const [dob, setDob] = useState('');
+	const [errors, setErrors] = useState<string[]>([]);
+
 
 	/**
-	 * The function verifies a user's email and birthdate by making a POST request to an API and then
-	 * navigates to a password page if the user is verified.
+	 * The function `verify()` sends a POST request to an API endpoint to validate a user's email and
+	 * birthdate, and based on the response, either logs an error message or navigates to a password page.
 	 */
 	function verify() {
 		const API =
@@ -35,13 +38,11 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 				// if result has a errorType, then the user is not verified
 				// TODO - To update the lambda function to return properly if have time
 				if (result.errorType) {
-					console.log('User is not correct');
+					setErrors(['Email or Date of Birth is incorrect']);
 					return;
 				}
 
-				/* if result has a statusCode, then the user is verified
-				 * navigate to the setPassword page
-				 */
+				// else, navigate to password page
 				navigate('/password', {
 					state: {
 						isChangePassword: false,
@@ -88,7 +89,14 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 						/>
 					</div>
 				</div>
-				<div>
+				<div className='text-center'>
+					{/* Display error messages */}
+					{errors.map((error, index) => (
+						<p className="text-danger" key={index}>
+							{error}
+						</p>
+					))}
+
 					<h5 className="caption">Already have an account?</h5>
 					<p className="caption">
 						Login
@@ -101,11 +109,12 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 						</span>
 					</p>
 					<p className="caption">
-						or <Link to="/">Sign In with SSO</Link>
+						or <Link to="/">Sign in with SSO</Link>
 					</p>
 				</div>
-				<button className="defaultBtn" onClick={() => verify()}>
-					Sign Up!
+				<button className={`defaultBtn ${(validateEmailFormat(email) && validateDateFormat(dob)) ? '' : 'disabled'
+					}`} onClick={() => verify()} disabled={(!validateEmailFormat(email) || !validateDateFormat(dob))}>
+					Activate
 				</button>
 			</div>
 		</>
