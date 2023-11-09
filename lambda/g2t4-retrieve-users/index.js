@@ -39,7 +39,7 @@ const validateAdmin = async (token) =>
     });
   });
 
-const retrieveUsers = async (event) =>
+const retrieveUsers = async (bankIdentifier) =>
   await new Promise((resolve, reject) => {
     const params = {
       UserPoolId: "ap-southeast-1_crimtf1ce",
@@ -53,8 +53,14 @@ const retrieveUsers = async (event) =>
         });
       } else {
         try {
-          const usersData = data.Users.map((user) => {
-            console.log(user);
+          const filteredUsers = data.Users.filter((user) => {
+            const bankNameAttribute = user.Attributes.find(
+              (attr) => attr.Name === 'custom:bank_name'
+            );
+            return bankNameAttribute && bankNameAttribute.Value === bankIdentifier;
+          });
+
+          const usersData = filteredUsers.map((user) => {
             const emailAttribute = user.Attributes.find(
               (attr) => attr.Name === "email"
             );
@@ -129,8 +135,18 @@ const main = async (event) => {
   if (!accessToken && event.accessToken) {
     accessToken = event.accessToken;
   }
+
+  let bankIdentifier = "";
+  if (event.queryStringParameters && event.queryStringParameters.bankIdentifier) {
+    bankIdentifier = event.queryStringParameters.bankIdentifier;
+  }
+
+  if(!bankIdentifier && event.bankIdentifier) {
+    bankIdentifier = event.bankIdentifier;
+  }
+
   const status = await validateAdmin(accessToken);
-  const users = await retrieveUsers(event);
+  const users = await retrieveUsers(bankIdentifier);
   const response = {
     statusCode: status.role,
     users: users,

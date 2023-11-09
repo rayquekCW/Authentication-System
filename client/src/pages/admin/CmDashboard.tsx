@@ -7,6 +7,7 @@ import { AccountContext } from "../../services/Account";
 import SignInPopup from "../../components/SignInPopup";
 import UserLogoutPopup from "../../components/UserLogout";
 import AdminNavBar from "../../components/navigation/AdminNavBar";
+const bankName = import.meta.env.VITE_BANK_NAME;
 
 const CmDashboard = () => {
 	const { getSession } = useContext(AccountContext) || {};
@@ -123,7 +124,7 @@ const CmDashboard = () => {
 					const headers = sessionData.headers;
 					const API =
 						"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
-					const uri = `${API}?accessToken=${accessToken}`;
+					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankName}`;
 					try {
 						const response = await fetch(uri, { headers });
 

@@ -4,7 +4,8 @@ import { PiUserSquareFill } from "react-icons/pi";
 import { ImFolderDownload } from "react-icons/im";
 import { GoLog } from "react-icons/go";
 import { BiSolidShoppingBags } from "react-icons/bi";
-import BankLogo from "../../assets/posb.svg";
+const bankName = import.meta.env.VITE_BANK_NAME;
+const BankLogo = await import(`../../assets/${bankName}.svg`);
 
 type SideBarProps = {
 	handleClick: () => void;
@@ -20,7 +21,7 @@ const Sidebar = ({ handleClick }: SideBarProps) => {
 					style={{ fontSize: "25px", marginRight: "5px" }}
 				/>
 			</button>
-			<img src={BankLogo} alt="bank-logo" width={150} />
+			<img src={BankLogo.default} alt="bank-logo" width={150} />
 			<ul className="ms-3">
 				<li>
 					<Link to="/cm-dashboard" style={{ textDecoration: "none" }}>

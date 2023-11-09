@@ -48,15 +48,15 @@ p {
 
 /* Backgrounds */
 .bg-primary {
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
 }
 
 .bg-secondary {
-  background-color: #fa9d00;
+  background-color: var(--secondaryBrandColor);
 }
 
 .navbar {
-  background-color: #0078ce;
+  background-color: var(--navBarColor);
 }
 
 .navbar-brand {
@@ -68,16 +68,16 @@ p {
   color: var(--light, #f5f5f7);
 }
 .nav-item :hover, .nav-link :hover {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 /* Text */
 .text-primary {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
 }
 
 .text-secondary {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 .caption {
@@ -89,19 +89,18 @@ p {
 }
 
 .bank-name {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
 }
 
 .bank-slogan {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 /* Buttons */
 .cancelBtn {
   background-color: white;
   color: var(--dark, #1d1d1f);
-  border: 0px solid #0078ce;
-  margin-top: 0.5rem;
+  border: 0px solid var(--primaryBrandColor);
   padding: 0.5rem 1rem;
   width: 50%;
   border-radius: 5px;
@@ -113,7 +112,7 @@ p {
 }
 
 .defaultBtn {
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;
@@ -121,7 +120,7 @@ p {
   border-radius: 5px;
   transition: background-color 0.3s;
   cursor: pointer;
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;
@@ -130,21 +129,21 @@ p {
   transition: background-color 0.3s;
 }
 .defaultBtn:hover:enabled {
-  background-color: #0066BB;
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 .defaultBtn.disabled {
-  background-color: rgba(0, 120, 206, 0.4);
+  background-color: var(--disabledColor);
   cursor: not-allowed;
 }
 .defaultBtn:hover:enabled {
-  background-color: #0066BB;
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 
 .mfaBtn {
-  color: #0078ce;
-  border-color: #0078ce;
+  color: var(--primaryBrandColor);
+  border-color: var(--primaryBrandColor);
   transition: background-color 0.3s;
 }
 @media (min-width: 320px) {
@@ -158,7 +157,7 @@ p {
   }
 }
 .mfaBtn:hover {
-  background-color: #0066BB;
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 
@@ -173,7 +172,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   opacity: 50%;
   z-index: 999;
   display: none;
@@ -306,11 +305,11 @@ p {
 
 .nav-link-sideBar {
   padding: 10px;
-  color: #0078ce;
+  color: var(--primaryBrandColor);
   transition: background-color 0.3s ease;
 }
 .nav-link-sideBar :hover {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 .open {
@@ -324,19 +323,19 @@ p {
   right: 10px;
   background: none;
   border: none;
-  color: #0078ce;
+  color: var(--primaryBrandColor);
   font-size: 24px;
   cursor: pointer;
 }
 
 /* Table */
 .table-header {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
   font-weight: bolder;
 }
 
 .card-header {
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   font-weight: bolder;
   color: var(--light, #f5f5f7);
 }
@@ -349,6 +348,14 @@ p {
 
 .nav-default {
   font-size: 16px;
-  background-color: #0078CE;
+  background-color: #ffffff;
   padding: 20px;
+}
+
+.drag-drop-wrapper {
+  border: 1px solid;
+}
+
+.drag-drop-disabled {
+  display: none;
 }

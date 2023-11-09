@@ -2,7 +2,8 @@ import { FaPhoneAlt, FaUserSecret, FaAt } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
-import BankLogo from "../assets/posb.svg";
+const bankName = import.meta.env.VITE_BANK_NAME;
+const BankLogo = await import(`../assets/${bankName}.svg`);
 
 const MfaPage = () => {
 	const navigate = useNavigate();
@@ -276,7 +277,7 @@ const MfaPage = () => {
 		<>
 			<nav className="navbar navbar-expand-lg navbar-light nav-default">
 				<div className="container">
-					<img src={BankLogo} alt="bank-logo" width={100} />
+					<img src={BankLogo.default} alt="bank-logo" width={100} />
 				</div>
 			</nav>
 

@@ -1,3 +1,4 @@
+import {useEffect} from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import LoginPage from "./pages/LoginPage";
 import "./App.css";
@@ -15,8 +16,18 @@ import CmProfile from "./pages/admin/CmProfile";
 import { Account } from "./services/Account";
 import { CookiesProvider } from "react-cookie";
 import ProtectedRoute from "./ProtectedRoute";
+const bankName = import.meta.env.VITE_BANK_NAME;
+const bankConfig = await import(`../config/${bankName}.json`);
 
 const App = () => {
+	useEffect(() => {
+			// Generate CSS custom properties dynamically from brandColors data
+			const root = document.documentElement;
+			Object.entries(bankConfig.brandColors).forEach(([name, value]) => {
+				return root.style.setProperty(`--${name}`, value as string);
+			});
+		}
+	);
 	return (
 		<>
 			<CookiesProvider>

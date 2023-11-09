@@ -2,7 +2,8 @@ import { Link } from "react-router-dom";
 import { IoMdLogOut } from "react-icons/io";
 import { useContext } from "react";
 import "../../styles/_variable.scss";
-import BankLogo from "../../assets/posb.svg";
+const bankName = import.meta.env.VITE_BANK_NAME;
+const BankLogo = await import(`../../assets/${bankName}.svg`);
 import { AccountContext } from "../../services/Account";
 import { useCookies } from "react-cookie";
 import { useNavigate } from "react-router-dom";
@@ -27,17 +28,14 @@ const NavBar = () => {
 
 	return (
 		<nav className="navbar navbar-expand">
-			<div className="container d-flex justify-content-between">
-				<Link to="/home">
-					<img
-						src={BankLogo}
-						alt="bank-logo"
-						height={75}
-						width={100}
-						className="navbar-brand"
-					/>
-				</Link>
-
+			<div className="container">
+				<img
+					src={BankLogo.default}
+					alt="bank-logo"
+					height={75}
+					width={100}
+					className="navbar-brand"
+				/>
 				<button
 					className="navbar-toggler"
 					type="button"
