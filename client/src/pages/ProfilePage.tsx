@@ -287,6 +287,13 @@ const ProfilePage = () => {
 								{userData?.phone_number
 									? userData.phone_number
 									: "Not Set"}
+
+								{!isPhoneVerified && (
+									<span>
+										&nbsp; &nbsp; &nbsp;
+										<a href="/mfa">Finish Set-up</a>
+									</span>
+								)}
 							</td>
 						</tr>
 						<tr>

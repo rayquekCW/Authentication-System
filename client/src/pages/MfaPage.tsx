@@ -1,4 +1,4 @@
-import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
+import { FaPhoneAlt, FaUserSecret, FaAt } from "react-icons/fa";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
@@ -275,7 +275,7 @@ const MfaPage = () => {
 	return (
 		<>
 			<nav className="navbar navbar-expand-lg navbar-light nav-default">
-				<div className="container-fluid">
+				<div className="container">
 					<img src={BankLogo} alt="bank-logo" width={100} />
 				</div>
 			</nav>
@@ -320,8 +320,7 @@ const MfaPage = () => {
 											className="input-group-text"
 											id="phone-number-input"
 										>
-											<FaAt />{" "}
-											{/* TODO - Change the logo to a phone logo*/}
+											<FaPhoneAlt />{" "}
 										</span>
 										<input
 											type="tel"
@@ -347,14 +346,12 @@ const MfaPage = () => {
 										<div className="pt-3">
 											Verify the Phone Number
 										</div>
-										{/* Add a input text box and validate it for 6 digits only */}
 										<div className="input-group py-3">
 											<span
 												className="input-group-text"
 												id="phone-confirmation-code"
 											>
-												<FaAt />{" "}
-												{/* TODO - Change the logo to a phone logo*/}
+												<FaUserSecret />{" "}
 											</span>
 											<input
 												type="text"
@@ -532,6 +529,22 @@ const MfaPage = () => {
 
 						{/* ----End of Step 2 */}
 					</div>
+
+					{optOut && enabled && (
+						<div>
+							<button
+								className="btn btn-primary defaultBtn"
+								onClick={() => {
+									if (logout) {
+										logout();
+										navigate("/");
+									}
+								}}
+							>
+								Confirm
+							</button>
+						</div>
+					)}
 
 					{/* Step 3 */}
 					{!optOut && enabled && isVerifiedPhone && (
