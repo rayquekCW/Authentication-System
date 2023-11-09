@@ -170,7 +170,8 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
         },
 
         totpRequired: () => {
-          const token = prompt("Please enter your 6-digit OAUTH token");
+          alert("Please check your phone for the Authenticator code")
+          const token = prompt("Please enter your 6-digit code from your OAUTH token");
           if (token) {
             userState.sendMFACode(
               token,
@@ -190,7 +191,8 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
         },
 
         mfaRequired: () => {
-          const token = prompt("Please enter your 6-digit MFA passcode");
+          alert("Please check your phone for a 6-digit code")
+          const token = prompt("Please enter your 6-digit code from your phone");
           if (token) {
             userState.sendMFACode(
               token,
