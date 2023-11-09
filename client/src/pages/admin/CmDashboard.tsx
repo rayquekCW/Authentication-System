@@ -1,38 +1,22 @@
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-  AiFillExclamationCircle,
-  AiFillEdit,
-  AiOutlineClose,
-} from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
-import { IoMdLogOut } from "react-icons/io";
-import { GiHamburgerMenu } from "react-icons/gi";
+import { AiFillEdit, AiOutlineClose } from "react-icons/ai";
 import { MdRemoveCircle } from "react-icons/md";
-import BankLogo from "../../assets/posb.svg";
-import Sidebar from "../../components/navigation/SideBar";
-import SideBarSuper from "../../components/navigation/SideBarSuper";
 import Pagination from "react-bootstrap/Pagination";
 import Switch from "react-switch";
 import { AccountContext } from "../../services/Account";
 import SignInPopup from "../../components/SignInPopup";
-import UserLogoutPopup from '../../components/UserLogout';
-import { useCookies } from 'react-cookie';
-import { useNavigate } from 'react-router-dom';
+import UserLogoutPopup from "../../components/UserLogout";
+import AdminNavBar from "../../components/navigation/AdminNavBar";
 
 const CmDashboard = () => {
-  const { getSession, logout } = useContext(AccountContext) || {};
+  const { getSession } = useContext(AccountContext) || {};
 
   //TODO: Implement different protected routes based on admin types (super_admin, admin, user)
-  const [adminType, setAdminType] = useState('');
-  const [cookie, setCookie, removeCookie] = useCookies();
-  const navigate = useNavigate();
-  const isSuper = adminType === 'super_admin';
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [userSub, setUserSub] = useState<string>('');
-  const [userName, setUserName] = useState<string>('');
+  const [adminType, setAdminType] = useState("");
+  const [userName, setUserName] = useState<string>("");
+  const [userSub, setUserSub] = useState<string>("");
   const [currentUserSub, setCurrentUserSub] = useState<string>("");
-  const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false)
+  const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false);
 
   // For MFA Popups
   const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
@@ -50,7 +34,7 @@ const CmDashboard = () => {
   const [customers, setCustomers] = useState([]);
   const updateCustomers = (updatedCustomers: any) => {
     setCustomers(updatedCustomers);
-  }
+  };
 
   // Handle Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -76,7 +60,6 @@ const CmDashboard = () => {
     }
   };
 
-
   /**
    * The function `toggleSuperAdmin` toggles the value of `isSuperAdmin` and sets `isAdmin` to `false` if
    * it was previously `true`.
@@ -86,10 +69,6 @@ const CmDashboard = () => {
     if (isAdmin) {
       setIsAdmin(false);
     }
-  };
-
-  const handleClick = () => {
-    setIsOpen(!isOpen);
   };
 
   // For Delete Popup
@@ -108,31 +87,16 @@ const CmDashboard = () => {
     setShowEditPopup(true);
     setIsDeleteAccount(false);
     setUserSub(userSub); //userSub of selected user
-    if (userRole == 'Super Admin') {
+    if (userRole == "Super Admin") {
       setIsSuperAdmin(true);
       setIsAdmin(false);
-    } else if (userRole == 'Admin') {
+    } else if (userRole == "Admin") {
       setIsAdmin(true);
       setIsSuperAdmin(false);
     }
   };
   const handleEditConfirmButtonClick = () => {
     setShowMfaPopup(true);
-  };
-
-  const handleLogout = () => {
-    if (logout) {
-      logout();
-      removeCookie('userData');
-      navigate('/');
-    }
-  };
-
-  // TODO - Refactor this into a separate file
-  const inlineStyle = {
-    fontSize: '16px',
-    backgroundColor: '#0078CE',
-    padding: '20px',
   };
 
   // TODO - Refactor this into a utils file
@@ -151,9 +115,8 @@ const CmDashboard = () => {
           // Sets the current user's details
           // Calls the api to retrieve all users
           setCurrentUserSub(sessionData.sub);
-          setUserName(sessionData.given_name + " " + sessionData.family_name)
+          setUserName(sessionData.given_name + " " + sessionData.family_name);
           const accessToken = sessionData.accessToken.jwtToken;
-          console.log(sessionData);
 
           const headers = sessionData.headers;
           const API =
@@ -169,7 +132,6 @@ const CmDashboard = () => {
             } else {
               console.error("Error retrieving user data");
             }
-
           } catch (error) {
             console.error("Error while validating admin:", error);
           }
@@ -185,55 +147,11 @@ const CmDashboard = () => {
       <UserLogoutPopup />
       <div>
         <div
-          className={`overlay ${showMfaPopup || showDeleteConfirmPopup ? "active" : ""
-            }`}
+          className={`overlay ${
+            showMfaPopup || showDeleteConfirmPopup ? "active" : ""
+          }`}
         ></div>
-        <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-          <div className="container-fluid">
-            <div onClick={handleClick} style={{ cursor: "pointer" }}>
-              <GiHamburgerMenu
-                style={{ fontSize: "25px", color: "white", marginRight: "5px" }}
-              />
-            </div>
-            <img src={BankLogo} alt="bank-logo" width={100} />
-            <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
-              <li className="nav-item me-4">
-                <Link className="nav-link" to="" style={{ color: "white" }}>
-                  {
-                    <AiFillExclamationCircle
-                      style={{ marginRight: "5px", marginBottom: "3px" }}
-                    />
-                  }
-                  Edit Tooltips
-                </Link>
-              </li>
-              <li className="nav-item me-4">
-                <Link className="nav-link" to="" style={{ color: "white" }}>
-                  <CgProfile
-                    style={{ marginRight: "5px", marginBottom: "3px" }}
-                  />
-                  {userName}
-                </Link>
-              </li>
-              <li className="nav-item me-4">
-                {/* TODO: Logout functionality */}
-                <Link className="nav-link" to="" style={{ color: "white" }} onClick={handleLogout}>
-                  <IoMdLogOut
-                    style={{ marginRight: "5px", marginBottom: "3px" }}
-                  />
-                  Logout
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
-          {isSuper ? (
-            <SideBarSuper handleClick={handleClick} />
-          ) : (
-            <Sidebar handleClick={handleClick} />
-          )}
-        </div>
+        <AdminNavBar adminType={adminType} userName={userName} />
         <h1 className="mt-5 ms-5">Customers</h1>
         <table
           className="table mt-4 ms-5"
@@ -279,9 +197,8 @@ const CmDashboard = () => {
                       </button>
                       <button
                         className="btn btn-secondary ms-2"
-                        onClick={() => handleDeleteButtonClick(
-                          customer.Username
-                        )
+                        onClick={() =>
+                          handleDeleteButtonClick(customer.Username)
                         }
                       >
                         <MdRemoveCircle />
@@ -327,7 +244,9 @@ const CmDashboard = () => {
                 <tbody>
                   <tr>
                     <td>
-                      <span className="me-3">Admin (Restricted & Read-Only)</span>
+                      <span className="me-3">
+                        Admin (Restricted & Read-Only)
+                      </span>
                     </td>
                     <td>
                       <Switch
@@ -385,14 +304,14 @@ const CmDashboard = () => {
               <h6>Are you sure you want to deactivate this user?</h6>
               <button
                 className="defaultBtn me-2"
-                style={{ width: 'auto' }}
+                style={{ width: "auto" }}
                 onClick={handleDeleteConfirmButtonClick}
               >
                 Yes
               </button>
               <button
                 className="cancelBtn"
-                style={{ width: 'auto' }}
+                style={{ width: "auto" }}
                 onClick={closePopup}
               >
                 No
@@ -411,7 +330,16 @@ const CmDashboard = () => {
             </div>
             <div className="popup-content">
               <div className="my-5">
-                <SignInPopup currentUserSub={currentUserSub} targetSub={userSub} role={isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"} updateCustomers={updateCustomers} closePopup={closePopup} isDeleteAccount={isDeleteAccount} />
+                <SignInPopup
+                  currentUserSub={currentUserSub}
+                  targetSub={userSub}
+                  role={
+                    isAdmin ? "admin" : isSuperAdmin ? "super_admin" : "user"
+                  }
+                  updateCustomers={updateCustomers}
+                  closePopup={closePopup}
+                  isDeleteAccount={isDeleteAccount}
+                />
               </div>
             </div>
           </div>
