@@ -1,15 +1,10 @@
 import { Link } from "react-router-dom";
 import "../../styles/_variable.scss"
-import { BsList } from "react-icons/bs";
+// import { BsList } from "react-icons/bs";
 import BankLogo from "../../assets/posb.svg";
 
 
 const NavBar = () => {
-  const inlineStyle = {
-    fontSize: "16px",
-    backgroundColor: "#0078CE",
-    padding: "20px",
-  };
 
   const handleToggleClick = () => {
     const navbarNavDropdown = document.getElementById("navbarNavDropdown");
@@ -17,15 +12,14 @@ const NavBar = () => {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-      <div className="container-fluid">
-        <img src={BankLogo} alt="bank-logo" width={100}/>
+    <nav className="navbar navbar-expand">
+      <div className="container">
+        <img src={BankLogo} alt="bank-logo" height={75} width={100} className="navbar-brand"/>
         <button
           className="navbar-toggler"
           type="button"
           onClick={handleToggleClick}
         >
-          <BsList style={{ color: "white" }} />
         </button>
         <div className="collapse navbar-collapse" id="navbarNavDropdown">
           <ul className="navbar-nav">
@@ -34,7 +28,6 @@ const NavBar = () => {
                 className="nav-link"
                 aria-current="page"
                 to="/home"
-                style={{ color: "white" }}
               >
                 Home
               </Link>
@@ -43,7 +36,6 @@ const NavBar = () => {
               <Link
                 className="nav-link"
                 to="/profile"
-                style={{ color: "white" }}
               >
                 Profile
               </Link>

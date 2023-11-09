@@ -60,7 +60,20 @@ p {
 }
 
 .navbar {
-  height: 5rem;
+  background-color: $primaryBrandColor;
+}
+
+.navbar-brand {
+  object-fit: cover;
+}
+
+.nav-item, .nav-link{
+  color: $light;
+  
+
+  :hover{
+    color: $secondaryBrandColor;
+  }
 }
 
 /* Text */
