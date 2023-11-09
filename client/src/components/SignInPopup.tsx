@@ -10,13 +10,23 @@ type SignInContainerProps = {
   updateCustomers: any;
   closePopup: any;
   isDeleteAccount?: boolean;
+  isChangePassword?: boolean;
 };
 
-const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePopup, isDeleteAccount = false }: SignInContainerProps) => {
+const SignInPopUp = ({
+  currentUserSub,
+  targetSub,
+  role,
+  updateCustomers,
+  closePopup,
+  isDeleteAccount = false,
+  isChangePassword = false,
+}: SignInContainerProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const { authenticate, getSession, deleteAccount, deleteSelectedAccount } = useContext(AccountContext) || {};
+  const { authenticate, getSession, deleteAccount, deleteSelectedAccount } =
+    useContext(AccountContext) || {};
   const navigate = useNavigate();
 
   /**
@@ -41,33 +51,60 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
    * @returns The function does not explicitly return anything.
    */
   async function requireMFASetup() {
-    if (isDeleteAccount) {
-      if (deleteSelectedAccount && targetSub !== "") {
-        const response =  await deleteSelectedAccount(email, password, currentUserSub, targetSub);
-        if (response) {
-          updateCustomers(response)
-          closePopup();
-          alert("Account deleted successfully!")
-        }
-        else {
-          alert("Error deleting account!")
+    if (isChangePassword) {
+      if (authenticate) {
+        try {
+          const data: any = await authenticate(email, password);
+          // data is supposed to be the cognito user
+          if (data.accessToken.payload.sub !== currentUserSub) {
+            alert("You are not the current user!");
+            closePopup();
+            return;
+          } else {
+            navigate("/password", {
+              state: {
+                isChangePassword: true,
+                isVerified: false,
+                email: email,
+              },
+            });
+            return;
+          }
+        } catch (err) {
+          console.error("Failed to login!", err);
         }
       }
-      else if (deleteAccount) {
+    }
+    if (isDeleteAccount) {
+      if (deleteSelectedAccount && targetSub !== "") {
+        const response = await deleteSelectedAccount(
+          email,
+          password,
+          currentUserSub,
+          targetSub
+        );
+        if (response) {
+          updateCustomers(response);
+          closePopup();
+          alert("Account deleted successfully!");
+        } else {
+          alert("Error deleting account!");
+        }
+      } else if (deleteAccount) {
         await deleteAccount(email, password, currentUserSub);
         closePopup();
         navigate("/");
       }
-      return
+      return;
     }
-    if (authenticate) {
+    if (authenticate && !isChangePassword) {
       try {
         const data: any = await authenticate(email, password);
         // data is supposed to be the cognito user
         if (data.accessToken.payload.sub !== currentUserSub) {
           alert("You are not the current user!");
           closePopup();
-          return
+          return;
         }
 
         //verify if user is admin
@@ -97,7 +134,7 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
                   headers: headers,
                   body: JSON.stringify({ sub, role, accessToken }),
                 });
-                
+
                 if (response.ok) {
                   const API =
                     "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
@@ -121,7 +158,6 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
               } catch (error) {
                 console.error("Error while validating admin:", error);
               }
-
             } else {
               //go to home if user is not admin
               alert("You are not an admin!");
@@ -180,7 +216,6 @@ const SignInPopUp = ({ currentUserSub, targetSub, role, updateCustomers, closePo
             </button>
           </div>
         </div>
-
         <button
           className={`defaultBtn ${validateEmail(email) ? "" : "disabled"}`}
           onClick={() => validateEmail(email) && requireMFASetup()}
