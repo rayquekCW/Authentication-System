@@ -1,8 +1,11 @@
-import { FaAt, FaCalendar } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
-import { formatDate } from '../utils/formatDate';
-import { validateEmailFormat, validateDateFormat } from '../utils/validateFormat';
+import { FaAt, FaCalendar } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { formatDate } from "../utils/formatDate";
+import {
+	validateEmailFormat,
+	validateDateFormat,
+} from "../utils/validateFormat";
 
 type RegisterContainerProps = {
 	handleSignIn: () => void;
@@ -12,14 +15,13 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 	let navigate = useNavigate();
 	var today = new Date();
 	var dd = today.getDate();
-	var mm = String(today.getMonth() + 1).padStart(2, '0');
+	var mm = String(today.getMonth() + 1).padStart(2, "0");
 	var yyyy = today.getFullYear();
-	var maxDate = yyyy + '-' + mm + '-' + dd;
+	var maxDate = yyyy + "-" + mm + "-" + dd;
 
-	const [email, setEmail] = useState('');
-	const [dob, setDob] = useState('');
+	const [email, setEmail] = useState("");
+	const [dob, setDob] = useState("");
 	const [errors, setErrors] = useState<string[]>([]);
-
 
 	/**
 	 * The function `verify()` sends a POST request to an API endpoint to validate a user's email and
@@ -27,23 +29,23 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 	 */
 	function verify() {
 		const API =
-			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validate';
+			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validate";
 
 		const uri = `${API}?email=${email}&birthdate=${dob}`;
 		fetch(uri, {
-			method: 'POST',
+			method: "POST",
 		})
 			.then((data) => data.json())
 			.then((result) => {
 				// if result has a errorType, then the user is not verified
 				// TODO - To update the lambda function to return properly if have time
 				if (result.errorType) {
-					setErrors(['Email or Date of Birth is incorrect']);
+					setErrors(["Email or Date of Birth is incorrect"]);
 					return;
 				}
 
 				// else, navigate to password page
-				navigate('/password', {
+				navigate("/password", {
 					state: {
 						isChangePassword: false,
 						isVerified: false,
@@ -89,7 +91,7 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 						/>
 					</div>
 				</div>
-				<div className='text-center'>
+				<div className="text-center">
 					{/* Display error messages */}
 					{errors.map((error, index) => (
 						<p className="text-danger" key={index}>
@@ -104,7 +106,7 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 							className="text-primary cursor-pointer"
 							onClick={handleSignIn}
 						>
-							{' '}
+							{" "}
 							here!
 						</span>
 					</p>
@@ -112,8 +114,17 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 						or <Link to="/">Sign in with SSO</Link>
 					</p>
 				</div>
-				<button className={`defaultBtn ${(validateEmailFormat(email) && validateDateFormat(dob)) ? '' : 'disabled'
-					}`} onClick={() => verify()} disabled={(!validateEmailFormat(email) || !validateDateFormat(dob))}>
+				<button
+					className={`defaultBtn ${
+						validateEmailFormat(email) && validateDateFormat(dob)
+							? ""
+							: "disabled"
+					}`}
+					onClick={() => verify()}
+					disabled={
+						!validateEmailFormat(email) || !validateDateFormat(dob)
+					}
+				>
 					Activate
 				</button>
 			</div>

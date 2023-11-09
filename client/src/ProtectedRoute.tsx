@@ -1,11 +1,11 @@
-import {useState, useEffect, useContext} from 'react';
-import {useCookies} from 'react-cookie';
-import {AccountContext} from './services/Account';
-import {Navigate, Outlet} from 'react-router-dom';
+import { useState, useEffect, useContext } from "react";
+import { useCookies } from "react-cookie";
+import { AccountContext } from "./services/Account";
+import { Navigate, Outlet } from "react-router-dom";
 
 function ProtectedRoute() {
 	const [cookie] = useCookies();
-	const {getSession} = useContext(AccountContext) || {};
+	const { getSession } = useContext(AccountContext) || {};
 	const [isAuthenticated, setIsAuthenticated] = useState(false);
 	const [loading, setLoading] = useState(true); // To track loading state
 

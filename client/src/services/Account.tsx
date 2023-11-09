@@ -1,403 +1,472 @@
-import { useNavigate } from 'react-router-dom';
-import { createContext, ReactNode } from 'react';
-import { CognitoUser, AuthenticationDetails } from 'amazon-cognito-identity-js';
-import AWS from 'aws-sdk';
-import Pool from './UserPool';
-import { CognitoJwtVerifier } from 'aws-jwt-verify';
+import { useNavigate } from "react-router-dom";
+import { createContext, ReactNode } from "react";
+import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
+import AWS from "aws-sdk";
+import Pool from "./UserPool";
+import { CognitoJwtVerifier } from "aws-jwt-verify";
 
 // Define the type for the context value
 type AccountContextValue = {
-  authenticate: (Username: string, Password: string) => Promise<unknown>;
-  getSession: () => Promise<any>;
-  logout: () => void;
-  deleteAccount: (Username: string, Password: string, CurrentUserSub: string) => void;
-  deleteSelectedAccount: (Username: string, Password: string, CurrentUserSub: string, targetSub: string) => Promise<any>;
+	authenticate: (Username: string, Password: string) => Promise<unknown>;
+	getSession: () => Promise<any>;
+	logout: () => void;
+	deleteAccount: (
+		Username: string,
+		Password: string,
+		CurrentUserSub: string
+	) => void;
+	deleteSelectedAccount: (
+		Username: string,
+		Password: string,
+		CurrentUserSub: string,
+		targetSub: string
+	) => Promise<any>;
 };
 
 // Create a new instance of the Cognito JWT Verifier
 const verifier = CognitoJwtVerifier.create({
-  userPoolId: Pool.getUserPoolId(),
-  tokenUse: 'access',
-  clientId: Pool.getClientId(),
+	userPoolId: Pool.getUserPoolId(),
+	tokenUse: "access",
+	clientId: Pool.getClientId(),
 });
 
 // Create a new instance of the Cognito Identity Service Provider
 const cognito = new AWS.CognitoIdentityServiceProvider({
-  region: 'ap-southeast-1',
+	region: "ap-southeast-1",
 });
 
 // Initialize the context
 const AccountContext = createContext<AccountContextValue | undefined>(
-  undefined
+	undefined
 );
 
 const Account: React.FC<{ children: ReactNode }> = (props) => {
+	const navigate = useNavigate();
+	/**
+	 * The `getSession` function retrieves the user session, verifies the access token, retrieves user
+	 * attributes, checks if MFA is enabled, and returns the necessary data for authentication.
+	 */
+	const getSession = async () =>
+		await new Promise<void>((resolve, reject) => {
+			const user = Pool.getCurrentUser();
 
-  const navigate = useNavigate()
-  /**
-   * The `getSession` function retrieves the user session, verifies the access token, retrieves user
-   * attributes, checks if MFA is enabled, and returns the necessary data for authentication.
-   */
-  const getSession = async () =>
-    await new Promise<void>((resolve, reject) => {
-      const user = Pool.getCurrentUser();
+			if (user) {
+				// Get the session from the user
+				user.getSession(async (err: any, session: any) => {
+					if (err) {
+						reject();
+					} else {
+						/* Verifying the validity of the access token (JWT) obtained from the user's session. */
+						const accessToken = session.accessToken.jwtToken;
+						try {
+							const payload = verifier.verify(
+								accessToken // the JWT as string
+							);
+							console.log("Token is valid. Payload:", payload); //TODO - Remove this before moving to Production
+						} catch {
+							console.log("Token not valid!");
+						}
 
-      if (user) {
-        // Get the session from the user
-        user.getSession(async (err: any, session: any) => {
-          if (err) {
-            reject();
-          } else {
-            /* Verifying the validity of the access token (JWT) obtained from the user's session. */
-            const accessToken = session.accessToken.jwtToken;
-            try {
-              const payload = verifier.verify(
-                accessToken // the JWT as string
-              );
-              console.log("Token is valid. Payload:", payload); //TODO - Remove this before moving to Production
-            } catch {
-              console.log("Token not valid!");
-            }
+						/*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
+						const attributes = await new Promise<
+							Record<string, string>
+						>((resolve, reject) => {
+							user.getUserAttributes((err, attributes) => {
+								if (err) {
+									reject(err);
+								} else {
+									const results: Record<string, string> = {};
 
-            /*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
-            const attributes = await new Promise<
-              Record<string, string>
-            >((resolve, reject) => {
-              user.getUserAttributes((err, attributes) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  const results: Record<string, string> = {};
+									for (let attribute of attributes || []) {
+										const { Name, Value } = attribute;
+										results[Name] = Value;
+									}
 
-                  for (let attribute of attributes || []) {
-                    const { Name, Value } = attribute;
-                    results[Name] = Value;
-                  }
+									resolve(results);
+								}
+							});
+						});
 
-                  resolve(results);
-                }
-              });
-            });
+						/* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
+						const mfaEnabled = await new Promise((resolve) => {
+							cognito.getUser(
+								{
+									AccessToken: accessToken,
+								},
+								(err, data) => {
+									if (err) resolve(false);
+									else
+										resolve(
+											data.UserMFASettingList &&
+												data.UserMFASettingList.includes(
+													"SOFTWARE_TOKEN_MFA"
+												)
+										);
+								}
+							);
+						});
 
-            /* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
-            const mfaEnabled = await new Promise((resolve) => {
-              cognito.getUser(
-                {
-                  AccessToken: accessToken,
-                },
-                (err, data) => {
-                  if (err) resolve(false);
-                  else
-                    resolve(
-                      data.UserMFASettingList &&
-                      data.UserMFASettingList.includes(
-                        'SOFTWARE_TOKEN_MFA'
-                      )
-                    );
-                }
-              );
-            });
+						/* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
+						const preferredMFA = await new Promise((resolve) => {
+							cognito.getUser(
+								{
+									AccessToken: accessToken,
+								},
+								(err, data) => {
+									if (err) resolve(false);
+									else resolve(data.PreferredMfaSetting);
+								}
+							);
+						});
 
-            /* Checking whether Multi-Factor Authentication (MFA) is enabled for the user. */
-            const preferredMFA = await new Promise((resolve) => {
-              cognito.getUser(
-                {
-                  AccessToken: accessToken,
-                },
-                (err, data) => {
-                  if (err) resolve(false);
-                  else
-                    resolve(
-                      data.PreferredMfaSetting
-                    );
-                }
-              );
-            });
+						/* Retrieving the JSON Web Token (JWT) from the session's ID token. */
+						const token = session.getIdToken().getJwtToken();
 
-            /* Retrieving the JSON Web Token (JWT) from the session's ID token. */
-            const token = session.getIdToken().getJwtToken();
+						resolve({
+							user,
+							accessToken,
+							mfaEnabled,
+							preferredMFA,
+							headers: {
+								"x-api-key": attributes["custom:apikey"],
+								Authorization: token,
+							},
+							...session,
+							...attributes,
+						});
+					}
+				});
+			} else {
+				reject();
+			}
+		});
 
-            resolve({
-              user,
-              accessToken,
-              mfaEnabled,
-              preferredMFA,
-              headers: {
-                'x-api-key': attributes['custom:apikey'],
-                Authorization: token,
-              },
-              ...session,
-              ...attributes,
-            });
-          }
-        });
-      } else {
-        reject();
-      }
-    });
+	/**
+	 * The `authenticate` function is used to authenticate a user with a username and password, using AWS
+	 * Cognito, and handles scenarios such as new password requirement and multi-factor authentication.
+	 * @param {string} Username - The `Username` parameter is a string that represents the username of
+	 * the user trying to authenticate. It is used to create a new `CognitoUser` object.
+	 * @param {string} Password - The `Password` parameter is a string that represents the user's
+	 * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
+	 * method of the `CognitoUser` object.
+	 */
 
-  /**
-   * The `authenticate` function is used to authenticate a user with a username and password, using AWS
-   * Cognito, and handles scenarios such as new password requirement and multi-factor authentication.
-   * @param {string} Username - The `Username` parameter is a string that represents the username of
-   * the user trying to authenticate. It is used to create a new `CognitoUser` object.
-   * @param {string} Password - The `Password` parameter is a string that represents the user's
-   * password. It is used to authenticate the user's credentials when calling the `authenticateUser`
-   * method of the `CognitoUser` object.
-   */
+	const authenticate = (Username: string, Password: string) => {
+		return new Promise((resolve, reject) => {
+			const userState = new CognitoUser({ Username, Pool });
+			const authDetailState = new AuthenticationDetails({
+				Username,
+				Password,
+			});
 
-  const authenticate = (Username: string, Password: string) => {
-    return new Promise((resolve, reject) => {
-      const userState = new CognitoUser({ Username, Pool });
-      const authDetailState = new AuthenticationDetails({ Username, Password });
+			userState.authenticateUser(authDetailState, {
+				onSuccess: (data) => {
+					console.log("onSuccess:");
+					resolve(data);
+				},
 
-      userState.authenticateUser(authDetailState, {
-        onSuccess: (data) => {
-          console.log("onSuccess:");
-          resolve(data);
-        },
+				onFailure: (err) => {
+					console.error("onFailure:", err);
+					reject(err);
+				},
 
-        onFailure: (err) => {
-          console.error('onFailure:', err);
-          reject(err);
-        },
+				newPasswordRequired: (data) => {
+					console.log("newPasswordRequired:", data);
+					// Handle the new password requirement here
+					// For now, we are resolving it, but you should prompt the user for a new password
+					resolve(data);
+				},
 
-        newPasswordRequired: (data) => {
-          console.log("newPasswordRequired:", data);
-          // Handle the new password requirement here
-          // For now, we are resolving it, but you should prompt the user for a new password
-          resolve(data);
-        },
+				totpRequired: () => {
+					alert("Please check your phone for the Authenticator code");
+					const token = prompt(
+						"Please enter your 6-digit code from your OAUTH token"
+					);
+					if (token) {
+						userState.sendMFACode(
+							token,
+							{
+								onSuccess: (data) => {
+									resolve(data);
+								},
+								onFailure: (e) => {
+									console.error("onFailure:", e);
+									alert("Incorrect code!");
+									reject(e);
+								},
+							},
+							"SOFTWARE_TOKEN_MFA"
+						);
+					}
+				},
 
-        totpRequired: () => {
-          alert("Please check your phone for the Authenticator code")
-          const token = prompt("Please enter your 6-digit code from your OAUTH token");
-          if (token) {
-            userState.sendMFACode(
-              token,
-              {
-                onSuccess: (data) => {
-                  resolve(data);
-                },
-                onFailure: (e) => {
-                  console.error("onFailure:", e);
-                  alert("Incorrect code!");
-                  reject(e);
-                }
-              },
-              "SOFTWARE_TOKEN_MFA"
-            );
-          }
-        },
+				mfaRequired: () => {
+					alert("Please check your phone for a 6-digit code");
+					const token = prompt(
+						"Please enter your 6-digit code from your phone"
+					);
+					if (token) {
+						userState.sendMFACode(
+							token,
+							{
+								onSuccess: (data) => {
+									resolve(data);
+								},
+								onFailure: (e) => {
+									console.error("onFailure:", e);
+									alert("Incorrect code!");
+									reject(e);
+								},
+							},
+							"SMS_MFA"
+						);
+					}
+				},
+			});
+		});
+	};
 
-        mfaRequired: () => {
-          alert("Please check your phone for a 6-digit code")
-          const token = prompt("Please enter your 6-digit code from your phone");
-          if (token) {
-            userState.sendMFACode(
-              token,
-              {
-                onSuccess: (data) => {
-                  resolve(data);
-                },
-                onFailure: (e) => {
-                  console.error("onFailure:", e);
-                  alert("Incorrect code!");
-                  reject(e);
-                }
-              },
-              "SMS_MFA"
-            );
-          }
-        },
-      });
-    });
-  };
+	/**
+	 * The `logout` function signs out the current user if there is one.
+	 */
+	const logout = () => {
+		const user = Pool.getCurrentUser();
+		if (user) {
+			window.localStorage.clear();
+			user.signOut();
+		}
+	};
 
+	/**
+	 * The `deleteAccount` function deletes the current user if there is one.
+	 */
+	const deleteAccount = async (
+		Username: string,
+		Password: string,
+		CurrentUserSub: string
+	) => {
+		await new Promise(async (resolve, reject) => {
+			try {
+				const cognitoUser = new CognitoUser({
+					Username,
+					Pool,
+				});
+				const authDetailState = new AuthenticationDetails({
+					Username,
+					Password,
+				});
+				cognitoUser.authenticateUser(authDetailState, {
+					onSuccess: (data) => {
+						console.log("onSuccess:", data);
+					},
 
-  /**
-   * The `logout` function signs out the current user if there is one.
-   */
-  const logout = () => {
-    const user = Pool.getCurrentUser();
-    if (user) {
-      window.localStorage.clear();
-      user.signOut();
-    }
-  };
+					onFailure: (err) => {
+						console.error("onFailure:", err);
+						reject(err);
+					},
 
-  /**
-   * The `deleteAccount` function deletes the current user if there is one.
-   */
-  const deleteAccount = async (Username: string, Password: string, CurrentUserSub: string) => {
-    await new Promise(async (resolve, reject) => {
-      try {
-        const cognitoUser = new CognitoUser({
-          Username,
-          Pool,
-        });
-        const authDetailState = new AuthenticationDetails({ Username, Password });
-        cognitoUser.authenticateUser(authDetailState, {
-          onSuccess: (data) => {
-            console.log("onSuccess:", data);
-          },
+					totpRequired: () => {
+						const token = prompt(
+							"Please enter your 6-digit OAUTH token"
+						);
+						if (token) {
+							cognitoUser.sendMFACode(
+								token,
+								{
+									onSuccess: (data: any) => {
+										if (
+											data.accessToken.payload.sub !==
+											CurrentUserSub
+										) {
+											alert(
+												"You are not the current user!"
+											);
+											logout();
+											resolve(true);
+											return;
+										}
+										cognitoUser.deleteUser((err, data) => {
+											if (err) {
+												console.error(
+													"Error deleting user:",
+													err.message ||
+														JSON.stringify(err)
+												);
+											} else {
+												console.log(
+													"User deleted successfully:",
+													data
+												);
+												resolve(data);
+											}
+										});
+									},
+									onFailure: (e) => {
+										console.error("onFailure:", e);
+										alert("Incorrect code!");
+										reject(e);
+									},
+								},
+								"SOFTWARE_TOKEN_MFA"
+							);
+						}
+					},
 
-          onFailure: (err) => {
-            console.error("onFailure:", err);
-            reject(err);
-          },
+					mfaRequired: () => {
+						const token = prompt(
+							"Please enter your 6-digit MFA passcode"
+						);
+						if (token) {
+							cognitoUser.sendMFACode(
+								token,
+								{
+									onSuccess: (data: any) => {
+										if (
+											data.accessToken.payload.sub !==
+											CurrentUserSub
+										) {
+											alert(
+												"You are not the current user!"
+											);
+											logout();
+											resolve(true);
+											return;
+										}
+										cognitoUser.deleteUser((err, data) => {
+											if (err) {
+												console.error(
+													"Error deleting user:",
+													err.message ||
+														JSON.stringify(err)
+												);
+											} else {
+												console.log(
+													"User deleted successfully:",
+													data
+												);
+												resolve(data);
+											}
+										});
+									},
+									onFailure: (e) => {
+										console.error("onFailure:", e);
+										alert("Incorrect code!");
+										reject(e);
+									},
+								},
+								"SMS_MFA"
+							);
+						}
+					},
+				});
+			} catch (err) {
+				console.error("Authentication failed:", err);
+				reject(err);
+			}
+		});
+	};
 
-          totpRequired: () => {
-            const token = prompt("Please enter your 6-digit OAUTH token");
-            if (token) {
-              cognitoUser.sendMFACode(
-                token,
-                {
-                  onSuccess: (data: any) => {
-                    if (data.accessToken.payload.sub !== CurrentUserSub) {
-                      alert("You are not the current user!");
-                      logout();
-                      resolve(true)
-                      return
-                    }
-                    cognitoUser.deleteUser((err, data) => {
-                      if (err) {
-                        console.error('Error deleting user:', err.message || JSON.stringify(err));
+	const AUTH_BASE_URL =
+		"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev";
 
-                      } else {
-                        console.log('User deleted successfully:', data);
-                        resolve(data);
-                      }
-                    });
-                  },
-                  onFailure: (e) => {
-                    console.error("onFailure:", e);
-                    alert("Incorrect code!");
-                    reject(e);
-                  }
-                },
-                "SOFTWARE_TOKEN_MFA"
-              );
-            }
-          },
+	const authenticateUser = async (
+		username: string,
+		password: string
+	): Promise<any> => {
+		const result = await authenticate(username, password);
+		if (!result) {
+			throw new Error("Authentication failed");
+		}
+		return result;
+	};
 
-          mfaRequired: () => {
-            const token = prompt("Please enter your 6-digit MFA passcode");
-            if (token) {
-              cognitoUser.sendMFACode(
-                token,
-                {
-                  onSuccess: (data: any) => {
-                    if (data.accessToken.payload.sub !== CurrentUserSub) {
-                      alert("You are not the current user!");
-                      logout();
-                      resolve(true)
-                      return
-                    }
-                    cognitoUser.deleteUser((err, data) => {
-                      if (err) {
-                        console.error('Error deleting user:', err.message || JSON.stringify(err));
+	const verifyCurrentUser = (
+		accessTokenSub: string,
+		currentUserSub: string
+	): void => {
+		if (accessTokenSub !== currentUserSub) {
+			alert("You are not the current user!");
+			logout();
+			throw new Error("Current user mismatch");
+		}
+	};
 
-                      } else {
-                        console.log('User deleted successfully:', data);
-                        resolve(data);
-                      }
-                    });
-                  },
-                  onFailure: (e) => {
-                    console.error("onFailure:", e);
-                    alert("Incorrect code!");
-                    reject(e);
-                  }
-                },
-                "SMS_MFA"
-              );
-            }
-          },
-        });
-      }
-      catch (err) {
-        console.error('Authentication failed:', err);
-        reject(err);
-      }
-    },
-    );
-  }
+	const deleteSelectedAccount = async (
+		username: string,
+		password: string,
+		currentUserSub: string,
+		targetSub: string
+	): Promise<any> => {
+		try {
+			const authResult = await authenticateUser(username, password);
+			verifyCurrentUser(
+				authResult.accessToken.payload.sub,
+				currentUserSub
+			);
 
-  const AUTH_BASE_URL = "https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev";
+			const sessionRes: any = await getSession();
+			const headers = sessionRes.headers;
+			const accessToken = authResult.accessToken.jwtToken;
 
-  const authenticateUser = async (username: string, password: string): Promise<any> => {
-    const result = await authenticate(username, password);
-    if (!result) {
-      throw new Error('Authentication failed');
-    }
-    return result;
-  };
+			const validationResponse = await fetch(
+				`${AUTH_BASE_URL}/validateAdmin?accessToken=${accessToken}`,
+				{ headers }
+			);
+			if (!validationResponse.ok) {
+				throw new Error("Failed to validate admin status");
+			}
+			const { role } = await validationResponse.json();
 
-  const verifyCurrentUser = (accessTokenSub: string, currentUserSub: string): void => {
-    if (accessTokenSub !== currentUserSub) {
-      alert("You are not the current user!");
-      logout();
-      throw new Error("Current user mismatch");
-    }
-  };
+			if (role === "super_admin") {
+				const deleteResponse = await fetch(
+					`${AUTH_BASE_URL}/delete-user`,
+					{
+						method: "DELETE",
+						headers,
+						body: JSON.stringify({ targetSub, role, accessToken }),
+					}
+				);
 
-  const deleteSelectedAccount = async (username: string, password: string, currentUserSub: string, targetSub: string): Promise<any> => {
-    try {
-      const authResult = await authenticateUser(username, password);
-      verifyCurrentUser(authResult.accessToken.payload.sub, currentUserSub);
+				if (!deleteResponse.ok) {
+					throw new Error("Failed to delete user");
+				}
 
-      const sessionRes: any = await getSession();
-      const headers = sessionRes.headers;
-      const accessToken = authResult.accessToken.jwtToken;
+				const retrieveResponse = await fetch(
+					`${AUTH_BASE_URL}/retrieveuser?accessToken=${accessToken}`,
+					{ headers }
+				);
+				if (!retrieveResponse.ok) {
+					console.error("Error while retrieving user data");
+					throw new Error(
+						"Failed to retrieve user data after deletion"
+					);
+				}
 
-      const validationResponse = await fetch(`${AUTH_BASE_URL}/validateAdmin?accessToken=${accessToken}`, { headers });
-      if (!validationResponse.ok) {
-        throw new Error("Failed to validate admin status");
-      }
-      const { role } = await validationResponse.json();
+				const usersData = await retrieveResponse.json();
+				return usersData.users.data;
+			} else {
+				alert("You are not an admin!");
+				throw new Error("Unauthorized access: User is not an admin");
+			}
+		} catch (error) {
+			console.error("An error occurred in deleteSelectedAccount:", error);
+			throw error;
+		}
+	};
 
-      if (role === "super_admin") {
-        const deleteResponse = await fetch(`${AUTH_BASE_URL}/delete-user`, {
-          method: "DELETE",
-          headers,
-          body: JSON.stringify({ targetSub, role, accessToken }),
-        });
-
-        if (!deleteResponse.ok) {
-          throw new Error("Failed to delete user");
-        }
-
-        const retrieveResponse = await fetch(`${AUTH_BASE_URL}/retrieveuser?accessToken=${accessToken}`, { headers });
-        if (!retrieveResponse.ok) {
-          console.error("Error while retrieving user data");
-          throw new Error("Failed to retrieve user data after deletion");
-        }
-
-        const usersData = await retrieveResponse.json();
-        return usersData.users.data;
-      } else {
-        alert("You are not an admin!");
-        throw new Error("Unauthorized access: User is not an admin");
-      }
-    } catch (error) {
-      console.error("An error occurred in deleteSelectedAccount:", error);
-      throw error;
-    }
-  };
-
-  return (
-    <AccountContext.Provider value={{
-      authenticate,
-      getSession,
-      logout,
-      deleteAccount,
-      deleteSelectedAccount,
-
-    }}>
-      {props.children}
-    </AccountContext.Provider>
-  );
+	return (
+		<AccountContext.Provider
+			value={{
+				authenticate,
+				getSession,
+				logout,
+				deleteAccount,
+				deleteSelectedAccount,
+			}}
+		>
+			{props.children}
+		</AccountContext.Provider>
+	);
 };
 
 export { Account, AccountContext };

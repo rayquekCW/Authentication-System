@@ -1,27 +1,27 @@
-import { useSearchParams } from 'react-router-dom';
-import { useState } from 'react';
+import { useSearchParams } from "react-router-dom";
+import { useState } from "react";
 
 function Redirect() {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [data, setData] = useState({
-		access_token: 'this is supposed to be the access token',
+		access_token: "this is supposed to be the access token",
 	});
 	const [userData, setUserData] = useState({
-		name: 'this is supposed to be the user data',
-		email: 'this is supposed to be the user email',
-		given_name: 'this is supposed to be the user given name',
-		family_name: 'this is supposed to be the user family name',
-		birthdate: 'this is supposed to be the user birthdate',
-		gender: 'this is supposed to be the user gender',
-		phone_number: 'this is supposed to be the user phone number',
+		name: "this is supposed to be the user data",
+		email: "this is supposed to be the user email",
+		given_name: "this is supposed to be the user given name",
+		family_name: "this is supposed to be the user family name",
+		birthdate: "this is supposed to be the user birthdate",
+		gender: "this is supposed to be the user gender",
+		phone_number: "this is supposed to be the user phone number",
 	});
 	async function getAccessToken(code: string | null) {
 		if (code === null) return;
 		try {
-			const response = await fetch('http://localhost:8001/auth/token', {
-				method: 'POST',
+			const response = await fetch("http://localhost:8001/auth/token", {
+				method: "POST",
 				headers: {
-					'Content-Type': 'application/json',
+					"Content-Type": "application/json",
 				},
 				body: JSON.stringify({
 					code: code, // Pass the code from your form or wherever you get it
@@ -30,7 +30,7 @@ function Redirect() {
 
 			if (response.ok) {
 				const data = await response.json();
-				console.log('coming from client', data);
+				console.log("coming from client", data);
 				setData(data); // Update the access token state
 			} else {
 				console.error(
@@ -46,11 +46,11 @@ function Redirect() {
 		if (accessToken === null) return;
 		try {
 			const response = await fetch(
-				'http://localhost:8001/auth/userinfo',
+				"http://localhost:8001/auth/userinfo",
 				{
-					method: 'POST',
+					method: "POST",
 					headers: {
-						'Content-Type': 'application/json',
+						"Content-Type": "application/json",
 					},
 					body: JSON.stringify({
 						accessToken: accessToken,
@@ -59,7 +59,7 @@ function Redirect() {
 			);
 			if (response.ok) {
 				const data = await response.json();
-				console.log('coming from client', data);
+				console.log("coming from client", data);
 				setUserData(data); // Update the access token state
 			} else {
 				console.error(
@@ -67,13 +67,13 @@ function Redirect() {
 				);
 			}
 		} catch (error) {
-			console.error('Something went wrong');
+			console.error("Something went wrong");
 		}
 	}
 
 	return (
 		<div>
-			<h1>{searchParams.get('code')}</h1>
+			<h1>{searchParams.get("code")}</h1>
 			{/* <h1>{data?.access_token}</h1> */}
 			<h1>{userData.name}</h1>
 			<h1>{userData.given_name}</h1>
@@ -81,7 +81,7 @@ function Redirect() {
 			<h1>{userData.email}</h1>
 			<h1>{userData.gender}</h1>
 			<h1>{userData.phone_number}</h1>
-			<button onClick={() => getAccessToken(searchParams.get('code'))}>
+			<button onClick={() => getAccessToken(searchParams.get("code"))}>
 				generate access token
 			</button>
 			<button onClick={() => getUserData(data.access_token)}>

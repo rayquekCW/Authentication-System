@@ -156,7 +156,7 @@ const CmDashboard = () => {
 				<AdminNavBar adminType={adminType} userName={userName} />
 
 				<div className="container bg-light shadow-sm my-4 p-4">
-					<h1 className="">Customers</h1>
+					<h2 className="">User Management</h2>
 					<div className="table-responsive">
 						<table
 							className="table mt-4"

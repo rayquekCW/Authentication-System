@@ -2,15 +2,18 @@ import { FaLock, FaRegEye, FaRegEyeSlash, FaAt } from "react-icons/fa";
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
-import { validateEmailFormat, validatePasswordFormat } from '../utils/validateFormat';
+import {
+	validateEmailFormat,
+	validatePasswordFormat,
+} from "../utils/validateFormat";
 
 type SignInContainerProps = {
 	handleSignIn: () => void;
 };
 
 const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
-	const [email, setEmail] = useState('');
-	const [password, setPassword] = useState('');
+	const [email, setEmail] = useState("");
+	const [password, setPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [errors, setErrors] = useState<string[]>([]);
 
@@ -30,13 +33,19 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 				// data is supposed to be the cognito user
 
 				// Sets the tokens into sessionStorage for activity/expriry prompt
-				sessionStorage.setItem("access_token", data.accessToken.jwtToken)
-				sessionStorage.setItem("refresh_token", data.refreshToken.token)
+				sessionStorage.setItem(
+					"access_token",
+					data.accessToken.jwtToken
+				);
+				sessionStorage.setItem(
+					"refresh_token",
+					data.refreshToken.token
+				);
 
 				// Verify if user role is admin
 				if (getSession) {
-
-					const { headers, accessToken, mfaEnabled } = await getSession();
+					const { headers, accessToken, mfaEnabled } =
+						await getSession();
 
 					if (!mfaEnabled) {
 						return navigate("/mfa");
@@ -58,13 +67,15 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 						const data = await response.json();
 
 						// Go to admin dashboard if user is admin or super admin
-						if (data.role === "admin" || data.role === "super_admin") {
+						if (
+							data.role === "admin" ||
+							data.role === "super_admin"
+						) {
 							return navigate("/cm-dashboard");
 						}
 
 						// Go to home if user is not admin
 						navigate("/home");
-
 					} catch (error: any) {
 						setErrors([error.message]);
 					}
@@ -101,7 +112,7 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							<FaLock />
 						</span>
 						<input
-							type={showPassword ? 'text' : 'password'}
+							type={showPassword ? "text" : "password"}
 							className="form-control"
 							placeholder="Password"
 							aria-label="Password"
@@ -120,7 +131,6 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 					</div>
 				</div>
 				<div className="text-center">
-
 					{/* Display error messages */}
 					{errors.map((error, index) => (
 						<p className="text-danger" key={index}>
@@ -135,30 +145,37 @@ const SignInContainer = ({ handleSignIn }: SignInContainerProps) => {
 							className="text-primary cursor-pointer"
 							onClick={handleSignIn}
 						>
-							{' '}
+							{" "}
 							here!
 						</span>
 					</p>
 					<p className="caption">
-						or{' '}
+						or{" "}
 						<Link
-							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${import.meta.env.VITE_CLIENT_ID
-								}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
+							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
+								import.meta.env.VITE_CLIENT_ID
+							}&redirect_uri=http%3A%2F%2Flocalhost%3A5173%2Fprofile&response_type=code&scope=openid+profile`}
 						>
 							Sign in with SSO
 						</Link>
 					</p>
 				</div>
 				<button
-					className={`defaultBtn ${(validateEmailFormat(email) && validatePasswordFormat(password)) ? '' : 'disabled'
-						}`}
+					className={`defaultBtn ${
+						validateEmailFormat(email) &&
+						validatePasswordFormat(password)
+							? ""
+							: "disabled"
+					}`}
 					onClick={() => login()}
-					disabled={(!validateEmailFormat(email) || !validatePasswordFormat(password))}
+					disabled={
+						!validateEmailFormat(email) ||
+						!validatePasswordFormat(password)
+					}
 				>
 					Sign In
-				</button>{' '}
+				</button>{" "}
 			</div>
-
 		</>
 	);
 };
