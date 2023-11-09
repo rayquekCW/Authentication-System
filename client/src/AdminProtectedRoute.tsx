@@ -3,36 +3,37 @@ import {useCookies} from 'react-cookie';
 import {AccountContext} from './services/Account';
 import {Navigate, Outlet} from 'react-router-dom';
 
-function MFAProtectedRoute() {
+function AdminProtectedRoute() {
 	const [cookie] = useCookies();
 	const {getSession} = useContext(AccountContext) || {};
-	const [isMFAAuthenticated, setIsMFAAuthenticated] = useState(false);
+	const [isAdmin, setIsAdmin] = useState(false);
 	const [loading, setLoading] = useState(true); // To track loading state
 
 	useEffect(() => {
-		async function checkMFAAuthentication() {
+		async function checkAdmin() {
 			if (getSession) {
 				try {
-					const {mfaEnabled} = await getSession();
-					if (!mfaEnabled) {
-						setIsMFAAuthenticated(false);
-					} else {
-						setIsMFAAuthenticated(true);
-					}
+					getSession().then(async (sessionData) => {
+						console.log(sessionData['custom:role']);
+						setIsAdmin(
+							sessionData['custom:role'] === 'admin' ||
+								sessionData['custom:role'] === 'super_admin'
+						);
+					});
 				} catch (error) {
 					if (cookie['userData']) {
-						setIsMFAAuthenticated(true);
+						setIsAdmin(false);
 					}
 				} finally {
 					setLoading(false);
 				}
 			}
 		}
-		checkMFAAuthentication();
+		checkAdmin();
 	}, [getSession, cookie]);
 
 	if (loading) return null;
-	return isMFAAuthenticated ? <Outlet /> : <Navigate to="/mfa" />;
+	return isAdmin ? <Outlet /> : <Navigate to="/home" />;
 }
 
-export default MFAProtectedRoute;
+export default AdminProtectedRoute;

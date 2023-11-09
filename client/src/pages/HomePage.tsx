@@ -94,10 +94,12 @@ const HomePage = () => {
 							</div>
 						</div>
 						<table className="w-100 text-secondary h-25 border-bottom">
-							<tr>
-								<th>Cash & Investments </th>
-								<td> S$1,020,010,000.01</td>
-							</tr>
+							<tbody>
+								<tr>
+									<th>Cash & Investments </th>
+									<td> S$1,020,010,000.01</td>
+								</tr>
+							</tbody>
 						</table>
 					</div>
 				</div>

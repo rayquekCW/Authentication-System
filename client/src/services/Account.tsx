@@ -1,9 +1,9 @@
-import { useNavigate } from "react-router-dom";
-import { createContext, ReactNode } from "react";
-import { CognitoUser, AuthenticationDetails } from "amazon-cognito-identity-js";
-import AWS from "aws-sdk";
-import Pool from "./UserPool";
-import { CognitoJwtVerifier } from "aws-jwt-verify";
+import {useNavigate} from 'react-router-dom';
+import {createContext, ReactNode} from 'react';
+import {CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
+import AWS from 'aws-sdk';
+import Pool from './UserPool';
+import {CognitoJwtVerifier} from 'aws-jwt-verify';
 
 // Define the type for the context value
 type AccountContextValue = {
@@ -26,13 +26,13 @@ type AccountContextValue = {
 // Create a new instance of the Cognito JWT Verifier
 const verifier = CognitoJwtVerifier.create({
 	userPoolId: Pool.getUserPoolId(),
-	tokenUse: "access",
+	tokenUse: 'access',
 	clientId: Pool.getClientId(),
 });
 
 // Create a new instance of the Cognito Identity Service Provider
 const cognito = new AWS.CognitoIdentityServiceProvider({
-	region: "ap-southeast-1",
+	region: 'ap-southeast-1',
 });
 
 // Initialize the context
@@ -40,8 +40,7 @@ const AccountContext = createContext<AccountContextValue | undefined>(
 	undefined
 );
 
-const Account: React.FC<{ children: ReactNode }> = (props) => {
-	const navigate = useNavigate();
+const Account: React.FC<{children: ReactNode}> = (props) => {
 	/**
 	 * The `getSession` function retrieves the user session, verifies the access token, retrieves user
 	 * attributes, checks if MFA is enabled, and returns the necessary data for authentication.
@@ -62,9 +61,9 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 							const payload = verifier.verify(
 								accessToken // the JWT as string
 							);
-							console.log("Token is valid. Payload:", payload); //TODO - Remove this before moving to Production
+							console.log('Token is valid. Payload:', payload); //TODO - Remove this before moving to Production
 						} catch {
-							console.log("Token not valid!");
+							console.log('Token not valid!');
 						}
 
 						/*  It uses the `getUserAttributes` method of the `CognitoUser` object to get the attributes. */
@@ -78,7 +77,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 									const results: Record<string, string> = {};
 
 									for (let attribute of attributes || []) {
-										const { Name, Value } = attribute;
+										const {Name, Value} = attribute;
 										results[Name] = Value;
 									}
 
@@ -99,7 +98,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 										resolve(
 											data.UserMFASettingList &&
 												data.UserMFASettingList.includes(
-													"SOFTWARE_TOKEN_MFA"
+													'SOFTWARE_TOKEN_MFA'
 												)
 										);
 								}
@@ -128,7 +127,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 							mfaEnabled,
 							preferredMFA,
 							headers: {
-								"x-api-key": attributes["custom:apikey"],
+								'x-api-key': attributes['custom:apikey'],
 								Authorization: token,
 							},
 							...session,
@@ -153,7 +152,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 
 	const authenticate = (Username: string, Password: string) => {
 		return new Promise((resolve, reject) => {
-			const userState = new CognitoUser({ Username, Pool });
+			const userState = new CognitoUser({Username, Pool});
 			const authDetailState = new AuthenticationDetails({
 				Username,
 				Password,
@@ -161,26 +160,26 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 
 			userState.authenticateUser(authDetailState, {
 				onSuccess: (data) => {
-					console.log("onSuccess:");
+					console.log('onSuccess:');
 					resolve(data);
 				},
 
 				onFailure: (err) => {
-					console.error("onFailure:", err);
+					console.error('onFailure:', err);
 					reject(err);
 				},
 
 				newPasswordRequired: (data) => {
-					console.log("newPasswordRequired:", data);
+					console.log('newPasswordRequired:', data);
 					// Handle the new password requirement here
 					// For now, we are resolving it, but you should prompt the user for a new password
 					resolve(data);
 				},
 
 				totpRequired: () => {
-					alert("Please check your phone for the Authenticator code");
+					alert('Please check your phone for the Authenticator code');
 					const token = prompt(
-						"Please enter your 6-digit code from your OAUTH token"
+						'Please enter your 6-digit code from your OAUTH token'
 					);
 					if (token) {
 						userState.sendMFACode(
@@ -190,20 +189,20 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 									resolve(data);
 								},
 								onFailure: (e) => {
-									console.error("onFailure:", e);
-									alert("Incorrect code!");
+									console.error('onFailure:', e);
+									alert('Incorrect code!');
 									reject(e);
 								},
 							},
-							"SOFTWARE_TOKEN_MFA"
+							'SOFTWARE_TOKEN_MFA'
 						);
 					}
 				},
 
 				mfaRequired: () => {
-					alert("Please check your phone for a 6-digit code");
+					alert('Please check your phone for a 6-digit code');
 					const token = prompt(
-						"Please enter your 6-digit code from your phone"
+						'Please enter your 6-digit code from your phone'
 					);
 					if (token) {
 						userState.sendMFACode(
@@ -213,12 +212,12 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 									resolve(data);
 								},
 								onFailure: (e) => {
-									console.error("onFailure:", e);
-									alert("Incorrect code!");
+									console.error('onFailure:', e);
+									alert('Incorrect code!');
 									reject(e);
 								},
 							},
-							"SMS_MFA"
+							'SMS_MFA'
 						);
 					}
 				},
@@ -257,17 +256,17 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 				});
 				cognitoUser.authenticateUser(authDetailState, {
 					onSuccess: (data) => {
-						console.log("onSuccess:", data);
+						console.log('onSuccess:', data);
 					},
 
 					onFailure: (err) => {
-						console.error("onFailure:", err);
+						console.error('onFailure:', err);
 						reject(err);
 					},
 
 					totpRequired: () => {
 						const token = prompt(
-							"Please enter your 6-digit OAUTH token"
+							'Please enter your 6-digit OAUTH token'
 						);
 						if (token) {
 							cognitoUser.sendMFACode(
@@ -279,7 +278,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 											CurrentUserSub
 										) {
 											alert(
-												"You are not the current user!"
+												'You are not the current user!'
 											);
 											logout();
 											resolve(true);
@@ -288,13 +287,13 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 										cognitoUser.deleteUser((err, data) => {
 											if (err) {
 												console.error(
-													"Error deleting user:",
+													'Error deleting user:',
 													err.message ||
 														JSON.stringify(err)
 												);
 											} else {
 												console.log(
-													"User deleted successfully:",
+													'User deleted successfully:',
 													data
 												);
 												resolve(data);
@@ -302,19 +301,19 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 										});
 									},
 									onFailure: (e) => {
-										console.error("onFailure:", e);
-										alert("Incorrect code!");
+										console.error('onFailure:', e);
+										alert('Incorrect code!');
 										reject(e);
 									},
 								},
-								"SOFTWARE_TOKEN_MFA"
+								'SOFTWARE_TOKEN_MFA'
 							);
 						}
 					},
 
 					mfaRequired: () => {
 						const token = prompt(
-							"Please enter your 6-digit MFA passcode"
+							'Please enter your 6-digit MFA passcode'
 						);
 						if (token) {
 							cognitoUser.sendMFACode(
@@ -326,7 +325,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 											CurrentUserSub
 										) {
 											alert(
-												"You are not the current user!"
+												'You are not the current user!'
 											);
 											logout();
 											resolve(true);
@@ -335,13 +334,13 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 										cognitoUser.deleteUser((err, data) => {
 											if (err) {
 												console.error(
-													"Error deleting user:",
+													'Error deleting user:',
 													err.message ||
 														JSON.stringify(err)
 												);
 											} else {
 												console.log(
-													"User deleted successfully:",
+													'User deleted successfully:',
 													data
 												);
 												resolve(data);
@@ -349,25 +348,25 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 										});
 									},
 									onFailure: (e) => {
-										console.error("onFailure:", e);
-										alert("Incorrect code!");
+										console.error('onFailure:', e);
+										alert('Incorrect code!');
 										reject(e);
 									},
 								},
-								"SMS_MFA"
+								'SMS_MFA'
 							);
 						}
 					},
 				});
 			} catch (err) {
-				console.error("Authentication failed:", err);
+				console.error('Authentication failed:', err);
 				reject(err);
 			}
 		});
 	};
 
 	const AUTH_BASE_URL =
-		"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev";
+		'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev';
 
 	const authenticateUser = async (
 		username: string,
@@ -375,7 +374,7 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 	): Promise<any> => {
 		const result = await authenticate(username, password);
 		if (!result) {
-			throw new Error("Authentication failed");
+			throw new Error('Authentication failed');
 		}
 		return result;
 	};
@@ -385,9 +384,9 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 		currentUserSub: string
 	): void => {
 		if (accessTokenSub !== currentUserSub) {
-			alert("You are not the current user!");
+			alert('You are not the current user!');
 			logout();
-			throw new Error("Current user mismatch");
+			throw new Error('Current user mismatch');
 		}
 	};
 
@@ -410,46 +409,46 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 
 			const validationResponse = await fetch(
 				`${AUTH_BASE_URL}/validateAdmin?accessToken=${accessToken}`,
-				{ headers }
+				{headers}
 			);
 			if (!validationResponse.ok) {
-				throw new Error("Failed to validate admin status");
+				throw new Error('Failed to validate admin status');
 			}
-			const { role } = await validationResponse.json();
+			const {role} = await validationResponse.json();
 
-			if (role === "super_admin") {
+			if (role === 'super_admin') {
 				const deleteResponse = await fetch(
 					`${AUTH_BASE_URL}/delete-user`,
 					{
-						method: "DELETE",
+						method: 'DELETE',
 						headers,
-						body: JSON.stringify({ targetSub, role, accessToken }),
+						body: JSON.stringify({targetSub, role, accessToken}),
 					}
 				);
 
 				if (!deleteResponse.ok) {
-					throw new Error("Failed to delete user");
+					throw new Error('Failed to delete user');
 				}
 
 				const retrieveResponse = await fetch(
 					`${AUTH_BASE_URL}/retrieveuser?accessToken=${accessToken}`,
-					{ headers }
+					{headers}
 				);
 				if (!retrieveResponse.ok) {
-					console.error("Error while retrieving user data");
+					console.error('Error while retrieving user data');
 					throw new Error(
-						"Failed to retrieve user data after deletion"
+						'Failed to retrieve user data after deletion'
 					);
 				}
 
 				const usersData = await retrieveResponse.json();
 				return usersData.users.data;
 			} else {
-				alert("You are not an admin!");
-				throw new Error("Unauthorized access: User is not an admin");
+				alert('You are not an admin!');
+				throw new Error('Unauthorized access: User is not an admin');
 			}
 		} catch (error) {
-			console.error("An error occurred in deleteSelectedAccount:", error);
+			console.error('An error occurred in deleteSelectedAccount:', error);
 			throw error;
 		}
 	};
@@ -469,4 +468,4 @@ const Account: React.FC<{ children: ReactNode }> = (props) => {
 	);
 };
 
-export { Account, AccountContext };
+export {Account, AccountContext};
