@@ -12,6 +12,7 @@ const CmEnrollment = () => {
   const [token, setToken] = useState<string>("");
   const [role, setRole] = useState<string>("");
   const [userName, setUserName] = useState<string>("");
+  const [isLocked, setIsLocked] = useState<boolean>(true);
 
   const accountContext = useContext(AccountContext);
 
@@ -87,6 +88,7 @@ const CmEnrollment = () => {
         reader.readAsText(file);
       }
       setFilename(file.name);
+      setFileSet(true);
       setSelectedFile(file);
     }
   };
@@ -144,6 +146,7 @@ const CmEnrollment = () => {
       }
       setFilename(file.name);
       setSelectedFile(file);
+      setFileSet(true);
     }
   };
 
@@ -196,51 +199,109 @@ const CmEnrollment = () => {
       <UserLogoutPopup />
       <AdminNavBar adminType={role} userName={userName} />
       <div>
-        <h1 className="mt-5 ms-5">Enrollment</h1>
-        <div
-          className="mt-5 ms-5 mb-5"
-          onDrop={handleDrop}
-          onDragLeave={handleDragLeave}
-          onDragOver={handleDragOver}
-          onClick={handleDivClick}
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            height: "100px",
-            width: "400px",
-            border: "1px solid",
-            backgroundColor: dragIsOver ? "lightgray" : "white",
-          }}
-        >
-          <p>Drag & drop files or Click here </p>
-          <label htmlFor="fileInput">
-            <input
-              type="file"
-              id="fileInput"
-              style={{ display: "none" }}
-              onChange={handleFileChange}
-              accept=".xlsx, .csv"
-            />
-          </label>
+        {/* Start of Enrollment section */}
+
+        <div className="container bg-light shadow-sm mt-4 p-4">
+          <div className="row p-3">
+            <div className="col-8">
+              <h2>Enrollment of New Users</h2>
+            </div>
+
+            <div className="col-4 d-flex justify-content-end">
+              {isLocked ? (
+                <button
+                  className="defaultBtn"
+                  style={{ width: "auto" }}
+                  onClick={() => {
+                    setIsLocked(!isLocked);
+                  }}
+                >
+                  Lock
+                </button>
+              ) : (
+                <button
+                  className="defaultBtn"
+                  style={{ width: "auto" }}
+                  onClick={() => {
+                    setIsLocked(!isLocked);
+                  }}
+                >
+                  Unlock
+                </button>
+              )}
+            </div>
+          </div>
+          <div className="row px-3">
+            <div className="pb-3">
+              <div>
+                Drag the users file into the box below or click to select the
+                file to upload
+              </div>
+            </div>
+          </div>
         </div>
-        <div className="mt-5 ms-5 mb-5 d-flex align-items-center">
-          <p>{filename}</p>
-          {fileSet && (
-            <button className="btn btn-primary ms-5" onClick={handleUpload}>
-              Upload
-            </button>
+
+        <div className="container bg-light shadow-sm mt-4 p-4">
+          {isLocked ? (
+            <div className="">File upload is locked. Please click unlock!</div>
+          ) : (
+            <div className="row p-4">
+              <h2 className="pb-3">Upload the user file</h2>
+              <div
+                className={
+                  !isLocked
+                    ? "drag-drop-wrapper text-center p-5 d-flex justify-content-center align-items-center"
+                    : "drag-drop-disabled text-center p-5 d-flex justify-content-center align-items-center"
+                }
+                onDrop={handleDrop}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onClick={handleDivClick}
+                style={{
+                  backgroundColor: dragIsOver ? "lightgray" : "white",
+                }}
+              >
+                <div className={!isLocked ? "" : "drag-drop-disabled"}>
+                  Drag & drop files <br /> or <br />
+                  Click here{" "}
+                </div>
+                <label htmlFor="fileInput">
+                  <input
+                    type="file"
+                    id="fileInput"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept=".xlsx, .csv"
+                    disabled={isLocked}
+                  />
+                </label>
+              </div>
+            </div>
           )}
         </div>
-        <div
-          className="container ms-5"
-          id="previewContainer"
-          style={{
-            width: "100%",
-            height: "300px",
-            overflowY: "scroll", // Add this to enable scrolling if needed
-          }}
-        ></div>
+
+        {fileSet && (
+          <div className="container bg-light shadow-sm mt-4 p-4">
+            <div className="row p-4">
+              <div className="col-7">{filename}</div>
+              <div className="col-5  d-flex justify-content-end">
+                <button className="defaultBtn" onClick={handleUpload}>
+                  Upload
+                </button>
+              </div>
+            </div>
+
+            <div
+              className="container"
+              id="previewContainer"
+              style={{
+                width: "100%",
+                height: "400px",
+                overflowY: "scroll", // Add this to enable scrolling if needed
+              }}
+            ></div>
+          </div>
+        )}
       </div>
     </>
   );
