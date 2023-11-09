@@ -1,19 +1,20 @@
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import './App.css';
-import '../src/styles/styles.scss';
-import SetPassword from './pages/SetPassword';
-import ProfilePage from './pages/ProfilePage';
-import MfaPage from './pages/MfaPage';
-import HomePage from './pages/HomePage';
-import CustomerManagementDashboard from './pages/admin/CmDashboard';
-import Enrollment from './pages/admin/CmEnrollment';
-import Logs from './pages/admin/CmLogs';
-import Orders from './pages/admin/CmOrders';
-import Pricing from './pages/admin/CmPricing';
-import { Account } from './services/Account';
-import { CookiesProvider } from 'react-cookie';
-import ProtectedRoute from './ProtectedRoute';
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import LoginPage from "./pages/LoginPage";
+import "./App.css";
+import "../src/styles/styles.scss";
+import SetPassword from "./pages/SetPassword";
+import ProfilePage from "./pages/ProfilePage";
+import MfaPage from "./pages/MfaPage";
+import HomePage from "./pages/HomePage";
+import CustomerManagementDashboard from "./pages/admin/CmDashboard";
+import Enrollment from "./pages/admin/CmEnrollment";
+import Logs from "./pages/admin/CmLogs";
+import Orders from "./pages/admin/CmOrders";
+import Pricing from "./pages/admin/CmPricing";
+import CmProfile from "./pages/admin/CmProfile";
+import { Account } from "./services/Account";
+import { CookiesProvider } from "react-cookie";
+import ProtectedRoute from "./ProtectedRoute";
 
 const App = () => {
 	return (
@@ -43,6 +44,10 @@ const App = () => {
 								<Route
 									path="/cm-pricing"
 									element={<Pricing />}
+								/>
+								<Route
+									path="/cm-profile"
+									element={<CmProfile />}
 								/>
 							</Route>
 						</Routes>
