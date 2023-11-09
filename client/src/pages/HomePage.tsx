@@ -28,7 +28,7 @@ const HomePage = () => {
 							family_name: sessionData.family_name,
 							birthdate: sessionData.birthdate,
 							gender: '',
-							phone_number: NaN,
+							phone_number: sessionData.phone_number,
 						});
 					})
 					.catch((error) => {

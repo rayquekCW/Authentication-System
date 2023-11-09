@@ -119,6 +119,7 @@ const ProfilePage = () => {
 			);
 			if (response.ok) {
 				const data = await response.json();
+				console.log(data);
 				try {
 					const verifyTokenResponse = await fetch(
 						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',

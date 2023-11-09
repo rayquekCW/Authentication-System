@@ -14,7 +14,6 @@ function ProtectedRoute() {
 			if (getSession) {
 				try {
 					const sessionData = await getSession();
-					console.log(sessionData);
 					// eslint-disable-next-line no-unused-vars
 					const accessToken = sessionData.accessToken.jwtToken;
 					console.log(accessToken);
@@ -34,7 +33,7 @@ function ProtectedRoute() {
 	}, [getSession, cookie]);
 
 	if (loading) return null; // Or return a loader/spinner
-	return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+	return isAuthenticated ? <Outlet /> : <Navigate to="/mfa" />;
 }
 
 export default ProtectedRoute;
