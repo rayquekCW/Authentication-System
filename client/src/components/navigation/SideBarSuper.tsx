@@ -22,7 +22,7 @@ const Sidebar = ({ handleClick }: SideBarProps) => {
       <ul className="ms-3">
         <li>
           <Link to="/cm-dashboard" style={{ textDecoration: "none" }}>
-            <div className="nav-link">
+            <div className="nav-link-sideBar">
               <PiUserSquareFill
                 style={{
                   fontSize: "25px",
@@ -37,7 +37,7 @@ const Sidebar = ({ handleClick }: SideBarProps) => {
         <li className="mt-5">
           {/*Restricted*/}
           <Link to="/cm-enrollment" style={{ textDecoration: "none" }}>
-            <div className="nav-link">
+            <div className="nav-link-sideBar">
               <ImFolderDownload
                 style={{
                   fontSize: "25px",
@@ -52,7 +52,7 @@ const Sidebar = ({ handleClick }: SideBarProps) => {
         <li className="mt-5">
           {/*Restricted*/}
           <Link to="/cm-logs" style={{ textDecoration: "none" }}>
-            <div className="nav-link">
+            <div className="nav-link-sideBar">
               <GoLog
                 style={{
                   fontSize: "25px",
@@ -66,7 +66,7 @@ const Sidebar = ({ handleClick }: SideBarProps) => {
         </li>
         <li className="mt-5">
           <Link to="/cm-pricing" style={{ textDecoration: "none" }}>
-            <div className="nav-link">
+            <div className="nav-link-sideBar">
               <GiPriceTag
                 style={{
                   fontSize: "25px",

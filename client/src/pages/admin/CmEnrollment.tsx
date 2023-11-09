@@ -1,25 +1,17 @@
 import { DragEvent, useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import { AiFillExclamationCircle } from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
-import { IoMdLogOut } from "react-icons/io";
-import { GiHamburgerMenu } from "react-icons/gi";
 import * as XLSX from "xlsx";
 import { AccountContext } from "../admin/../../services/Account";
-import Sidebar from "../../components/navigation/SideBar";
-import SideBarSuper from "../../components/navigation/SideBarSuper";
-import BankLogo from "../../assets/posb.svg";
-import UserLogoutPopup from '../../components/UserLogout';
-
+import UserLogoutPopup from "../../components/UserLogout";
+import AdminNavBar from "../../components/navigation/AdminNavBar";
 
 const CmEnrollment = () => {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
   const [dragIsOver, setDragIsOver] = useState<boolean>(false);
   const [filename, setFilename] = useState<string>("");
   const [fileSet, setFileSet] = useState<boolean>(false);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [token, setToken] = useState<string>("");
   const [role, setRole] = useState<string>("");
+  const [userName, setUserName] = useState<string>("");
   const [isLocked, setIsLocked] = useState<boolean>(true);
 
   const accountContext = useContext(AccountContext);
@@ -32,27 +24,13 @@ const CmEnrollment = () => {
         .then((session) => {
           setToken(session.accessToken.jwtToken);
           setRole(session["custom:role"]);
+          setUserName(session.given_name + " " + session.family_name);
         })
         .catch((error) => {
           console.error(error); // Handle error
         });
     }
   }, [accountContext]);
-
-  console.log(role);
-
-  const isSuper = role;
-
-
-  const inlineStyle = {
-    fontSize: "16px",
-    backgroundColor: "#0078CE",
-    padding: "20px",
-  };
-
-  const handleClick = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleDragOver = (event: DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -110,6 +88,7 @@ const CmEnrollment = () => {
         reader.readAsText(file);
       }
       setFilename(file.name);
+      setFileSet(true);
       setSelectedFile(file);
     }
   };
@@ -167,6 +146,7 @@ const CmEnrollment = () => {
       }
       setFilename(file.name);
       setSelectedFile(file);
+      setFileSet(true);
     }
   };
 
@@ -204,7 +184,7 @@ const CmEnrollment = () => {
         },
       });
       if (!response.ok) {
-        alert("File upload failed!: Forbidden")
+        alert("File upload failed!: Forbidden");
         throw new Error(`HTTP error! status: ${response.status}`);
       } else {
         alert("File uploaded successfully!");
@@ -217,54 +197,8 @@ const CmEnrollment = () => {
   return (
     <>
       <UserLogoutPopup />
+      <AdminNavBar adminType={role} userName={userName} />
       <div>
-        <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-          <div className="container-fluid">
-            <div onClick={handleClick} style={{ cursor: "pointer" }}>
-              <GiHamburgerMenu
-                style={{ fontSize: "25px", color: "white", marginRight: "5px" }}
-              />
-            </div>
-            <img src={BankLogo} alt="bank-logo" width={100} />
-            <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
-              <li className="nav-item me-4">
-                <Link className="nav-link" to="" style={{ color: "white" }}>
-                  {
-                    <AiFillExclamationCircle
-                      style={{ marginRight: "5px", marginBottom: "3px" }}
-                    />
-                  }
-                  Edit Tooltips
-                </Link>
-              </li>
-              <li className="nav-item me-4">
-                <Link className="nav-link" to="" style={{ color: "white" }}>
-                  <CgProfile
-                    style={{ marginRight: "5px", marginBottom: "3px" }}
-                  />
-                  Ray Quek
-                </Link>
-              </li>
-              <li className="nav-item me-4">
-                {/* TODO: Logout functionality */}
-                <Link className="nav-link" to="/" style={{ color: "white" }}>
-                  <IoMdLogOut
-                    style={{ marginRight: "5px", marginBottom: "3px" }}
-                  />
-                  Logout
-                </Link>
-              </li>
-            </ul>
-          </div>
-        </div>
-        <div className={`sidebar-container ${isOpen ? "open" : ""}`}>
-          {isSuper ? (
-            <SideBarSuper handleClick={handleClick} />
-          ) : (
-            <Sidebar handleClick={handleClick} />
-          )}
-        </div>
-
         {/* Start of Enrollment section */}
 
         <div className="container bg-light shadow-sm mt-4 p-4">
@@ -274,62 +208,77 @@ const CmEnrollment = () => {
             </div>
 
             <div className="col-4 d-flex justify-content-end">
-
-              {isLocked ? (<button
-                className="defaultBtn"
-                style={{ width: "auto" }}
-                onClick={() => { setIsLocked(!isLocked); }}
-              >
-                Lock
-              </button>
-              ) : (<button
-                className="defaultBtn"
-                style={{ width: "auto" }}
-                onClick={() => { setIsLocked(!isLocked); }}
-              >
-                Unlock
-              </button>)}
-
+              {isLocked ? (
+                <button
+                  className="defaultBtn"
+                  style={{ width: "auto" }}
+                  onClick={() => {
+                    setIsLocked(!isLocked);
+                  }}
+                >
+                  Lock
+                </button>
+              ) : (
+                <button
+                  className="defaultBtn"
+                  style={{ width: "auto" }}
+                  onClick={() => {
+                    setIsLocked(!isLocked);
+                  }}
+                >
+                  Unlock
+                </button>
+              )}
             </div>
           </div>
           <div className="row px-3">
             <div className="pb-3">
               <div>
-                Drag the users file into the box below or click to select the file to upload
+                Drag the users file into the box below or click to select the
+                file to upload
               </div>
             </div>
           </div>
         </div>
 
-
         <div className="container bg-light shadow-sm mt-4 p-4">
-          {isLocked ? (<div className="">File upload is locked. Please click unlock!</div>) : (<div className="row p-4">
-            <h2 className="pb-3">Upload the user file</h2>
-            <div
-              className={!isLocked ? "drag-drop-wrapper text-center p-5 d-flex justify-content-center align-items-center" : "drag-drop-disabled text-center p-5 d-flex justify-content-center align-items-center"}
-              onDrop={handleDrop}
-              onDragLeave={handleDragLeave}
-              onDragOver={handleDragOver}
-              onClick={handleDivClick}
-              style={{
-                backgroundColor: dragIsOver ? "lightgray" : "white",
-              }}
-            >
-              <div className={!isLocked ? "" : "drag-drop-disabled"}>Drag & drop files <br /> or <br />Click here </div>
-              <label htmlFor="fileInput">
-                <input
-                  type="file"
-                  id="fileInput"
-                  style={{ display: "none" }}
-                  onChange={handleFileChange}
-                  accept=".xlsx, .csv"
-                  disabled={isLocked}
-                />
-              </label>
+          {isLocked ? (
+            <div className="">File upload is locked. Please click unlock!</div>
+          ) : (
+            <div className="row p-4">
+              <h2 className="pb-3">Upload the user file</h2>
+              <div
+                className={
+                  !isLocked
+                    ? "drag-drop-wrapper text-center p-5 d-flex justify-content-center align-items-center"
+                    : "drag-drop-disabled text-center p-5 d-flex justify-content-center align-items-center"
+                }
+                onDrop={handleDrop}
+                onDragLeave={handleDragLeave}
+                onDragOver={handleDragOver}
+                onClick={handleDivClick}
+                style={{
+                  backgroundColor: dragIsOver ? "lightgray" : "white",
+                }}
+              >
+                <div className={!isLocked ? "" : "drag-drop-disabled"}>
+                  Drag & drop files <br /> or <br />
+                  Click here{" "}
+                </div>
+                <label htmlFor="fileInput">
+                  <input
+                    type="file"
+                    id="fileInput"
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept=".xlsx, .csv"
+                    disabled={isLocked}
+                  />
+                </label>
+              </div>
             </div>
-          </div>)}
+          )}
         </div>
-
 
         {fileSet && (
           <div className="container bg-light shadow-sm mt-4 p-4">

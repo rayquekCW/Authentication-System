@@ -76,6 +76,7 @@ p {
   }
 }
 
+
 /* Text */
 
 .text-primary {
@@ -316,6 +317,15 @@ p {
   padding: 10px;
   transition: background-color 0.3s ease;
   /* Add a transition effect for a smoother hover */
+}
+
+.nav-link-sideBar{
+  padding: 10px;
+  color:$primaryBrandColor;
+  transition: background-color 0.3s ease;
+  :hover{
+    color: $secondaryBrandColor;
+  }
 }
 
 .open {
