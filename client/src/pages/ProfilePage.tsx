@@ -395,8 +395,8 @@ const ProfilePage = () => {
 			{showDeleteConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
 					<div className="popup-content text-center">
-						<h1>Delete Account</h1>
-						<h6>Are you sure you want to delete your Account?</h6>
+						<h5>Delete Account</h5>
+						<p>Are you sure you want to delete your Account?</p>
 						<button
 							className="defaultBtn me-2"
 							style={{ width: "auto" }}
@@ -418,8 +418,8 @@ const ProfilePage = () => {
 			{showChangeConfirmPopup && (
 				<div className="popup d-flex justify-content-center align-items-center">
 					<div className="popup-content text-center">
-						<h1>Change Password</h1>
-						<h6>Are you sure you want to change your Password?</h6>
+						<h5>Change Password</h5>
+						<p>Are you sure you want to change your Password?</p>
 						<button
 							className="defaultBtn me-2"
 							style={{ width: "auto" }}

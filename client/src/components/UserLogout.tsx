@@ -95,7 +95,8 @@ const UserLogoutPopup = () => {
 				<div className="popup d-flex justify-content-center align-items-center">
 					<div className="popup-content text-center">
 						<h5>
-							Your session is about to expire due to inactivity.
+							Your session is about to expire due to inactivity.{" "}
+							<br />
 							Would you like to continue your session?{" "}
 						</h5>
 						<p>
