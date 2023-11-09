@@ -1,15 +1,16 @@
-import {useState, useEffect} from 'react';
-import {useLocation, useNavigate} from 'react-router-dom';
-import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa';
-import UserPool from '../services/UserPool';
-import {CognitoUser} from 'amazon-cognito-identity-js';
-import OtpPassword from '../components/OtpPassword';
-import Notifications from '../components/Notifications';
-import MFAPassword from '../components/MFAPassword';
+import { useState, useEffect, useContext } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import UserPool from "../services/UserPool";
+import { CognitoUser } from "amazon-cognito-identity-js";
+import OtpPassword from "../components/OtpPassword";
+import Notifications from "../components/Notifications";
+import { AccountContext } from "../services/Account";
+// import MFAPassword from '../components/MFAPassword';
 
 const SetPassword = () => {
-	const [password, setPassword] = useState('');
-	const [confirmPassword, setConfirmPassword] = useState('');
+	const [password, setPassword] = useState("");
+	const [confirmPassword, setConfirmPassword] = useState("");
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [lengthCheck, setLengthCheck] = useState(false);
@@ -18,12 +19,14 @@ const SetPassword = () => {
 	const [isSuccessful, setIsSuccessful] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [showErrorNotification, setShowErrorNotification] = useState(false);
+	const [oldPassword, setOldPassword] = useState("");
+	const [isOldPasswordInvalid, setIsOldPasswordInvalid] = useState(false);
 
-	const navigate = useNavigate();
 	const location = useLocation();
 	const isChange = location.state.isChangePassword;
-	const isVerified = location.state.isVerified;
 	const email = location.state.email;
+	const navigate = useNavigate();
+	const { getSession, logout } = useContext(AccountContext) || {};
 
 	// Effect for showing/hiding error notification
 	useEffect(() => {
@@ -83,25 +86,55 @@ const SetPassword = () => {
 	};
 
 	// Handler for setting the password
-	const handleSetPassword = () => {
+	async function handleSetPassword() {
 		setIsSubmitted(true);
-		if (password === confirmPassword && passwordValid) {
-			setIsSuccessful(true);
 
+		if (password === confirmPassword && passwordValid) {
 			// ! Only for production
-			// else send the email to forgetPassword
-			getUser().forgotPassword({
-				onSuccess: () => {
-					console.log('onSuccess: The reset email has been sent!');
-				},
-				onFailure: (err) => {
-					console.error('onFailure:', err);
-				},
-			});
+
+			if (isChange) {
+				// change password of existing user
+				if (getSession) {
+					getSession().then((res: any) => {
+						if (res) {
+							const user = res.user;
+							user.changePassword(
+								oldPassword, // Provide the user's current password
+								confirmPassword, // Provide the new password
+								(err: any, result: any) => {
+									if (err) {
+										console.log(err);
+										setIsSuccessful(false);
+										setIsOldPasswordInvalid(true);
+										return;
+									}
+									setIsSuccessful(true);
+									if (logout && result) {
+										logout();
+										navigate("/");
+									}
+								}
+							);
+						}
+					});
+				}
+			} else {
+				setIsSuccessful(true);
+				getUser().forgotPassword({
+					onSuccess: () => {
+						console.log(
+							"onSuccess: The reset email has been sent!"
+						);
+					},
+					onFailure: (err) => {
+						console.error("onFailure:", err);
+					},
+				});
+			}
 		} else {
 			setShowErrorNotification(true);
 		}
-	};
+	}
 
 	return (
 		<div className="container-fluid h-100">
@@ -118,6 +151,41 @@ const SetPassword = () => {
 								/>
 								{!isSuccessful && (
 									<div>
+										{isChange && (
+											<div className="input-group mb-3 w-100">
+												<input
+													type={
+														showPassword
+															? "text"
+															: "password"
+													}
+													className="form-control"
+													placeholder="Old Password"
+													aria-label="Password"
+													aria-describedby="basic-addon2"
+													value={oldPassword}
+													onChange={(e) =>
+														setOldPassword(
+															e.target.value
+														)
+													}
+												/>
+												<button
+													className="input-group-text"
+													onClick={() =>
+														setShowPassword(
+															!showPassword
+														)
+													}
+												>
+													{showPassword ? (
+														<FaRegEyeSlash />
+													) : (
+														<FaRegEye />
+													)}
+												</button>
+											</div>
+										)}
 										<div className="text-start">
 											Password must:
 										</div>
@@ -126,9 +194,9 @@ const SetPassword = () => {
 												style={{
 													color: password
 														? lengthCheck
-															? 'green'
-															: 'red'
-														: 'black',
+															? "green"
+															: "red"
+														: "black",
 												}}
 											>
 												Be between 14-64 characters
@@ -137,9 +205,9 @@ const SetPassword = () => {
 												style={{
 													color: password
 														? passwordStrengthCheck
-															? 'green'
-															: 'red'
-														: 'black',
+															? "green"
+															: "red"
+														: "black",
 												}}
 											>
 												<li>
@@ -162,8 +230,8 @@ const SetPassword = () => {
 											<input
 												type={
 													showPassword
-														? 'text'
-														: 'password'
+														? "text"
+														: "password"
 												}
 												className="form-control"
 												placeholder="Password"
@@ -191,8 +259,8 @@ const SetPassword = () => {
 											<input
 												type={
 													showConfirmPassword
-														? 'text'
-														: 'password'
+														? "text"
+														: "password"
 												}
 												className="form-control"
 												placeholder="Confirm Password"
@@ -230,7 +298,7 @@ const SetPassword = () => {
 									<div>
 										<Notifications
 											message={
-												'Final verification before your password is set!'
+												"Final verification before your password is set!"
 											}
 											isError={!isSuccessful}
 										/>
@@ -253,7 +321,17 @@ const SetPassword = () => {
 										isSubmitted && (
 											<Notifications
 												message={
-													'Invalid password or passwords do not match'
+													"Invalid password or passwords do not match. Please try again."
+												}
+												isError={!isSuccessful}
+											/>
+										)}
+									{isOldPasswordInvalid &&
+										!isSuccessful &&
+										isSubmitted && (
+											<Notifications
+												message={
+													"Old Password is invalid. Please try again."
 												}
 												isError={!isSuccessful}
 											/>

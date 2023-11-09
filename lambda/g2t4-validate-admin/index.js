@@ -29,6 +29,11 @@ const validateAdmin = async (token) =>
               status: 200,
               role: customRoleAttribute.Value,
             });
+          } else {
+            resolve({
+              status: 200,
+              role: "user",
+            });
           }
         } catch (err) {
           reject({

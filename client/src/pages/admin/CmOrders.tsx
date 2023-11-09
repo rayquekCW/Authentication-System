@@ -1,79 +1,37 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
-import { AiFillExclamationCircle } from 'react-icons/ai';
-import { CgProfile } from 'react-icons/cg';
-import { IoMdLogOut } from 'react-icons/io';
-import { GiHamburgerMenu } from 'react-icons/gi';
-import Sidebar from "../../components/navigation/SideBar";
-import SideBarSuper from "../../components/navigation/SideBarSuper";
-// import BankLogo from "../assets/posb.svg";
+import { useState, useEffect, useContext } from "react";
 
-const Orders = () => {
-    const [isOpen, setIsOpen] = useState<boolean>(false);
-    const [adminType] = useState(window.localStorage.getItem("adminType")); //TODO: for demo of different admin types use protected routes and checking of tokens to determine admin type for actual implementation
-    // isSuperAdmin is true if adminType is superAdmin from local storage
-    const isSuper = adminType === 'superAdmin';
+import UserLogoutPopup from "../../components/UserLogout";
+import { AccountContext } from "../admin/../../services/Account";
+import AdminNavBar from "../../components/navigation/AdminNavBar";
+const CmOrders = () => {
+	const [role, setRole] = useState<string>("");
+	const [userName, setUserName] = useState<string>("");
+	const accountContext = useContext(AccountContext);
 
-    const handleClick = () => {
-        setIsOpen(!isOpen);
-    };
+	useEffect(() => {
+		if (accountContext) {
+			// Now you can use accountContext.getSession
+			accountContext
+				.getSession()
+				.then((session: any) => {
+					setRole(session["custom:role"]);
+					setUserName(session.given_name + " " + session.family_name);
+				})
+				.catch((error: any) => {
+					console.error(error); // Handle error
+				});
+		}
+	}, [accountContext]);
 
-    const inlineStyle = {
-        fontSize: "16px",
-        backgroundColor: "#0078CE",
-        padding: "20px",
-    };
+	return (
+		<>
+			<UserLogoutPopup />
+			<div>
+				<AdminNavBar adminType={role} userName={userName} />
+				<h1 className="mt-5 ms-5">Orders</h1>
+			</div>
+		</>
+	);
+};
 
-
-    return (
-        <div>
-            <div className="navbar navbar-expand-lg navbar-light" style={inlineStyle}>
-                <div className="container-fluid">
-                    <div onClick={handleClick} style={{ cursor: 'pointer' }}>
-                        <GiHamburgerMenu style={{ fontSize: "25px", color: "white", marginRight: '5px' }} />
-                    </div>
-                    {/* <BankLogo /> */}
-                    <ul className="navbar-nav" style={{ marginLeft: "auto" }}>
-                        <li className="nav-item me-4">
-                            <Link
-                                className="nav-link"
-                                to=""
-                                style={{ color: "white" }}
-                            >
-                                {<AiFillExclamationCircle style={{ marginRight: "5px", marginBottom: "3px" }} />}
-                                Edit Tooltips
-                            </Link>
-                        </li>
-                        <li className="nav-item me-4">
-                            <Link
-                                className="nav-link"
-                                to=""
-                                style={{ color: "white" }}
-                            >
-                                <CgProfile style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                Ray Quek
-                            </Link>
-                        </li>
-                        <li className="nav-item me-4">
-                        {/* TODO: Logout functionality */}
-                            <Link
-                                className="nav-link"
-                                to="/"
-                                style={{ color: "white" }}
-                            >
-                                <IoMdLogOut style={{ marginRight: "5px", marginBottom: "3px" }} />
-                                Logout
-                            </Link>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <div className={`sidebar-container ${isOpen ? 'open' : ''}`}>
-                {isSuper ? <SideBarSuper handleClick={handleClick} /> : <Sidebar handleClick={handleClick} />}
-            </div>
-            <h1 className="mt-5 ms-5">Orders</h1>
-        </div>
-    )
-}
-
-export default Orders
+export default CmOrders;

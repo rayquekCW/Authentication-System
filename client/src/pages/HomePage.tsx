@@ -1,5 +1,6 @@
 import NavBar from '../components/navigation/NavBar';
 import {useNavigate} from 'react-router-dom';
+import UserLogoutPopup from '../components/UserLogout';
 import {useCookies} from 'react-cookie';
 import {AccountContext} from '../services/Account';
 import {useState, useContext, useEffect} from 'react';
@@ -49,6 +50,7 @@ const HomePage = () => {
 	const navigate = useNavigate();
 	return (
 		<>
+			<UserLogoutPopup />
 			<NavBar />
 			<div className="container bg-light shadow-sm mt-4">
 				<div className="row p-3">
