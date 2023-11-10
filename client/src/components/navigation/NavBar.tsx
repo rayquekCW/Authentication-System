@@ -1,28 +1,30 @@
-import { Link } from "react-router-dom";
-import { IoMdLogOut } from "react-icons/io";
-import { useContext } from "react";
-import "../../styles/_variable.scss";
+import {Link} from 'react-router-dom';
+import {IoMdLogOut} from 'react-icons/io';
+import {useContext} from 'react';
+import '../../styles/_variable.scss';
 const bankName = import.meta.env.VITE_BANK_NAME;
 const BankLogo = await import(`../../assets/${bankName}.svg`);
-import { AccountContext } from "../../services/Account";
-import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
+import {AccountContext} from '../../services/Account';
+import {useCookies} from 'react-cookie';
+import {useNavigate} from 'react-router-dom';
 
 const NavBar = () => {
-	const { logout } = useContext(AccountContext) || {};
-	const [cookie, setCookie, removeCookie] = useCookies();
+	const {logout} = useContext(AccountContext) || {};
+	const [, , removeCookie] = useCookies();
 	const navigate = useNavigate();
 
 	const handleToggleClick = () => {
-		const navbarNavDropdown = document.getElementById("navbarNavDropdown");
-		navbarNavDropdown?.classList.toggle("show");
+		const navbarNavDropdown = document.getElementById('navbarNavDropdown');
+		navbarNavDropdown?.classList.toggle('show');
 	};
 
 	const handleLogout = () => {
 		if (logout) {
 			logout();
-			removeCookie("userData");
-			navigate("/");
+			sessionStorage.clear();
+			localStorage.clear();
+			removeCookie('userData');
+			navigate('/');
 		}
 	};
 
@@ -55,7 +57,7 @@ const NavBar = () => {
 						<li className="nav-item">
 							<Link
 								className="nav-link"
-								to=""
+								to="/"
 								onClick={handleLogout}
 							>
 								Logout

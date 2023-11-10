@@ -1,13 +1,13 @@
-import { useState, useContext, useEffect } from "react";
-import { AiOutlineClose } from "react-icons/ai";
-import { Link, useNavigate } from "react-router-dom";
-import { AccountContext } from "../../services/Account";
-import { useSearchParams } from "react-router-dom";
-import { useCookies } from "react-cookie";
-import SignInPopUp from "../../components/SignInPopup";
-import UserLogoutPopup from "../../components/UserLogout";
-import { maskPhone } from "../../utils/maskPhone";
-import AdminNavBar from "../../components/navigation/AdminNavBar";
+import {useState, useContext, useEffect} from 'react';
+import {AiOutlineClose} from 'react-icons/ai';
+import {Link, useNavigate} from 'react-router-dom';
+import {AccountContext} from '../../services/Account';
+import {useSearchParams} from 'react-router-dom';
+import {useCookies} from 'react-cookie';
+import SignInPopUp from '../../components/SignInPopup';
+import UserLogoutPopup from '../../components/UserLogout';
+import {maskPhone} from '../../utils/maskPhone';
+import AdminNavBar from '../../components/navigation/AdminNavBar';
 
 interface UserDataProps {
 	sub: string;
@@ -26,17 +26,17 @@ const CmProfile = () => {
 	const [showDeleteConfirmPopup, setShowDeleteConfirmPopup] = useState(false);
 	const [showChangeConfirmPopup, setShowChangeConfirmPopup] = useState(false);
 	const [cookie, setCookie, removeCookie] = useCookies();
-	const [currentUserSub, setCurrentUserSub] = useState<string>("");
+	const [currentUserSub, setCurrentUserSub] = useState<string>('');
 	const [showSignInPopUp, setShowSignInPopUp] = useState(false);
 	const [isCognitoUser, setIsCognitoUser] = useState(false);
-	const [mfaPreference, setMfaPreference] = useState("");
+	const [mfaPreference, setMfaPreference] = useState('');
 	const [mfaEnabled, setMfaEnabled] = useState(false);
 	const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 	const [changePassword, setChangePassword] = useState(false);
-	const [role, setRole] = useState<string>("");
-	const [userName, setUserName] = useState<string>("");
+	const [role, setRole] = useState<string>('');
+	const [userName, setUserName] = useState<string>('');
 
-	const { getSession, logout } = useContext(AccountContext) || {};
+	const {getSession, logout} = useContext(AccountContext) || {};
 
 	const navigate = useNavigate();
 
@@ -68,8 +68,10 @@ const CmProfile = () => {
 	const handleLogout = () => {
 		if (logout) {
 			logout();
-			removeCookie("userData");
-			navigate("/");
+			localStorage.clear();
+			sessionStorage.clear();
+			removeCookie('userData');
+			navigate('/');
 		}
 	};
 
@@ -77,7 +79,7 @@ const CmProfile = () => {
 		// Retrieve all keys from local storage
 		const allKeys = Object.keys(localStorage);
 		const isCognitoKeyPresent = allKeys.some((key) =>
-			key.startsWith("CognitoIdentityServiceProvider")
+			key.startsWith('CognitoIdentityServiceProvider')
 		); // Check if any key matches the pattern used by Cognito Identity Service Provider
 		setIsCognitoUser(isCognitoKeyPresent);
 
@@ -91,39 +93,39 @@ const CmProfile = () => {
 					setMfaEnabled(sessionData.mfaEnabled);
 					setMfaPreference(sessionData.preferredMFA);
 					setIsPhoneVerified(
-						sessionData.phone_number_verified === "true"
+						sessionData.phone_number_verified === 'true'
 					);
-					setRole(sessionData["custom:role"]);
+					setRole(sessionData['custom:role']);
 					setUserName(
-						sessionData.given_name + " " + sessionData.family_name
+						sessionData.given_name + ' ' + sessionData.family_name
 					);
 
 					setUserData({
 						sub: sessionData.sub,
 						name:
 							sessionData.given_name +
-							" " +
+							' ' +
 							sessionData.family_name,
 						email: sessionData.email,
 						given_name: sessionData.given_name,
 						family_name: sessionData.family_name,
 						birthdate: sessionData.birthdate,
-						gender: "",
+						gender: '',
 						phone_number: maskPhone(sessionData.phone_number),
 					});
 				})
 				.catch((error) => {
 					// if no accessToken then user is not logged in
-					console.error("Error while getting access token:", error);
+					console.error('Error while getting access token:', error);
 					if (cookie.userData) {
-						console.log("have cookie");
+						console.log('have cookie');
 						setUserData(cookie.userData);
-					} else if (searchParams.get("code") != null) {
-						console.log("have code");
+					} else if (searchParams.get('code') != null) {
+						console.log('have code');
 						getUserData();
 					} else {
 						//NOT LOGGED IN IN ANY WAY
-						navigate("/");
+						navigate('/');
 					}
 				});
 		}
@@ -131,18 +133,18 @@ const CmProfile = () => {
 
 	const getUserData = async () => {
 		//get data from session
-		if (searchParams.get("code") === null) return;
+		if (searchParams.get('code') === null) return;
 		if (userData != undefined) return;
 		try {
 			const response = await fetch(
-				"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-authtoken",
+				'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-authtoken',
 				{
-					method: "POST",
+					method: 'POST',
 					headers: {
-						"Content-Type": "application/json",
+						'Content-Type': 'application/json',
 					},
 					body: JSON.stringify({
-						code: searchParams.get("code"),
+						code: searchParams.get('code'),
 					}),
 				}
 			);
@@ -150,11 +152,11 @@ const CmProfile = () => {
 				const data = await response.json();
 				try {
 					const verifyTokenResponse = await fetch(
-						"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken",
+						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',
 						{
-							method: "POST",
+							method: 'POST',
 							headers: {
-								"Content-Type": "application/json",
+								'Content-Type': 'application/json',
 							},
 							body: JSON.stringify({
 								token: data.access_token,
@@ -162,16 +164,16 @@ const CmProfile = () => {
 						}
 					);
 					if (!verifyTokenResponse.ok) {
-						alert("Invalid Token");
+						alert('Invalid Token');
 					} else {
-						console.log("token verified");
+						console.log('token verified');
 						try {
 							const response2 = await fetch(
-								"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/auth_userprofile",
+								'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/auth_userprofile',
 								{
-									method: "POST",
+									method: 'POST',
 									headers: {
-										"Content-Type": "application/json",
+										'Content-Type': 'application/json',
 									},
 									body: JSON.stringify({
 										accessToken: data.access_token,
@@ -180,9 +182,14 @@ const CmProfile = () => {
 							);
 							if (response2.ok) {
 								const userData = await response2.json();
-								setUserData(userData);
-								setCookie("userData", userData, {
-									path: "/",
+								setUserData({
+									...userData,
+									phone_number: maskPhone(
+										userData['phone_number']
+									),
+								});
+								setCookie('userData', userData, {
+									path: '/',
 									maxAge: 3600,
 								});
 							}
@@ -191,7 +198,7 @@ const CmProfile = () => {
 						}
 					}
 				} catch {
-					console.log("error");
+					console.log('error');
 				}
 			} else {
 				console.error(
@@ -199,7 +206,7 @@ const CmProfile = () => {
 				);
 			}
 		} catch (error: any) {
-			console.log("error");
+			console.log('error');
 		}
 	};
 
@@ -209,16 +216,16 @@ const CmProfile = () => {
 	 */
 	const updateMfaPreference = () => {
 		if (getSession) {
-			getSession().then(({ user }) => {
+			getSession().then(({user}) => {
 				let smsMfaPreferred = false;
 				let softwareTokenMfaPreferred = false;
 
-				if (mfaPreference === "SMS_MFA") {
+				if (mfaPreference === 'SMS_MFA') {
 					smsMfaPreferred = true;
 					softwareTokenMfaPreferred = !smsMfaPreferred;
 				}
 
-				if (mfaPreference === "SOFTWARE_TOKEN_MFA") {
+				if (mfaPreference === 'SOFTWARE_TOKEN_MFA') {
 					softwareTokenMfaPreferred = true;
 					smsMfaPreferred = !softwareTokenMfaPreferred;
 				}
@@ -235,7 +242,7 @@ const CmProfile = () => {
 
 				user.setUserMfaPreference(smsSettings, totpSettings, () => {});
 
-				alert("MFA Preference Updated!");
+				alert('MFA Preference Updated!');
 			});
 		}
 	};
@@ -254,8 +261,8 @@ const CmProfile = () => {
 					showSignInPopUp ||
 					showDeleteConfirmPopup ||
 					showChangeConfirmPopup
-						? "active"
-						: ""
+						? 'active'
+						: ''
 				}`}
 			></div>
 
@@ -268,7 +275,7 @@ const CmProfile = () => {
 						<Link to="/">
 							<button
 								className="defaultBtn"
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 								onClick={handleLogout}
 							>
 								Log Out
@@ -293,13 +300,19 @@ const CmProfile = () => {
 							<td className="text-start p-3">
 								{userData?.phone_number
 									? userData.phone_number
-									: "Not Set"}
+									: 'Not Set'}
 							</td>
 						</tr>
 						<tr>
 							<th className="text-start p-3">Birth Date</th>
 							<td className="text-start p-3">
-								{userData?.birthdate}
+								{userData?.birthdate &&
+								new Date(userData.birthdate).toString() !==
+									'Invalid Date'
+									? new Date(
+											userData.birthdate
+									  ).toLocaleDateString('en-GB')
+									: userData?.birthdate}
 							</td>
 						</tr>
 					</tbody>
@@ -309,7 +322,7 @@ const CmProfile = () => {
 						<div className="col-12 col-lg-8 text-md-end">
 							<button
 								className="defaultBtn me-3"
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 								onClick={handleChangeButtonClick}
 							>
 								Change Password
@@ -317,7 +330,7 @@ const CmProfile = () => {
 							<button
 								className="cancelBtn me-3"
 								onClick={handleDeleteButtonClick}
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 							>
 								Delete Account
 							</button>
@@ -337,7 +350,7 @@ const CmProfile = () => {
 						<div className="col-8 d-flex justify-content-end">
 							<button
 								className="defaultBtn"
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 								onClick={() => updateMfaPreference()}
 							>
 								Update
@@ -364,7 +377,7 @@ const CmProfile = () => {
 									onChange={(event) =>
 										setMfaPreference(event.target.value)
 									}
-									checked={mfaPreference === "SMS_MFA"}
+									checked={mfaPreference === 'SMS_MFA'}
 								/>
 								<label
 									className="form-check-label"
@@ -384,7 +397,7 @@ const CmProfile = () => {
 										setMfaPreference(event.target.value)
 									}
 									checked={
-										mfaPreference === "SOFTWARE_TOKEN_MFA"
+										mfaPreference === 'SOFTWARE_TOKEN_MFA'
 									}
 								/>
 								<label
@@ -406,14 +419,14 @@ const CmProfile = () => {
 						<p>Are you sure you want to delete your Account?</p>
 						<button
 							className="defaultBtn me-2"
-							style={{ width: "auto" }}
+							style={{width: 'auto'}}
 							onClick={handleDeleteConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{ width: "auto" }}
+							style={{width: 'auto'}}
 							onClick={closePopup}
 						>
 							No
@@ -429,14 +442,14 @@ const CmProfile = () => {
 						<p>Are you sure you want to change your Password?</p>
 						<button
 							className="defaultBtn me-2"
-							style={{ width: "auto" }}
+							style={{width: 'auto'}}
 							onClick={handleChangeConfirmButtonClick}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{ width: "auto" }}
+							style={{width: 'auto'}}
 							onClick={closePopup}
 						>
 							No

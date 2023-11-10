@@ -1,39 +1,18 @@
-import { useState, useEffect, useContext } from "react";
-import { useCookies } from "react-cookie";
-import { AccountContext } from "./services/Account";
-import { Navigate, Outlet } from "react-router-dom";
+import {Navigate, Outlet} from 'react-router-dom';
 
+/**
+ * The ProtectedRoute function checks if there is an access token in the session storage and renders
+ * the Outlet component if there is, otherwise it navigates to the home page.
+ * @returns either the `<Outlet />` component if there is an 'access_token' value stored in the
+ * sessionStorage, or it returns the `<Navigate to="/" />` component if there is no 'access_token'
+ * value stored.
+ */
 function ProtectedRoute() {
-	const [cookie] = useCookies();
-	const { getSession } = useContext(AccountContext) || {};
-	const [isAuthenticated, setIsAuthenticated] = useState(false);
-	const [loading, setLoading] = useState(true); // To track loading state
-
-	useEffect(() => {
-		async function checkAuthentication() {
-			if (getSession) {
-				try {
-					const sessionData = await getSession();
-					// eslint-disable-next-line no-unused-vars
-					const accessToken = sessionData.accessToken.jwtToken;
-					console.log(accessToken);
-					setIsAuthenticated(true);
-				} catch (error) {
-					if (cookie.userData) {
-						setIsAuthenticated(true);
-					} else {
-						setIsAuthenticated(false);
-					}
-				} finally {
-					setLoading(false); // Set loading to false once done
-				}
-			}
-		}
-		checkAuthentication();
-	}, [getSession, cookie]);
-
-	if (loading) return null; // Or return a loader/spinner
-	return isAuthenticated ? <Outlet /> : <Navigate to="/" />;
+	return sessionStorage.getItem('access_token') ? (
+		<Outlet />
+	) : (
+		<Navigate to="/" />
+	);
 }
 
 export default ProtectedRoute;

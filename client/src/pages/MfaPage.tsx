@@ -1,29 +1,29 @@
-import { FaPhoneAlt, FaUserSecret, FaAt } from "react-icons/fa";
-import { useState, useEffect, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { AccountContext } from "../services/Account";
+import {FaPhoneAlt, FaUserSecret, FaAt} from 'react-icons/fa';
+import {useState, useEffect, useContext} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {AccountContext} from '../services/Account';
 const bankName = import.meta.env.VITE_BANK_NAME;
 const BankLogo = await import(`../assets/${bankName}.svg`);
 
 const MfaPage = () => {
 	const navigate = useNavigate();
-	const { getSession, logout } = useContext(AccountContext) || {};
+	const {getSession, logout} = useContext(AccountContext) || {};
 
 	// For Step 1
 	const [isNumberInput, setIsNumberInput] = useState(false);
 	const [isVerifiedPhone, setIsVerifiedPhone] = useState(false);
-	const [phoneNumber, setPhoneNumber] = useState("");
-	const [confirmationCode, setConfirmationCode] = useState("");
+	const [phoneNumber, setPhoneNumber] = useState('');
+	const [confirmationCode, setConfirmationCode] = useState('');
 	const [optOut, setOptOut] = useState(false);
 
 	// For Step 2
-	const [userCode, setUserCode] = useState("");
+	const [userCode, setUserCode] = useState('');
 	const [enabled, setEnabled] = useState(false);
-	const [image, setImage] = useState("");
+	const [image, setImage] = useState('');
 	const [showImage, setShowImage] = useState(false);
 
 	// For Step 3
-	const [mfaPreference, setMfaPreference] = useState("SOFTWARE_TOKEN_MFA");
+	const [mfaPreference, setMfaPreference] = useState('SOFTWARE_TOKEN_MFA');
 
 	//* Phone MFA
 	/**
@@ -31,38 +31,38 @@ const MfaPage = () => {
 	 * API endpoint.
 	 */
 	const updatePhoneNumber = () => {
-		console.log("phoneNumber: " + phoneNumber);
-		console.log("updatePhoneNumber() function called!");
+		console.log('phoneNumber: ' + phoneNumber);
+		console.log('updatePhoneNumber() function called!');
 
 		const API =
-			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa-phone";
+			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa-phone';
 
 		if (getSession) {
-			getSession().then(({ accessToken, headers }) => {
-				if (typeof accessToken !== "string") {
+			getSession().then(({accessToken, headers}) => {
+				if (typeof accessToken !== 'string') {
 					accessToken = accessToken.jwtToken;
 				}
 
 				try {
 					fetch(API, {
 						headers,
-						method: "PATCH",
-						body: JSON.stringify({ phoneNumber, accessToken }),
+						method: 'PATCH',
+						body: JSON.stringify({phoneNumber, accessToken}),
 					}).then((data) => {
 						if (data.status === 200) {
 							setIsNumberInput(true);
-							setPhoneNumber("");
+							setPhoneNumber('');
 						} else {
-							console.log("error in status code ");
+							console.log('error in status code ');
 						}
 					});
 				} catch (err) {
-					console.log("error in updatePhoneNumber()");
+					console.log('error in updatePhoneNumber()');
 				}
 			});
 		}
 		// Clear the input box
-		setPhoneNumber("");
+		setPhoneNumber('');
 	};
 
 	/**
@@ -70,22 +70,22 @@ const MfaPage = () => {
 	 * API with a confirmation code and access token.
 	 */
 	const verifyPhoneNumberCode = () => {
-		console.log("confirmationCode: " + confirmationCode);
-		console.log("verifyPhoneNumberCode() function called!");
+		console.log('confirmationCode: ' + confirmationCode);
+		console.log('verifyPhoneNumberCode() function called!');
 
 		const API =
-			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa-phone";
+			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa-phone';
 
 		if (getSession) {
-			getSession().then(({ accessToken, headers }) => {
-				if (typeof accessToken !== "string") {
+			getSession().then(({accessToken, headers}) => {
+				if (typeof accessToken !== 'string') {
 					accessToken = accessToken.jwtToken;
 				}
 
 				try {
 					fetch(API, {
 						headers,
-						method: "POST",
+						method: 'POST',
 						body: JSON.stringify({
 							code: confirmationCode,
 							accessToken: accessToken,
@@ -93,19 +93,19 @@ const MfaPage = () => {
 					}).then((data) => {
 						if (data.status === 200) {
 							setIsVerifiedPhone(true);
-							setConfirmationCode("");
+							setConfirmationCode('');
 						} else {
-							console.log("error in status code ");
+							console.log('error in status code ');
 						}
 					});
 				} catch (err) {
-					console.log("error in verifyPhoneNumberCode");
+					console.log('error in verifyPhoneNumberCode');
 				}
 			});
 		}
 
 		// Clear the input box
-		setConfirmationCode("");
+		setConfirmationCode('');
 	};
 
 	//* TOTP MFA
@@ -118,11 +118,11 @@ const MfaPage = () => {
 	 */
 	const getQRCode = () => {
 		const API =
-			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa";
+			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa';
 
 		if (getSession) {
-			getSession().then(({ accessToken, headers }) => {
-				if (typeof accessToken !== "string") {
+			getSession().then(({accessToken, headers}) => {
+				if (typeof accessToken !== 'string') {
 					accessToken = accessToken.jwtToken;
 				}
 				const uri = `${API}?accessToken=${accessToken}`;
@@ -135,7 +135,7 @@ const MfaPage = () => {
 								if (data.status === 403) {
 									if (retryCount < MAX_RETRIES) {
 										retryCount++;
-										console.log("Retrying...");
+										console.log('Retrying...');
 										setTimeout(fetchWithRetry, 1000); // Retry after a delay (1 second in this example)
 									}
 								} else {
@@ -146,7 +146,7 @@ const MfaPage = () => {
 							})
 							.catch(() => {});
 					} catch (err) {
-						console.log("error");
+						console.log('error');
 					}
 				};
 				fetchWithRetry(); // Initial fetch
@@ -165,11 +165,11 @@ const MfaPage = () => {
 	const enableMFA = (event: any) => {
 		event.preventDefault();
 		const API =
-			"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa";
+			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/mfa';
 
 		if (getSession) {
-			getSession().then(({ user, accessToken, headers }) => {
-				if (typeof accessToken !== "string") {
+			getSession().then(({user, accessToken, headers}) => {
+				if (typeof accessToken !== 'string') {
 					accessToken = accessToken.jwtToken;
 				}
 
@@ -177,13 +177,13 @@ const MfaPage = () => {
 
 				/* Enable the MFA (TOTP) setting for the user */
 				fetch(uri, {
-					method: "POST",
+					method: 'POST',
 					headers,
 				})
 					.then((data) => data.json())
 					.then((result) => {
 						console.log(result);
-						if (result.Status && result.Status === "SUCCESS") {
+						if (result.Status && result.Status === 'SUCCESS') {
 							setEnabled(true); // Set state to enabled
 
 							const settings = {
@@ -193,26 +193,26 @@ const MfaPage = () => {
 
 							user.setUserMfaPreference(null, settings, () => {}); // set the MFA Setting on Cognito to enabled and assign to TOTP Preferred
 
-							alert("MFA Enabled!");
+							alert('MFA Enabled!');
 
 							// if out of SMS MFA, logout user and navigate to login page
 							if (optOut) {
 								if (logout) {
 									logout();
-									navigate("/");
+									navigate('/');
 								}
 							}
 						} else {
 							// Handle errors alert if the user enters the wrong code
 							if (
 								result.errorType ===
-								"EnableSoftwareTokenMFAException"
+								'EnableSoftwareTokenMFAException'
 							) {
-								alert("Incorrect 6-digit code!");
+								alert('Incorrect 6-digit code!');
 							} else if (
-								result.errorType === "InvalidParameterException"
+								result.errorType === 'InvalidParameterException'
 							) {
-								alert("Please provide a 6-digit number");
+								alert('Please provide a 6-digit number');
 							}
 						}
 					})
@@ -227,16 +227,16 @@ const MfaPage = () => {
 	 */
 	const updateMfaPreference = () => {
 		if (getSession) {
-			getSession().then(({ user }) => {
+			getSession().then(({user}) => {
 				let smsMfaPreferred = false;
 				let softwareTokenMfaPreferred = false;
 
-				if (mfaPreference === "SMS_MFA") {
+				if (mfaPreference === 'SMS_MFA') {
 					smsMfaPreferred = true;
 					softwareTokenMfaPreferred = !smsMfaPreferred;
 				}
 
-				if (mfaPreference === "SOFTWARE_TOKEN_MFA") {
+				if (mfaPreference === 'SOFTWARE_TOKEN_MFA') {
 					softwareTokenMfaPreferred = true;
 					smsMfaPreferred = !softwareTokenMfaPreferred;
 				}
@@ -253,12 +253,12 @@ const MfaPage = () => {
 
 				user.setUserMfaPreference(smsSettings, totpSettings, () => {});
 
-				alert("MFA Preference Updated!");
+				alert('MFA Preference Updated!');
 
 				// Logout user and navigate to login page
 				if (logout) {
 					logout();
-					navigate("/");
+					navigate('/');
 				}
 			});
 		}
@@ -266,9 +266,9 @@ const MfaPage = () => {
 
 	useEffect(() => {
 		if (getSession) {
-			getSession().then(({ mfaEnabled, phone_number_verified }) => {
+			getSession().then(({mfaEnabled, phone_number_verified}) => {
 				setEnabled(mfaEnabled);
-				setIsVerifiedPhone(phone_number_verified === "true");
+				setIsVerifiedPhone(phone_number_verified === 'true');
 			});
 		}
 	}, []);
@@ -300,8 +300,8 @@ const MfaPage = () => {
 						<h2
 							className={
 								isVerifiedPhone
-									? "py-3 px-3 card-success"
-									: "py-3 px-3 card-header"
+									? 'py-3 px-3 card-success'
+									: 'py-3 px-3 card-header'
 							}
 						>
 							Step 1: Set up Phone Number MFA
@@ -321,7 +321,7 @@ const MfaPage = () => {
 											className="input-group-text"
 											id="phone-number-input"
 										>
-											<FaPhoneAlt />{" "}
+											<FaPhoneAlt />{' '}
 										</span>
 										<input
 											type="tel"
@@ -352,7 +352,7 @@ const MfaPage = () => {
 												className="input-group-text"
 												id="phone-confirmation-code"
 											>
-												<FaUserSecret />{" "}
+												<FaUserSecret />{' '}
 											</span>
 											<input
 												type="text"
@@ -458,8 +458,8 @@ const MfaPage = () => {
 						<h2
 							className={
 								enabled
-									? "py-3 px-3 card-success"
-									: "py-3 px-3 card-header"
+									? 'py-3 px-3 card-success'
+									: 'py-3 px-3 card-header'
 							}
 						>
 							Step 2: Set up TOTP MFA
@@ -538,7 +538,9 @@ const MfaPage = () => {
 								onClick={() => {
 									if (logout) {
 										logout();
-										navigate("/");
+										sessionStorage.clear();
+										localStorage.clear();
+										navigate('/');
 									}
 								}}
 							>
