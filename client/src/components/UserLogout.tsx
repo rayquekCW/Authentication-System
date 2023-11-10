@@ -1,26 +1,26 @@
-import {useNavigate, useLocation, useSearchParams} from 'react-router-dom';
-import {AccountContext} from '../services/Account';
-import {useContext, useState} from 'react';
-import Pool from '../services/UserPool';
-import {jwtDecode} from 'jwt-decode';
-import {CognitoRefreshToken} from 'amazon-cognito-identity-js';
-import {useCookies} from 'react-cookie';
+import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { AccountContext } from "../services/Account";
+import { useContext, useState } from "react";
+import Pool from "../services/UserPool";
+import { jwtDecode } from "jwt-decode";
+import { CognitoRefreshToken } from "amazon-cognito-identity-js";
+import { useCookies } from "react-cookie";
 
 const UserLogoutPopup = () => {
 	const [showPopup, setShowPopup] = useState(false);
-	const {logout} = useContext(AccountContext) || {};
+	const { logout } = useContext(AccountContext) || {};
 	const navigate = useNavigate();
 	const location = useLocation();
 	const [searchParams] = useSearchParams();
 	const user = Pool.getCurrentUser();
 	const popupTimout = 120000;
-	const accessToken = sessionStorage.getItem('access_token');
-	const RefreshToken = sessionStorage.getItem('refresh_token');
+	const accessToken = sessionStorage.getItem("access_token");
+	const RefreshToken = sessionStorage.getItem("refresh_token");
 	const [, , removeCookies] = useCookies();
 
 	function scheduleTokenExpiryCheck(): void {
 		if (showPopup) return;
-		if (location.pathname === '/profile' && searchParams.get('code'))
+		if (location.pathname === "/profile" && searchParams.get("code"))
 			return;
 		if (accessToken) {
 			const payload = jwtDecode(accessToken);
@@ -30,10 +30,10 @@ const UserLogoutPopup = () => {
 
 			if (!RefreshToken) {
 				if (timeToExpiry <= 0) {
-					handleLogout('Token has expired');
+					handleLogout("Token has expired");
 				} else {
 					setTimeout(() => {
-						handleLogout('Token has expired');
+						handleLogout("Token has expired");
 					}, timeToExpiry);
 				}
 				return;
@@ -43,7 +43,7 @@ const UserLogoutPopup = () => {
 				if (!showPopup) setShowPopup(true);
 				setTimeout(() => {
 					if (!showPopup) return;
-					handleLogout('Token has expired');
+					handleLogout("Token has expired");
 				}, popupTimout);
 				return;
 			}
@@ -53,38 +53,38 @@ const UserLogoutPopup = () => {
 
 				setTimeout(() => {
 					if (!showPopup) return;
-					handleLogout('Token has expired');
+					handleLogout("Token has expired");
 				}, popupTimout);
 			}, timeToExpiry);
 		} else {
-			handleLogout('No token found');
+			handleLogout("No token found");
 		}
 	}
 
 	function handleLogout(_e: any) {
-		alert('You have been logged out');
+		alert("You have been logged out");
 		if (logout) logout();
 		localStorage.clear();
 		sessionStorage.clear();
-		removeCookies('userData');
-		navigate('/');
+		removeCookies("userData");
+		navigate("/");
 	}
 
 	function refreshUser(_e: any) {
 		if (user && RefreshToken) {
-			const token = new CognitoRefreshToken({RefreshToken});
+			const token = new CognitoRefreshToken({ RefreshToken });
 
 			user.refreshSession(token, (err, session) => {
 				if (err) {
-					handleLogout('Error refreshing session');
+					handleLogout("Error refreshing session");
 				} else {
-					console.log('Session refreshed'); //TODO: Remove this
+					console.log("Session refreshed"); //TODO: Remove this
 					sessionStorage.setItem(
-						'access_token',
+						"access_token",
 						session.getAccessToken().getJwtToken()
 					);
 					sessionStorage.setItem(
-						'refresh_token',
+						"refresh_token",
 						session.getRefreshToken().getToken()
 					);
 					setShowPopup(false);
@@ -102,23 +102,23 @@ const UserLogoutPopup = () => {
 				<div className="popup d-flex justify-content-center align-items-center">
 					<div className="popup-content text-center">
 						<h5>
-							Your session is about to expire due to inactivity.{' '}
+							Your session is about to expire due to inactivity.{" "}
 							<br />
-							Would you like to continue your session?{' '}
+							Would you like to continue your session?{" "}
 						</h5>
 						<p>
 							Please click 'Yes' to continue, or 'No' to log out.
 						</p>
 						<button
 							className="defaultBtn mx-4"
-							style={{width: 'auto'}}
+							style={{ width: "auto" }}
 							onClick={refreshUser}
 						>
 							Yes
 						</button>
 						<button
 							className="cancelBtn"
-							style={{width: 'auto'}}
+							style={{ width: "auto" }}
 							onClick={handleLogout}
 						>
 							No

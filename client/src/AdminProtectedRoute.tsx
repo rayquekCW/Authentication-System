@@ -1,25 +1,27 @@
-import {useState, useEffect, useContext} from 'react';
-import {useCookies} from 'react-cookie';
-import {AccountContext} from './services/Account';
-import {Navigate, Outlet} from 'react-router-dom';
+import { useState, useEffect, useContext } from "react";
+import { useCookies } from "react-cookie";
+import { AccountContext } from "./services/Account";
+import { Navigate, Outlet } from "react-router-dom";
 
 function AdminProtectedRoute() {
 	const [cookie] = useCookies();
-	const {getSession} = useContext(AccountContext) || {};
-	const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-	const [loading, setLoading] = useState(true);
+	const { getSession } = useContext(AccountContext) || {};
+	const [isAdmin, setIsAdmin] = useState(false);
+	const [loading, setLoading] = useState(true); // To track loading state
 
 	useEffect(() => {
 		async function checkAdmin() {
 			if (getSession) {
 				try {
-					const sessionData = await getSession();
-					const sessionIsAdmin =
-						sessionData['custom:role'] === 'admin' ||
-						sessionData['custom:role'] === 'super_admin';
-					setIsAdmin(sessionIsAdmin);
+					getSession().then(async (sessionData) => {
+						console.log(sessionData["custom:role"]);
+						setIsAdmin(
+							// sessionData["custom:role"] === "admin" ||
+							sessionData["custom:role"] === "super_admin"
+						);
+					});
 				} catch (error) {
-					if (cookie['userData']) {
+					if (cookie["userData"]) {
 						setIsAdmin(false);
 					}
 				} finally {
@@ -33,8 +35,8 @@ function AdminProtectedRoute() {
 		checkAdmin();
 	}, [getSession, cookie]);
 
-	if (isAdmin === null) return null; // Do not render anything until admin status is confirmed
-	if (loading) return <p>Loading...</p>;
+	if (loading) return null;
+	console.log(isAdmin);
 	return isAdmin ? <Outlet /> : <Navigate to="/home" />;
 }
 
