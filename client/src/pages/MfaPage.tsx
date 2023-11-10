@@ -209,12 +209,8 @@ const MfaPage = () => {
 
 							alert("MFA Enabled!");
 
-							// if out of SMS MFA, logout user and navigate to login page
 							if (optOut) {
-								if (logout) {
-									logout();
-									navigate("/");
-								}
+								navigate("/cm-dashboard");
 							}
 						} else {
 							// Handle errors alert if the user enters the wrong code
