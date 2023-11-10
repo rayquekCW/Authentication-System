@@ -1,6 +1,8 @@
 import { FaPhoneAlt, FaUserSecret, FaAt } from "react-icons/fa";
+import { Link } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
 import { AccountContext } from "../services/Account";
 const bankName = import.meta.env.VITE_BANK_NAME;
 const BankLogo = await import(`../assets/${bankName}.svg`);
@@ -24,6 +26,18 @@ const MfaPage = () => {
 
 	// For Step 3
 	const [mfaPreference, setMfaPreference] = useState("SOFTWARE_TOKEN_MFA");
+
+	const [, , removeCookie] = useCookies();
+
+	const handleLogout = () => {
+		if (logout) {
+			logout();
+			sessionStorage.clear();
+			localStorage.clear();
+			removeCookie("userData");
+			navigate("/");
+		}
+	};
 
 	//* Phone MFA
 	/**
@@ -255,11 +269,7 @@ const MfaPage = () => {
 
 				alert("MFA Preference Updated!");
 
-				// Logout user and navigate to login page
-				if (logout) {
-					logout();
-					navigate("/");
-				}
+				navigate("/cm-dashboard");
 			});
 		}
 	};
@@ -278,6 +288,15 @@ const MfaPage = () => {
 			<nav className="navbar navbar-expand-lg navbar-light nav-default">
 				<div className="container">
 					<img src={BankLogo.default} alt="bank-logo" width={100} />
+
+					<Link
+						className="nav-link"
+						style={{ color: "black" }}
+						to="/"
+						onClick={handleLogout}
+					>
+						Logout
+					</Link>
 				</div>
 			</nav>
 
@@ -536,12 +555,7 @@ const MfaPage = () => {
 							<button
 								className="btn btn-primary defaultBtn"
 								onClick={() => {
-									if (logout) {
-										logout();
-										sessionStorage.clear();
-										localStorage.clear();
-										navigate("/");
-									}
+									navigate("/cm-dashboard");
 								}}
 							>
 								Confirm
