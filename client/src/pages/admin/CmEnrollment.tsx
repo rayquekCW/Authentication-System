@@ -13,6 +13,7 @@ const CmEnrollment = () => {
 	const [role, setRole] = useState<string>("");
 	const [userName, setUserName] = useState<string>("");
 	const [isLocked, setIsLocked] = useState<boolean>(true);
+	const [bankName, setBankName] = useState<string>("");
 
 	const accountContext = useContext(AccountContext);
 
@@ -24,6 +25,9 @@ const CmEnrollment = () => {
 				.then((session) => {
 					setToken(session.accessToken.jwtToken);
 					setRole(session["custom:role"]);
+					setBankName(session['custom:bank_name'])
+					console.log(bankName)
+					console.log(role)
 					setUserName(session.given_name + " " + session.family_name);
 				})
 				.catch((error) => {
@@ -183,6 +187,7 @@ const CmEnrollment = () => {
 		const payload = {
 			accessToken: token,
 			role: role,
+			bank: bankName,
 			file: base64File,
 			filename: selectedFile.name,
 		};
