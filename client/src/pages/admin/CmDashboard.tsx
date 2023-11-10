@@ -1,37 +1,24 @@
 import { useState, useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
-import {
-	AiFillExclamationCircle,
-	AiFillEdit,
-	AiOutlineClose,
-} from "react-icons/ai";
-import { CgProfile } from "react-icons/cg";
-import { IoMdLogOut } from "react-icons/io";
-import { GiHamburgerMenu } from "react-icons/gi";
+import { AiFillEdit, AiOutlineClose } from "react-icons/ai";
 import { MdRemoveCircle } from "react-icons/md";
-import Sidebar from "../../components/navigation/SideBar";
-import SideBarSuper from "../../components/navigation/SideBarSuper";
 import AdminNavBar from "../../components/navigation/AdminNavBar";
 import UserLogoutPopup from "../../components/UserLogout";
-import MultiFactAuth from "../../components/MultiFactAuth";
 import Pagination from "react-bootstrap/Pagination";
 import Switch from "react-switch";
 import { AccountContext } from "../../services/Account";
-import { useCookies } from "react-cookie";
-import { useNavigate } from "react-router-dom";
+import SignInPopup from "../../components/SignInPopup";
+
 const bankName = import.meta.env.VITE_BANK_NAME;
 
 const CmDashboard = () => {
-	const { getSession, logout } = useContext(AccountContext) || {};
+	const { getSession } = useContext(AccountContext) || {};
 
 	//TODO: Implement different protected routes based on admin types (super_admin, admin, user)
 	const [adminType, setAdminType] = useState("");
-	const [, , removeCookie] = useCookies();
-	const navigate = useNavigate();
-	const isSuper = adminType === "super_admin";
-	const [isOpen, setIsOpen] = useState<boolean>(false);
-	const [userSub, setUserSub] = useState<string>("");
 	const [userName, setUserName] = useState<string>("");
+	const [userSub, setUserSub] = useState<string>("");
+	const [currentUserSub, setCurrentUserSub] = useState<string>("");
+	const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false);
 
 	// For MFA Popups
 	const [showMfaPopup, setShowMfaPopup] = useState<boolean>(false);
@@ -45,8 +32,13 @@ const CmDashboard = () => {
 		setShowEditPopup(false);
 	};
 
-	// Handle Pagination
+	// Handles the customers data
 	const [customers, setCustomers] = useState([]);
+	const updateCustomers = (updatedCustomers: any) => {
+		setCustomers(updatedCustomers);
+	};
+
+	// Handle Pagination
 	const [currentPage, setCurrentPage] = useState(1);
 	const customersPerPage = 12;
 	const startIndex = (currentPage - 1) * customersPerPage; // Calculate the startIndex and endIndex based on the current page number
@@ -60,17 +52,20 @@ const CmDashboard = () => {
 	const [isAdmin, setIsAdmin] = useState(false);
 	const [isSuperAdmin, setIsSuperAdmin] = useState(false);
 
-	// toggle admin by allowing only one of the two to be true
+	/**
+	 * The function toggleAdmin toggles the value of isAdmin and sets isSuperAdmin to false if it is true.
+	 */
 	const toggleAdmin = () => {
-		// set isAdmin to the opposite of its current value
 		setIsAdmin(!isAdmin);
-		// if isSuperAdmin is true, set it to false
 		if (isSuperAdmin) {
 			setIsSuperAdmin(false);
 		}
 	};
 
-	// toggle super admin by allowing only one of the two to be true
+	/**
+	 * The function `toggleSuperAdmin` toggles the value of `isSuperAdmin` and sets `isAdmin` to `false` if
+	 * it was previously `true`.
+	 */
 	const toggleSuperAdmin = () => {
 		setIsSuperAdmin(!isSuperAdmin);
 		if (isAdmin) {
@@ -78,14 +73,13 @@ const CmDashboard = () => {
 		}
 	};
 
-	const handleClick = () => {
-		setIsOpen(!isOpen);
+	// For Delete Popup
+	const handleDeleteButtonClick = (userSub: string) => {
+		setUserSub(userSub);
+		setShowDeleteConfirmPopup(true);
+		setIsDeleteAccount(true);
 	};
 
-	// For Delete Popup
-	const handleDeleteButtonClick = () => {
-		setShowDeleteConfirmPopup(true);
-	};
 	const handleDeleteConfirmButtonClick = () => {
 		setShowMfaPopup(true);
 	};
@@ -93,6 +87,7 @@ const CmDashboard = () => {
 	// For Edit Popup
 	const handleEditButtonClick = (userSub: string, userRole: string) => {
 		setShowEditPopup(true);
+		setIsDeleteAccount(false);
 		setUserSub(userSub); //userSub of selected user
 		if (userRole == "Super Admin") {
 			setIsSuperAdmin(true);
@@ -106,23 +101,6 @@ const CmDashboard = () => {
 		setShowMfaPopup(true);
 	};
 
-	const handleLogout = () => {
-		if (logout) {
-			logout();
-			localStorage.clear();
-			sessionStorage.clear();
-			removeCookie("userData");
-			navigate("/");
-		}
-	};
-
-	// TODO - Refactor this into a separate file
-	const inlineStyle = {
-		fontSize: "16px",
-		backgroundColor: "#0078CE",
-		padding: "20px",
-	};
-
 	// TODO - Refactor this into a utils file
 	const formatDate = (inputDate: any) => {
 		const date = new Date(inputDate);
@@ -132,76 +110,31 @@ const CmDashboard = () => {
 		return `${day}/${month}/${year}`;
 	};
 
-	const changeRole = async () => {
-		if (getSession) {
-			getSession().then(async (sessionData) => {
-				//if isAdmin is true and isSuperAdmin is false, role equals to admin. if isAdmin is false and isSuperAdmin is true, role equals to super_admin. if both are false, role equals to user
-				const role = isAdmin
-					? "admin"
-					: isSuperAdmin
-					? "super_admin"
-					: "user";
-				const accessToken = sessionData.accessToken.jwtToken;
-				const headers = sessionData.headers;
-				const sub = userSub;
-				const API =
-					"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/update-role";
-				//try catch to invoke the api with method patch and send headers and requst body
-				try {
-					const response = await fetch(API, {
-						method: "PATCH",
-						headers: headers,
-						body: JSON.stringify({ sub, role, accessToken }),
-					});
-					if (response.ok) {
-						const API =
-							"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
-						const uri = `${API}?accessToken=${accessToken}`;
-						try {
-							const response = await fetch(uri, { headers });
-							if (response.ok) {
-								const data = await response.json();
-								setAdminType(data.statusCode);
-								setCustomers(data.users.data);
-							} else {
-								// Handle the error
-							}
-						} catch (error) {
-							console.error(
-								"Error while validating admin:",
-								error
-							);
-						}
-						setShowEditPopup(false);
-					}
-				} catch (error) {
-					console.error("Error while validating admin:", error);
-				}
-			});
-		}
-	};
-
 	useEffect(() => {
 		if (getSession) {
 			getSession()
 				.then(async (sessionData) => {
+					// Sets the current user's details
+					// Calls the api to retrieve all users
+					setCurrentUserSub(sessionData.sub);
 					setUserName(
 						sessionData.given_name + " " + sessionData.family_name
 					);
 					const accessToken = sessionData.accessToken.jwtToken;
-					console.log(accessToken);
+
 					const headers = sessionData.headers;
 					const API =
 						"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
 					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankName}`;
 					try {
 						const response = await fetch(uri, { headers });
+
 						if (response.ok) {
 							const data = await response.json();
 							setAdminType(data.statusCode);
 							setCustomers(data.users.data);
 						} else {
-							// Handle the error
+							console.error("Error retrieving user data");
 						}
 					} catch (error) {
 						console.error("Error while validating admin:", error);
@@ -212,7 +145,6 @@ const CmDashboard = () => {
 				});
 		}
 	}, []);
-
 	return (
 		<>
 			<UserLogoutPopup />
@@ -299,7 +231,9 @@ const CmDashboard = () => {
 														width: "auto",
 													}}
 													onClick={() =>
-														handleDeleteButtonClick()
+														handleDeleteButtonClick(
+															userSub
+														)
 													}
 												>
 													<MdRemoveCircle />
@@ -385,8 +319,7 @@ const CmDashboard = () => {
 								<button
 									className="defaultBtn me-2"
 									style={{ width: "auto" }}
-									onClick={changeRole}
-									// onClick={handleEditConfirmButtonClick}
+									onClick={handleEditConfirmButtonClick}
 								>
 									Save
 								</button>
@@ -438,9 +371,19 @@ const CmDashboard = () => {
 						</div>
 						<div className="popup-content">
 							<div className="my-5">
-								<MultiFactAuth
-									navigateTo="/"
-									handleSteps={() => 5}
+								<SignInPopup
+									currentUserSub={currentUserSub}
+									targetSub={userSub}
+									role={
+										isAdmin
+											? "admin"
+											: isSuperAdmin
+											? "super_admin"
+											: "user"
+									}
+									updateCustomers={updateCustomers}
+									closePopup={closePopup}
+									isDeleteAccount={isDeleteAccount}
 								/>
 							</div>
 						</div>
