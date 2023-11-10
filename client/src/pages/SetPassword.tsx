@@ -6,6 +6,8 @@ import { CognitoUser } from "amazon-cognito-identity-js";
 import OtpPassword from "../components/OtpPassword";
 import Notifications from "../components/Notifications";
 import { AccountContext } from "../services/Account";
+const bankName = import.meta.env.VITE_BANK_NAME;
+const BankLogo = await import(`../assets/${bankName}.svg`);
 // import MFAPassword from '../components/MFAPassword';
 
 const SetPassword = () => {
@@ -145,9 +147,10 @@ const SetPassword = () => {
 						<div className="boxInput row d-flex justify-content-center align-items-center">
 							<div className="text-center p-2 rounded">
 								<img
-									className="mb-5"
-									src="https://internet-banking.dbs.com.sg/IB/posb/images/desktoplogo.png"
+									className=""
+									src={BankLogo.default}
 									alt=""
+									width={350}
 								/>
 								{!isSuccessful && (
 									<div>

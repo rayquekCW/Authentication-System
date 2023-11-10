@@ -17,6 +17,7 @@ import Switch from 'react-switch';
 import {AccountContext} from '../../services/Account';
 import {useCookies} from 'react-cookie';
 import {useNavigate} from 'react-router-dom';
+const bankName = import.meta.env.VITE_BANK_NAME;
 
 const CmDashboard = () => {
 	const {getSession, logout} = useContext(AccountContext) || {};
@@ -190,7 +191,7 @@ const CmDashboard = () => {
 					const headers = sessionData.headers;
 					const API =
 						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser';
-					const uri = `${API}?accessToken=${accessToken}`;
+					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankName}`;
 					try {
 						const response = await fetch(uri, {headers});
 						if (response.ok) {

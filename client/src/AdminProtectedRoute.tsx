@@ -3,6 +3,9 @@ import {useCookies} from 'react-cookie';
 import {AccountContext} from './services/Account';
 import {Navigate, Outlet} from 'react-router-dom';
 
+/* The `AdminProtectedRoute` function is a React component that acts as a protected route for admin
+users.
+Only admins coming from Cognito User Pool is allowed to access the pages under this route */
 function AdminProtectedRoute() {
 	const [cookie] = useCookies();
 	const {getSession} = useContext(AccountContext) || {};

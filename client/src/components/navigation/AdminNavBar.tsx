@@ -1,7 +1,8 @@
 import {Link} from 'react-router-dom';
 import '../../styles/_variable.scss';
 // import { BsList } from "react-icons/bs";
-import BankLogo from '../../assets/posb.svg';
+const bankName = import.meta.env.VITE_BANK_NAME;
+const BankLogo = await import(`../../assets/${bankName}.svg`);
 import {CgProfile} from 'react-icons/cg';
 import {IoMdLogOut} from 'react-icons/io';
 import {GiHamburgerMenu} from 'react-icons/gi';
@@ -58,7 +59,7 @@ const AdminNavBar = (adminNavBarProps: any) => {
 					</div>
 					<Link to="/cm-dashboard">
 						<img
-							src={BankLogo}
+							src={BankLogo.default}
 							alt="bank-logo"
 							height={75}
 							width={100}

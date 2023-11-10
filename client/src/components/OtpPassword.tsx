@@ -1,14 +1,14 @@
-import { useState, useRef, useEffect, useContext } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useNavigate } from "react-router-dom";
+import {useState, useRef, useEffect, useContext} from 'react';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {useNavigate} from 'react-router-dom';
 import {
 	faMobileScreen,
 	faEnvelopeOpenText,
-} from "@fortawesome/free-solid-svg-icons";
-import Notifications from "./Notifications";
-import UserPool from "../services/UserPool";
-import { CognitoUser } from "amazon-cognito-identity-js";
-import { AccountContext } from "../services/Account";
+} from '@fortawesome/free-solid-svg-icons';
+import Notifications from './Notifications';
+import UserPool from '../services/UserPool';
+import {CognitoUser} from 'amazon-cognito-identity-js';
+import {AccountContext} from '../services/Account';
 
 type OtpProps = {
 	otpType: string; // email or phone
@@ -16,18 +16,18 @@ type OtpProps = {
 	password: string;
 };
 
-const OtpPassword = ({ otpType, email, password }: OtpProps) => {
-	const { authenticate } = useContext(AccountContext) || {};
+const OtpPassword = ({otpType, email, password}: OtpProps) => {
+	const {authenticate} = useContext(AccountContext) || {};
 
-	const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
-	const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
+	const isEmail = otpType === 'email' ? true : false; // check if OTP is sent to email or phone
+	const [otp, setOtp] = useState(['', '', '', '', '', '']); // 6 digit OTP
 	const inputRefs = useRef<Array<HTMLInputElement | null>>(
 		Array(6).fill(null)
 	); // to store references to the 6 input fields
 	const [time, setTime] = useState(300); // 5 minutes timer
-	const [msg, setMsg] = useState(""); // message to be displayed
+	const [msg, setMsg] = useState(''); // message to be displayed
 	const [error, setError] = useState(false); // true if error, false if not
-	const [maskedEmail, setMaskedEmail] = useState(""); // masked email to be displayed
+	const [maskedEmail, setMaskedEmail] = useState(''); // masked email to be displayed
 
 	// get the user
 	const getUser = () => {
@@ -45,9 +45,9 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 		}
 
 		// Mask the email
-		const splitEmail = email.split("@");
+		const splitEmail = email.split('@');
 		const maskedEmail =
-			splitEmail[0].slice(0, 1) + "******@" + splitEmail[1];
+			splitEmail[0].slice(0, 1) + '******@' + splitEmail[1];
 		setMaskedEmail(maskedEmail);
 
 		return () => clearTimeout(timer); // clear the timer and update the masked email when the component unmounts
@@ -65,9 +65,9 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
 
-		return `${String(minutes).padStart(2, "0")}:${String(
+		return `${String(minutes).padStart(2, '0')}:${String(
 			remainingSeconds
-		).padStart(2, "0")}`;
+		).padStart(2, '0')}`;
 	};
 
 	const navigate = useNavigate();
@@ -99,11 +99,11 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 			setOtp(updatedOtp);
 
 			// if value is not empty and the index is less than 5 and the next input field exists, focus on the next input field
-			if (value !== "" && index < 5 && inputRefs.current[index + 1]) {
+			if (value !== '' && index < 5 && inputRefs.current[index + 1]) {
 				inputRefs.current[index + 1]?.focus();
 				// if value is empty and the index is greater than 0 and the previous input field exists, focus on the previous input field
 			} else if (
-				value === "" &&
+				value === '' &&
 				index > 0 &&
 				inputRefs.current[index - 1]
 			) {
@@ -119,34 +119,34 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 	const handleLogin = () => {
 		// if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
 		if (time <= 0) {
-			setMsg("OTP is invalid");
+			setMsg('OTP is invalid');
 			setError(true);
 		}
 		// if otp contains any empty string, set message to "OTP is invalid" and set error to true
-		if (otp.includes("")) {
-			setMsg("OTP is invalid");
+		if (otp.includes('')) {
+			setMsg('OTP is invalid');
 			setError(true);
 		}
 
-		const otpJoined = otp.join("");
+		const otpJoined = otp.join('');
 		if (otpJoined.length === 6) {
 			getUser().confirmPassword(otpJoined, password, {
 				onSuccess: (data) => {
-					console.log("onSuccess:", data);
+					console.log('onSuccess:', data);
 					if (authenticate) {
 						authenticate(email, password)
 							.then((data: any) => {
 								const sub = data.accessToken.payload.sub;
 								const API =
-									"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-create-api-key";
+									'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-create-api-key';
 								const URI = `${API}?sub=${sub}`;
 
 								// create an API key and assign to the user
 								fetch(URI, {
-									method: "POST",
+									method: 'POST',
 								}).then(() =>
 									//set delay to 1.5 second to allow time for the api key to be created
-									navigate("/mfa")
+									navigate('/mfa')
 								);
 							})
 							.catch((err: any) => {
@@ -155,12 +155,23 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 					}
 				},
 				onFailure: (err) => {
-					console.error("onFailure:", err);
-					setMsg("OTP is invalid");
+					console.error('onFailure:', err);
+					setMsg('OTP is invalid');
 					setError(true);
 				},
 			});
 		}
+	};
+
+	const resendOTP = () => {
+		getUser().forgotPassword({
+			onSuccess: () => {
+				console.log('onSuccess: The reset email has been sent!');
+			},
+			onFailure: (err) => {
+				console.error('onFailure:', err);
+			},
+		});
 	};
 
 	return (
@@ -189,20 +200,20 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 						aria-label="Mobile Screen Icon"
 					/>
 					<p id="otp-text" className="my-3">
-						A one-time password has been sent to +65 **** 5432.{" "}
+						A one-time password has been sent to +65 **** 5432.{' '}
 						{/* to be replaced with user's phone number */}
 					</p>
 				</>
 			)}
 			<div className="container text-center">
-				<div className="mx-auto" style={{ maxWidth: "400px" }}>
+				<div className="mx-auto" style={{maxWidth: '400px'}}>
 					{otp.map((value, index) => (
 						<div
 							key={index}
 							style={{
-								display: "inline-block",
-								marginRight: "10px",
-								marginBottom: "10px",
+								display: 'inline-block',
+								marginRight: '10px',
+								marginBottom: '10px',
 							}}
 						>
 							<input
@@ -212,9 +223,9 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 								onChange={(e) => handleInputChange(e, index)}
 								maxLength={1}
 								style={{
-									height: "50px",
-									width: "40px",
-									borderBottom: "1px solid #000",
+									height: '50px',
+									width: '40px',
+									borderBottom: '1px solid #000',
 								}}
 								ref={(input) =>
 									(inputRefs.current[index] = input)
@@ -232,8 +243,8 @@ const OtpPassword = ({ otpType, email, password }: OtpProps) => {
 					OTP is only valid for {formatTime(time)} seconds.
 				</p>
 				<p id="otp-text" className="my-3">
-					Did not receive the OTP?{" "}
-					<a href="#" aria-label="Resend OTP">
+					Did not receive the OTP?{' '}
+					<a href="" onClick={resendOTP} aria-label="Resend OTP">
 						Resend OTP
 					</a>
 				</p>

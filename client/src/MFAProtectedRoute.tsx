@@ -3,6 +3,8 @@ import {useCookies} from 'react-cookie';
 import {AccountContext} from './services/Account';
 import {Navigate, Outlet} from 'react-router-dom';
 
+// users from hosted login will be redirected to MFA page if they have not finish setting up their MFA
+
 function MFAProtectedRoute() {
 	const [cookie] = useCookies();
 	const {getSession} = useContext(AccountContext) || {};

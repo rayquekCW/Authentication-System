@@ -232,6 +232,7 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 		const user = Pool.getCurrentUser();
 		if (user) {
 			window.localStorage.clear();
+            window.sessionStorage.clear();
 			user.signOut();
 		}
 	};
