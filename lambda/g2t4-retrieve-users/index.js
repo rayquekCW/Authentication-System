@@ -55,9 +55,11 @@ const retrieveUsers = async (bankIdentifier) =>
         try {
           const filteredUsers = data.Users.filter((user) => {
             const bankNameAttribute = user.Attributes.find(
-              (attr) => attr.Name === 'custom:bank_name'
+              (attr) => attr.Name === "custom:bank_name"
             );
-            return bankNameAttribute && bankNameAttribute.Value === bankIdentifier;
+            return (
+              bankNameAttribute && bankNameAttribute.Value === bankIdentifier
+            );
           });
 
           const usersData = filteredUsers.map((user) => {
@@ -73,11 +75,16 @@ const retrieveUsers = async (bankIdentifier) =>
             const role = user.Attributes.find(
               (attr) => attr.Name === "custom:role"
             );
+            const status = user.Attributes.find(
+              (attr) => attr.Name === "custom:account_status"
+            );
 
-            const userStatus =
-              user.UserStatus === "FORCE_CHANGE_PASSWORD"
-                ? "Inactive"
-                : "Active";
+            let userStatus = "";
+            if (status.Value == "pending") {
+              userStatus = "Pending";
+            } else {
+              userStatus = "Active";
+            }
 
             let roleStatus = "";
             if (!role) {
@@ -137,11 +144,14 @@ const main = async (event) => {
   }
 
   let bankIdentifier = "";
-  if (event.queryStringParameters && event.queryStringParameters.bankIdentifier) {
+  if (
+    event.queryStringParameters &&
+    event.queryStringParameters.bankIdentifier
+  ) {
     bankIdentifier = event.queryStringParameters.bankIdentifier;
   }
 
-  if(!bankIdentifier && event.bankIdentifier) {
+  if (!bankIdentifier && event.bankIdentifier) {
     bankIdentifier = event.bankIdentifier;
   }
 
@@ -151,7 +161,6 @@ const main = async (event) => {
     statusCode: status.role,
     users: users,
   };
-  console.log("response", response);
   return response;
 };
 
