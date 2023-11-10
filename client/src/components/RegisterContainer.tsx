@@ -22,6 +22,7 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 	const [email, setEmail] = useState("");
 	const [dob, setDob] = useState("");
 	const [errors, setErrors] = useState<string[]>([]);
+	const [isConsent, setIsConsent] = useState(false);
 
 	/**
 	 * The function `verify()` sends a POST request to an API endpoint to validate a user's email and
@@ -99,6 +100,29 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 						</p>
 					))}
 
+					{/*  Consent checkbox */}
+					<div className="">
+						<div className="form-check">
+							<input
+								className="form-check-input"
+								type="checkbox"
+								value=""
+								id="consent"
+								onChange={(event) =>
+									setIsConsent(event.target.checked)
+								}
+							/>
+							<label
+								className="form-check-label caption"
+								htmlFor="consent"
+							>
+								I consent to the use of my personal data for
+								authentication purposes.
+							</label>
+						</div>
+					</div>
+					<br />
+
 					<h5 className="caption">Already have an account?</h5>
 					<p className="caption">
 						Login
@@ -116,7 +140,9 @@ const RegisterContainer = ({ handleSignIn }: RegisterContainerProps) => {
 				</div>
 				<button
 					className={`defaultBtn ${
-						validateEmailFormat(email) && validateDateFormat(dob)
+						validateEmailFormat(email) &&
+						validateDateFormat(dob) &&
+						isConsent
 							? ""
 							: "disabled"
 					}`}
