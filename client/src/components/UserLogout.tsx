@@ -1,27 +1,27 @@
-import { useNavigate, useLocation, useSearchParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import Pool from "../services/UserPool";
 import { jwtDecode } from "jwt-decode";
 import { CognitoRefreshToken } from "amazon-cognito-identity-js";
-import { useCookies } from "react-cookie";
 
 const UserLogoutPopup = () => {
+    const messageRef = useRef(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const { logout } = useContext(AccountContext) || {};
 	const navigate = useNavigate();
-	const location = useLocation();
-	const [searchParams] = useSearchParams();
 	const user = Pool.getCurrentUser();
 	const popupTimout = 120000;
 	const accessToken = sessionStorage.getItem("access_token");
 	const RefreshToken = sessionStorage.getItem("refresh_token");
-	const [, , removeCookies] = useCookies();
+
+    useEffect(() => {
+        // THIS IS THE MAGIC PART
+        messageRef.current = showPopup;
+      }, [showPopup]);
 
 	function scheduleTokenExpiryCheck(): void {
-		if (showPopup) return;
-		if (location.pathname === "/profile" && searchParams.get("code"))
-			return;
+		if (messageRef.current) return;
 		if (accessToken) {
 			const payload = jwtDecode(accessToken);
 
@@ -49,10 +49,11 @@ const UserLogoutPopup = () => {
 			}
 
 			setTimeout(() => {
+                if (messageRef.current) return;
 				setShowPopup(true);
 
 				setTimeout(() => {
-					if (!showPopup) return;
+					if (!messageRef.current) return;
 					handleLogout("Token has expired");
 				}, popupTimout);
 			}, timeToExpiry);
@@ -66,7 +67,6 @@ const UserLogoutPopup = () => {
 		if (logout) logout();
 		localStorage.clear();
 		sessionStorage.clear();
-		removeCookies("userData");
 		navigate("/");
 	}
 
@@ -88,6 +88,7 @@ const UserLogoutPopup = () => {
 						session.getRefreshToken().getToken()
 					);
 					setShowPopup(false);
+                    console.log("check3")
 				}
 			});
 		}

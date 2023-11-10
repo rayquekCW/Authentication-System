@@ -58,10 +58,10 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 						/* Verifying the validity of the access token (JWT) obtained from the user's session. */
 						const accessToken = session.accessToken.jwtToken;
 						try {
-							const payload = verifier.verify(
+							verifier.verify(
 								accessToken // the JWT as string
 							);
-							console.log('Token is valid. Payload:', payload); //TODO - Remove this before moving to Production
+							console.log('Token is valid!');
 						} catch {
 							console.log('Token not valid!');
 						}
