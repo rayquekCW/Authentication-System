@@ -1,23 +1,22 @@
-import { useState, useContext, useEffect } from "react";
-import { AiFillEdit, AiOutlineClose } from "react-icons/ai";
-import { MdRemoveCircle } from "react-icons/md";
-import AdminNavBar from "../../components/navigation/AdminNavBar";
-import UserLogoutPopup from "../../components/UserLogout";
-import Pagination from "react-bootstrap/Pagination";
-import Switch from "react-switch";
-import { AccountContext } from "../../services/Account";
-import SignInPopup from "../../components/SignInPopup";
-
+import {useState, useContext, useEffect} from 'react';
+import {AiFillEdit, AiOutlineClose} from 'react-icons/ai';
+import {MdRemoveCircle} from 'react-icons/md';
+import Pagination from 'react-bootstrap/Pagination';
+import Switch from 'react-switch';
+import {AccountContext} from '../../services/Account';
+import SignInPopup from '../../components/SignInPopup';
+import UserLogoutPopup from '../../components/UserLogout';
+import AdminNavBar from '../../components/navigation/AdminNavBar';
 const bankName = import.meta.env.VITE_BANK_NAME;
 
 const CmDashboard = () => {
-	const { getSession } = useContext(AccountContext) || {};
+	const {getSession} = useContext(AccountContext) || {};
 
 	//TODO: Implement different protected routes based on admin types (super_admin, admin, user)
-	const [adminType, setAdminType] = useState("");
-	const [userName, setUserName] = useState<string>("");
-	const [userSub, setUserSub] = useState<string>("");
-	const [currentUserSub, setCurrentUserSub] = useState<string>("");
+	const [adminType, setAdminType] = useState('');
+	const [userName, setUserName] = useState<string>('');
+	const [userSub, setUserSub] = useState<string>('');
+	const [currentUserSub, setCurrentUserSub] = useState<string>('');
 	const [isDeleteAccount, setIsDeleteAccount] = useState<boolean>(false);
 
 	// For MFA Popups
@@ -89,10 +88,10 @@ const CmDashboard = () => {
 		setShowEditPopup(true);
 		setIsDeleteAccount(false);
 		setUserSub(userSub); //userSub of selected user
-		if (userRole == "Super Admin") {
+		if (userRole == 'Super Admin') {
 			setIsSuperAdmin(true);
 			setIsAdmin(false);
-		} else if (userRole == "Admin") {
+		} else if (userRole == 'Admin') {
 			setIsAdmin(true);
 			setIsSuperAdmin(false);
 		}
@@ -104,8 +103,8 @@ const CmDashboard = () => {
 	// TODO - Refactor this into a utils file
 	const formatDate = (inputDate: any) => {
 		const date = new Date(inputDate);
-		const day = date.getDate().toString().padStart(2, "0");
-		const month = (date.getMonth() + 1).toString().padStart(2, "0");
+		const day = date.getDate().toString().padStart(2, '0');
+		const month = (date.getMonth() + 1).toString().padStart(2, '0');
 		const year = date.getFullYear();
 		return `${day}/${month}/${year}`;
 	};
@@ -118,160 +117,163 @@ const CmDashboard = () => {
 					// Calls the api to retrieve all users
 					setCurrentUserSub(sessionData.sub);
 					setUserName(
-						sessionData.given_name + " " + sessionData.family_name
+						sessionData.given_name + ' ' + sessionData.family_name
 					);
 					const accessToken = sessionData.accessToken.jwtToken;
 
 					const headers = sessionData.headers;
 					const API =
-						"https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser";
+						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser';
 					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankName}`;
 					try {
-						const response = await fetch(uri, { headers });
+						const response = await fetch(uri, {headers});
 
 						if (response.ok) {
 							const data = await response.json();
 							setAdminType(data.statusCode);
 							setCustomers(data.users.data);
 						} else {
-							console.error("Error retrieving user data");
+							console.error('Error retrieving user data');
 						}
 					} catch (error) {
-						console.error("Error while validating admin:", error);
+						console.error('Error while validating admin:', error);
 					}
 				})
 				.catch((error) => {
-					console.error("Error while getting access token:", error);
+					console.error('Error while getting access token:', error);
 				});
 		}
 	}, []);
+
 	return (
 		<>
 			<UserLogoutPopup />
-			<div
-				className={`overlay ${
-					showMfaPopup || showDeleteConfirmPopup ? "active" : ""
-				}`}
-			></div>
-			<AdminNavBar adminType={adminType} userName={userName} />
+			<div>
+				<div
+					className={`overlay ${
+						showMfaPopup || showDeleteConfirmPopup ? 'active' : ''
+					}`}
+				></div>
+				<AdminNavBar adminType={adminType} userName={userName} />
 
-			<div className="container bg-light shadow-sm my-4 p-4">
-				<h2 className="">Customers</h2>
-				<div className="table-responsive">
-					<table
-						className="table mt-4"
-						style={{ border: "1px solid lightgrey" }}
-					>
-						<thead>
-							<tr>
-								<th className="table-header" scope="col">
-									Name
-								</th>
-								<th className="table-header" scope="col">
-									Email
-								</th>
-								<th className="table-header" scope="col">
-									Status
-								</th>
-								<th className="table-header" scope="col">
-									User Role
-								</th>
-								<th className="table-header" scope="col">
-									Created At
-								</th>
-								<th className="table-header" scope="col">
-									Updated At
-								</th>
-								<th className="table-header" scope="col">
-									Action
-								</th>
-							</tr>
-						</thead>
-						<tbody>
-							{customersToDisplay &&
-								customersToDisplay.map((customer: any) => (
-									<tr key={customer.Username}>
-										<td>
-											{customer.given_name}{" "}
-											{customer.family_name}
-										</td>
-										<td>{customer.email}</td>
-										<td>{customer.UserStatus}</td>
-										<td>{customer.UserRole}</td>
-										<td>
-											{formatDate(
-												customer.UserCreateDate
-											)}
-										</td>
-										<td>
-											{formatDate(
-												customer.UserLastModifiedDate
-											)}
-										</td>
-										{/* TODO - Update the stlying of this button */}
-										{adminType === "super_admin" ? (
+				<div className="container bg-light shadow-sm my-4 p-4">
+					<h2 className="">User Management</h2>
+					<div className="table-responsive">
+						<table
+							className="table mt-4"
+							style={{border: '1px solid lightgrey'}}
+						>
+							<thead>
+								<tr>
+									<th className="table-header" scope="col">
+										Name
+									</th>
+									<th className="table-header" scope="col">
+										Email
+									</th>
+									<th className="table-header" scope="col">
+										Status
+									</th>
+									<th className="table-header" scope="col">
+										User Role
+									</th>
+									<th className="table-header" scope="col">
+										Created At
+									</th>
+									<th className="table-header" scope="col">
+										Updated At
+									</th>
+									<th className="table-header" scope="col">
+										Action
+									</th>
+								</tr>
+							</thead>
+							<tbody>
+								{customersToDisplay &&
+									customersToDisplay.map((customer: any) => (
+										<tr key={customer.Username}>
 											<td>
-												<button
-													className="defaultBtn"
-													style={{
-														width: "auto",
-													}}
-													onClick={() =>
-														handleEditButtonClick(
-															customer.Username,
-															customer.UserRole
-														)
-													}
-												>
-													<AiFillEdit />
-												</button>
-												<button
-													className="cancelBtn ms-2"
-													style={{
-														width: "auto",
-													}}
-													onClick={() =>
-														handleDeleteButtonClick(
-															userSub
-														)
-													}
-												>
-													<MdRemoveCircle />
-												</button>
+												{customer.given_name}{' '}
+												{customer.family_name}
 											</td>
-										) : (
-											<td>-</td>
-										)}
-									</tr>
-								))}
-						</tbody>
-					</table>
-				</div>
+											<td>{customer.email}</td>
+											<td>{customer.UserStatus}</td>
+											<td>{customer.UserRole}</td>
+											<td>
+												{formatDate(
+													customer.UserCreateDate
+												)}
+											</td>
+											<td>
+												{formatDate(
+													customer.UserLastModifiedDate
+												)}
+											</td>
+											{/* TODO - Update the stlying of this button */}
+											{adminType === 'super_admin' ? (
+												<td>
+													<button
+														className="defaultBtn"
+														style={{
+															width: 'auto',
+														}}
+														onClick={() =>
+															handleEditButtonClick(
+																customer.Username,
+																customer.UserRole
+															)
+														}
+													>
+														<AiFillEdit />
+													</button>
+													<button
+														className="cancelBtn ms-2"
+														style={{
+															width: 'auto',
+														}}
+														onClick={() =>
+															handleDeleteButtonClick(
+																customer.Username
+															)
+														}
+													>
+														<MdRemoveCircle />
+													</button>
+												</td>
+											) : (
+												<td>-</td>
+											)}
+										</tr>
+									))}
+							</tbody>
+						</table>
+					</div>
 
-				<Pagination className="my-pagination justify-content-center mt-4">
-					<Pagination.Prev
-						onClick={() => paginate(currentPage - 1)}
-						disabled={currentPage === 1}
-					/>
-					{Array(Math.ceil(customers.length / customersPerPage))
-						.fill(undefined)
-						.map((_, index) => (
-							<Pagination.Item
-								key={index + 1}
-								active={index + 1 === currentPage}
-								onClick={() => paginate(index + 1)}
-							>
-								{index + 1}
-							</Pagination.Item>
-						))}
-					<Pagination.Next
-						onClick={() => paginate(currentPage + 1)}
-						disabled={
-							currentPage ===
-							Math.ceil(customers.length / customersPerPage)
-						}
-					/>
-				</Pagination>
+					<Pagination className="my-pagination justify-content-center mt-4">
+						<Pagination.Prev
+							onClick={() => paginate(currentPage - 1)}
+							disabled={currentPage === 1}
+						/>
+						{Array(Math.ceil(customers.length / customersPerPage))
+							.fill(undefined)
+							.map((_, index) => (
+								<Pagination.Item
+									key={index + 1}
+									active={index + 1 === currentPage}
+									onClick={() => paginate(index + 1)}
+								>
+									{index + 1}
+								</Pagination.Item>
+							))}
+						<Pagination.Next
+							onClick={() => paginate(currentPage + 1)}
+							disabled={
+								currentPage ===
+								Math.ceil(customers.length / customersPerPage)
+							}
+						/>
+					</Pagination>
+				</div>
 
 				{/* This is the Edit User Popup Modal */}
 				{showEditPopup && (
@@ -318,14 +320,14 @@ const CmDashboard = () => {
 							<div className="button-container">
 								<button
 									className="defaultBtn me-2"
-									style={{ width: "auto" }}
+									style={{width: 'auto'}}
 									onClick={handleEditConfirmButtonClick}
 								>
 									Save
 								</button>
 								<button
 									className="cancelBtn"
-									style={{ width: "auto" }}
+									style={{width: 'auto'}}
 									onClick={closePopup}
 								>
 									Cancel
@@ -345,14 +347,14 @@ const CmDashboard = () => {
 							</h6>
 							<button
 								className="defaultBtn me-2"
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 								onClick={handleDeleteConfirmButtonClick}
 							>
 								Yes
 							</button>
 							<button
 								className="cancelBtn"
-								style={{ width: "auto" }}
+								style={{width: 'auto'}}
 								onClick={closePopup}
 							>
 								No
@@ -364,7 +366,7 @@ const CmDashboard = () => {
 				{/* This is the MFA Popup Modal */}
 				{showMfaPopup && (
 					<div className="popup">
-						<div className="col-3">
+						<div className="col-6">
 							<button className="cancelBtn" onClick={closePopup}>
 								<AiOutlineClose />
 							</button>
@@ -376,10 +378,10 @@ const CmDashboard = () => {
 									targetSub={userSub}
 									role={
 										isAdmin
-											? "admin"
+											? 'admin'
 											: isSuperAdmin
-											? "super_admin"
-											: "user"
+											? 'super_admin'
+											: 'user'
 									}
 									updateCustomers={updateCustomers}
 									closePopup={closePopup}

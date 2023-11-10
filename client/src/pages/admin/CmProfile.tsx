@@ -301,6 +301,12 @@ const CmProfile = () => {
 								{userData?.phone_number
 									? userData.phone_number
 									: 'Not Set'}
+								{isCognitoUser && !isPhoneVerified && (
+									<span>
+										&nbsp; &nbsp; &nbsp;
+										<a href="/mfa">Finish Set-up</a>
+									</span>
+								)}
 							</td>
 						</tr>
 						<tr>
