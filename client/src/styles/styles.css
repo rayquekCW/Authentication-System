@@ -48,24 +48,36 @@ p {
 
 /* Backgrounds */
 .bg-primary {
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
 }
 
 .bg-secondary {
-  background-color: #fa9d00;
+  background-color: var(--secondaryBrandColor);
 }
 
 .navbar {
-  height: 5rem;
+  background-color: var(--navBarColor);
+}
+
+.navbar-brand {
+  -o-object-fit: cover;
+     object-fit: cover;
+}
+
+.nav-item, .nav-link {
+  color: var(--light, #f5f5f7);
+}
+.nav-item :hover, .nav-link :hover {
+  color: var(--secondaryBrandColor);
 }
 
 /* Text */
 .text-primary {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
 }
 
 .text-secondary {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 .caption {
@@ -77,62 +89,61 @@ p {
 }
 
 .bank-name {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
 }
 
 .bank-slogan {
-  color: #fa9d00;
+  color: var(--secondaryBrandColor);
 }
 
 /* Buttons */
 .cancelBtn {
   background-color: white;
-  color: #0078ce;
-  border: 1px solid #0078ce;
-  margin-top: 0.5rem;
+  color: var(--dark, #1d1d1f);
+  border: 0px solid var(--primaryBrandColor);
   padding: 0.5rem 1rem;
   width: 50%;
   border-radius: 5px;
   transition: background-color 0.3s;
 }
 .cancelBtn:hover {
-  background-color: lightslategray;
-  color: #ffffff;
+  background-color: var(--light, #f5f5f7);
+  color: var(--danger, #d9534f);
 }
 
 .defaultBtn {
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   color: #ffffff;
   border: none;
-  margin-top: 0.5rem;
   padding: 0.5rem 1rem;
   width: 50%;
   border-radius: 5px;
   transition: background-color 0.3s;
-  background-color: #0078ce;
+  cursor: pointer;
+  background-color: var(--primaryBrandColor);
   color: #ffffff;
   border: none;
-  margin-top: 0.5rem;
   padding: 0.5rem 1rem;
   width: 50%;
   border-radius: 5px;
   transition: background-color 0.3s;
 }
-.defaultBtn:hover {
-  background-color: #161693;
+.defaultBtn:hover:enabled {
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 .defaultBtn.disabled {
-  background-color: rgb(173, 173, 173);
+  background-color: var(--disabledColor);
+  cursor: not-allowed;
 }
-.defaultBtn:hover {
-  background-color: #161693;
+.defaultBtn:hover:enabled {
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 
 .mfaBtn {
-  color: #0078ce;
-  border-color: #0078ce;
+  color: var(--primaryBrandColor);
+  border-color: var(--primaryBrandColor);
   transition: background-color 0.3s;
 }
 @media (min-width: 320px) {
@@ -146,7 +157,7 @@ p {
   }
 }
 .mfaBtn:hover {
-  background-color: #161693;
+  background-color: var(--hoverColor);
   color: #ffffff;
 }
 
@@ -161,7 +172,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: #0078ce;
+  background-color: var(--primaryBrandColor);
   opacity: 50%;
   z-index: 999;
   display: none;
@@ -248,7 +259,8 @@ p {
   background-color: #ffffff;
 }
 .passwordDesign .notification {
-  height: 80px; /* Adjust the height as needed */
+  height: 80px;
+  /* Adjust the height as needed */
   overflow: hidden;
 }
 
@@ -256,7 +268,8 @@ p {
 .sidebar-container {
   position: fixed;
   top: 0;
-  left: -300px; /* Start off-screen */
+  left: -300px;
+  /* Start off-screen */
   width: 300px;
   height: 100%;
   background-color: whitesmoke;
@@ -279,17 +292,29 @@ p {
 }
 
 .sidebar li:hover {
-  background-color: #eee; /* Use a darker color here */
+  background-color: #eee;
+  /* Use a darker color here */
   border-radius: 10px;
 }
 
 .nav-link {
   padding: 10px;
-  transition: background-color 0.3s ease; /* Add a transition effect for a smoother hover */
+  transition: background-color 0.3s ease;
+  /* Add a transition effect for a smoother hover */
+}
+
+.nav-link-sideBar {
+  padding: 10px;
+  color: var(--primaryBrandColor);
+  transition: background-color 0.3s ease;
+}
+.nav-link-sideBar :hover {
+  color: var(--secondaryBrandColor);
 }
 
 .open {
-  left: 0; /* Slide in when open */
+  left: 0;
+  /* Slide in when open */
 }
 
 .close-button {
@@ -298,13 +323,39 @@ p {
   right: 10px;
   background: none;
   border: none;
-  color: #0078ce;
+  color: var(--primaryBrandColor);
   font-size: 24px;
   cursor: pointer;
 }
 
 /* Table */
 .table-header {
-  color: #0078ce;
+  color: var(--primaryBrandColor);
   font-weight: bolder;
+}
+
+.card-header {
+  background-color: var(--primaryBrandColor);
+  font-weight: bolder;
+  color: var(--light, #f5f5f7);
+}
+
+.card-success {
+  background-color: var(--success, #3bb143);
+  font-weight: bolder;
+  color: var(--light, #f5f5f7);
+}
+
+.nav-default {
+  font-size: 16px;
+  background-color: #ffffff;
+  padding: 20px;
+}
+
+.drag-drop-wrapper {
+  border: 1px solid;
+}
+
+.drag-drop-disabled {
+  display: none;
 }
