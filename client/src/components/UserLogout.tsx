@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { AccountContext } from "../services/Account";
 import { useContext, useEffect, useRef, useState } from "react";
 import Pool from "../services/UserPool";
@@ -6,23 +6,23 @@ import { jwtDecode } from "jwt-decode";
 import { CognitoRefreshToken } from "amazon-cognito-identity-js";
 
 const UserLogoutPopup = () => {
-    const messageRef = useRef(false);
+	const messageRef = useRef(false);
 	const [showPopup, setShowPopup] = useState(false);
 	const { logout } = useContext(AccountContext) || {};
 	const navigate = useNavigate();
 	const user = Pool.getCurrentUser();
 	const popupTimout = 120000;
-	const accessToken = sessionStorage.getItem("access_token");
 	const RefreshToken = sessionStorage.getItem("refresh_token");
 
-    useEffect(() => {
-        // THIS IS THE MAGIC PART
-        messageRef.current = showPopup;
-      }, [showPopup]);
+	useEffect(() => {
+		messageRef.current = showPopup;
+	  }, [showPopup]);
 
 	function scheduleTokenExpiryCheck(): void {
 		if (messageRef.current) return;
+		const accessToken = sessionStorage.getItem("access_token");
 		if (accessToken) {
+
 			const payload = jwtDecode(accessToken);
 
 			const exp = payload.exp ? payload.exp * 1000 : Date.now() + 300;
@@ -42,14 +42,14 @@ const UserLogoutPopup = () => {
 			if (timeToExpiry <= 0) {
 				if (!showPopup) setShowPopup(true);
 				setTimeout(() => {
-					if (!showPopup) return;
+					if (!messageRef.current || useLocation().pathname === "/") return;
 					handleLogout("Token has expired");
 				}, popupTimout);
 				return;
 			}
 
 			setTimeout(() => {
-                if (messageRef.current) return;
+				if (messageRef.current) return;
 				setShowPopup(true);
 
 				setTimeout(() => {
@@ -57,8 +57,6 @@ const UserLogoutPopup = () => {
 					handleLogout("Token has expired");
 				}, popupTimout);
 			}, timeToExpiry);
-		} else {
-			handleLogout("No token found");
 		}
 	}
 
@@ -78,7 +76,6 @@ const UserLogoutPopup = () => {
 				if (err) {
 					handleLogout("Error refreshing session");
 				} else {
-					console.log("Session refreshed"); //TODO: Remove this
 					sessionStorage.setItem(
 						"access_token",
 						session.getAccessToken().getJwtToken()
@@ -87,8 +84,8 @@ const UserLogoutPopup = () => {
 						"refresh_token",
 						session.getRefreshToken().getToken()
 					);
+
 					setShowPopup(false);
-                    console.log("check3")
 				}
 			});
 		}
