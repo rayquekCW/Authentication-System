@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {useState, useRef, useEffect} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 import {
 	faMobileScreen,
 	faEnvelopeOpenText,
-} from "@fortawesome/free-solid-svg-icons";
-import Notifications from "./Notifications";
+} from '@fortawesome/free-solid-svg-icons';
+import Notifications from './Notifications';
 
 type OtpProps = {
 	otpType: string; // email or phone
@@ -15,21 +15,21 @@ type OtpProps = {
 	email?: string;
 };
 
-const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
-	const isEmail = otpType === "email" ? true : false; // check if OTP is sent to email or phone
-	const [otp, setOtp] = useState(["", "", "", "", "", ""]); // 6 digit OTP
+const Otp = ({otpType, stateChanger, step, navigateTo, email}: OtpProps) => {
+	const isEmail = otpType === 'email' ? true : false; // check if OTP is sent to email or phone
+	const [otp, setOtp] = useState(['', '', '', '', '', '']); // 6 digit OTP
 	const inputRefs = useRef<Array<HTMLInputElement | null>>(
 		Array(6).fill(null)
 	); // to store references to the 6 input fields
 	const [time, setTime] = useState(300); // 5 minutes timer
-	const [msg, setMsg] = useState(""); // message to be displayed
+	const [msg, setMsg] = useState(''); // message to be displayed
 	const [error, setError] = useState(false); // true if error, false if not
 	const navigate = useNavigate();
 
-	const adminEmails = ["superAdmin@gmail.com", "admin@gmail.com"];
+	const adminEmails = ['superAdmin@gmail.com', 'admin@gmail.com'];
 
 	if (email && adminEmails.includes(email)) {
-		navigateTo = "/cm-dashboard";
+		navigateTo = '/cm-dashboard';
 	}
 
 	useEffect(() => {
@@ -47,9 +47,9 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 		const minutes = Math.floor(seconds / 60);
 		const remainingSeconds = seconds % 60;
 
-		return `${String(minutes).padStart(2, "0")}:${String(
+		return `${String(minutes).padStart(2, '0')}:${String(
 			remainingSeconds
-		).padStart(2, "0")}`;
+		).padStart(2, '0')}`;
 	};
 
 	// handle input change of OTP
@@ -69,11 +69,11 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 			setOtp(updatedOtp);
 
 			// if value is not empty and the index is less than 5 and the next input field exists, focus on the next input field
-			if (value !== "" && index < 5 && inputRefs.current[index + 1]) {
+			if (value !== '' && index < 5 && inputRefs.current[index + 1]) {
 				inputRefs.current[index + 1]?.focus();
 				// if value is empty and the index is greater than 0 and the previous input field exists, focus on the previous input field
 			} else if (
-				value === "" &&
+				value === '' &&
 				index > 0 &&
 				inputRefs.current[index - 1]
 			) {
@@ -85,26 +85,24 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 	const handleVerify = () => {
 		// if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
 		if (time <= 0) {
-			setMsg("OTP is invalid");
+			setMsg('OTP is invalid');
 			setError(true);
 		}
 		// if otp contains any empty string, set message to "OTP is invalid" and set error to true
-		if (otp.includes("")) {
-			setMsg("OTP is invalid");
+		if (otp.includes('')) {
+			setMsg('OTP is invalid');
 			setError(true);
 		}
 		//TODO: check if OTP is valid and change adminType accordingly
 		if (navigateTo) {
 			navigate(navigateTo, {
-				state: { adminType: email?.split("@")[0] },
+				state: {adminType: email?.split('@')[0]},
 			});
 		}
 		stateChanger(step ? step : 5);
 	};
 
-	const handleResend = () => {
-		console.log("resend");
-	};
+	const handleResend = () => {};
 
 	return (
 		<div>
@@ -133,20 +131,20 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 						aria-label="Mobile Screen Icon"
 					/>
 					<p id="otp-text" className="my-3">
-						A one-time password has been sent to +65 **** 5432.{" "}
+						A one-time password has been sent to +65 **** 5432.{' '}
 						{/* to be replaced with user's phone number */}
 					</p>
 				</>
 			)}
 			<div className="container text-center">
-				<div className="mx-auto" style={{ maxWidth: "400px" }}>
+				<div className="mx-auto" style={{maxWidth: '400px'}}>
 					{otp.map((value, index) => (
 						<div
 							key={index}
 							style={{
-								display: "inline-block",
-								marginRight: "10px",
-								marginBottom: "10px",
+								display: 'inline-block',
+								marginRight: '10px',
+								marginBottom: '10px',
 							}}
 						>
 							<input
@@ -156,9 +154,9 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 								onChange={(e) => handleInputChange(e, index)}
 								maxLength={1}
 								style={{
-									height: "50px",
-									width: "40px",
-									borderBottom: "1px solid #000",
+									height: '50px',
+									width: '40px',
+									borderBottom: '1px solid #000',
 								}}
 								ref={(input) =>
 									(inputRefs.current[index] = input)
@@ -176,7 +174,7 @@ const Otp = ({ otpType, stateChanger, step, navigateTo, email }: OtpProps) => {
 					OTP is only valid for {formatTime(time)} seconds.
 				</p>
 				<p id="otp-text" className="my-3">
-					Did not receive the OTP?{" "}
+					Did not receive the OTP?{' '}
 					<a onClick={handleResend} aria-label="Resend OTP">
 						Resend OTP
 					</a>

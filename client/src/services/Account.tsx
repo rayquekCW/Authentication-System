@@ -1,4 +1,3 @@
-import {useNavigate} from 'react-router-dom';
 import {createContext, ReactNode} from 'react';
 import {CognitoUser, AuthenticationDetails} from 'amazon-cognito-identity-js';
 import AWS from 'aws-sdk';
@@ -160,7 +159,6 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 
 			userState.authenticateUser(authDetailState, {
 				onSuccess: (data) => {
-					console.log('onSuccess:');
 					resolve(data);
 				},
 
@@ -170,7 +168,6 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 				},
 
 				newPasswordRequired: (data) => {
-					console.log('newPasswordRequired:', data);
 					// Handle the new password requirement here
 					// For now, we are resolving it, but you should prompt the user for a new password
 					resolve(data);
@@ -232,7 +229,7 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 		const user = Pool.getCurrentUser();
 		if (user) {
 			window.localStorage.clear();
-            window.sessionStorage.clear();
+			window.sessionStorage.clear();
 			user.signOut();
 		}
 	};
@@ -256,10 +253,7 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 					Password,
 				});
 				cognitoUser.authenticateUser(authDetailState, {
-					onSuccess: (data) => {
-						console.log('onSuccess:', data);
-					},
-
+					onSuccess: () => {},
 					onFailure: (err) => {
 						console.error('onFailure:', err);
 						reject(err);
@@ -293,10 +287,6 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 														JSON.stringify(err)
 												);
 											} else {
-												console.log(
-													'User deleted successfully:',
-													data
-												);
 												resolve(data);
 											}
 										});
@@ -340,10 +330,6 @@ const Account: React.FC<{children: ReactNode}> = (props) => {
 														JSON.stringify(err)
 												);
 											} else {
-												console.log(
-													'User deleted successfully:',
-													data
-												);
 												resolve(data);
 											}
 										});

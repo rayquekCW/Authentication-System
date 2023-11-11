@@ -12,7 +12,6 @@ const bankName = import.meta.env.VITE_BANK_NAME;
 const CmDashboard = () => {
 	const {getSession} = useContext(AccountContext) || {};
 
-	//TODO: Implement different protected routes based on admin types (super_admin, admin, user)
 	const [adminType, setAdminType] = useState('');
 	const [userName, setUserName] = useState<string>('');
 	const [userSub, setUserSub] = useState<string>('');
@@ -100,7 +99,6 @@ const CmDashboard = () => {
 		setShowMfaPopup(true);
 	};
 
-	// TODO - Refactor this into a utils file
 	const formatDate = (inputDate: any) => {
 		const date = new Date(inputDate);
 		const day = date.getDate().toString().padStart(2, '0');
@@ -209,7 +207,6 @@ const CmDashboard = () => {
 													customer.UserLastModifiedDate
 												)}
 											</td>
-											{/* TODO - Update the stlying of this button */}
 											{adminType === 'super_admin' ? (
 												<td>
 													<button

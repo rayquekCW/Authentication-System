@@ -131,8 +131,7 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 		const otpJoined = otp.join('');
 		if (otpJoined.length === 6) {
 			getUser().confirmPassword(otpJoined, password, {
-				onSuccess: (data) => {
-					console.log('onSuccess:', data);
+				onSuccess: () => {
 					if (authenticate) {
 						authenticate(email, password)
 							.then((data: any) => {
@@ -150,7 +149,7 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 								);
 							})
 							.catch((err: any) => {
-								console.log(err);
+								console.error(err);
 							});
 					}
 				},
@@ -165,9 +164,7 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 
 	const resendOTP = () => {
 		getUser().forgotPassword({
-			onSuccess: () => {
-				console.log('onSuccess: The reset email has been sent!');
-			},
+			onSuccess: () => {},
 			onFailure: (err) => {
 				console.error('onFailure:', err);
 			},

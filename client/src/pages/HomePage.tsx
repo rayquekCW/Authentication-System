@@ -15,9 +15,7 @@ const HomePage = () => {
 			if (getSession) {
 				getSession()
 					.then(async (sessionData) => {
-						console.log(sessionData);
-						const accessToken = sessionData.accessToken.jwtToken;
-						console.log(accessToken);
+						// const accessToken = sessionData.accessToken.jwtToken;
 						setUserData({
 							sub: sessionData.sub,
 							name:

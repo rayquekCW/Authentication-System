@@ -78,7 +78,6 @@ const ProfilePage = () => {
 		if (getSession) {
 			getSession()
 				.then(async (sessionData: any) => {
-					console.log(sessionData['custom:role']);
 					// const accessToken = sessionData.accessToken.jwtToken;
 					setCurrentUserSub(sessionData.sub);
 					setMfaEnabled(sessionData.mfaEnabled);
@@ -105,10 +104,8 @@ const ProfilePage = () => {
 					// if no accessToken then user is not logged in
 					// console.error('Error while getting access token:', error);
 					if (cookie.userData) {
-						console.log('have cookie');
 						setUserData(cookie.userData);
 					} else if (searchParams.get('code') != null) {
-						console.log('have code');
 						getUserData();
 					} else {
 						//NOT LOGGED IN IN ANY WAY
@@ -137,7 +134,6 @@ const ProfilePage = () => {
 			);
 			if (response.ok) {
 				const data = await response.json();
-				console.log(data);
 				try {
 					const verifyTokenResponse = await fetch(
 						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-verifytoken',
@@ -154,7 +150,6 @@ const ProfilePage = () => {
 					if (!verifyTokenResponse.ok) {
 						alert('Invalid Token');
 					} else {
-						console.log('token verified');
 						sessionStorage.setItem(
 							'access_token',
 							data.access_token
@@ -174,7 +169,6 @@ const ProfilePage = () => {
 							);
 							if (response2.ok) {
 								const userData = await response2.json();
-								console.log(userData);
 								setUserData({
 									...userData,
 									phone_number: maskPhone(
@@ -186,21 +180,15 @@ const ProfilePage = () => {
 									maxAge: 3600,
 								});
 							}
-						} catch (error: any) {
-							console.log(error.message);
-						}
+						} catch (error) {}
 					}
-				} catch {
-					console.log('error');
-				}
+				} catch {}
 			} else {
 				console.error(
 					`Failed to fetch access token. Status code: ${response.status}`
 				);
 			}
-		} catch (error: any) {
-			console.log('error');
-		}
+		} catch (error) {}
 	};
 
 	/**

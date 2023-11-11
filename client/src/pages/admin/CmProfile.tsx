@@ -86,9 +86,7 @@ const CmProfile = () => {
 		if (getSession) {
 			getSession()
 				.then(async (sessionData: any) => {
-					console.log(sessionData);
-					const accessToken = sessionData.accessToken.jwtToken;
-					console.log(accessToken);
+					// const accessToken = sessionData.accessToken.jwtToken;
 					setCurrentUserSub(sessionData.sub);
 					setMfaEnabled(sessionData.mfaEnabled);
 					setMfaPreference(sessionData.preferredMFA);
@@ -118,10 +116,8 @@ const CmProfile = () => {
 					// if no accessToken then user is not logged in
 					console.error('Error while getting access token:', error);
 					if (cookie.userData) {
-						console.log('have cookie');
 						setUserData(cookie.userData);
 					} else if (searchParams.get('code') != null) {
-						console.log('have code');
 						getUserData();
 					} else {
 						//NOT LOGGED IN IN ANY WAY
@@ -166,7 +162,6 @@ const CmProfile = () => {
 					if (!verifyTokenResponse.ok) {
 						alert('Invalid Token');
 					} else {
-						console.log('token verified');
 						try {
 							const response2 = await fetch(
 								'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/auth_userprofile',
@@ -193,21 +188,15 @@ const CmProfile = () => {
 									maxAge: 3600,
 								});
 							}
-						} catch (error: any) {
-							console.log(error.message);
-						}
+						} catch (error: any) {}
 					}
-				} catch {
-					console.log('error');
-				}
+				} catch {}
 			} else {
 				console.error(
 					`Failed to fetch access token. Status code: ${response.status}`
 				);
 			}
-		} catch (error: any) {
-			console.log('error');
-		}
+		} catch (error: any) {}
 	};
 
 	/**
