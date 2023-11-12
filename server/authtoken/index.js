@@ -16,8 +16,8 @@ app.listen(port, () => {
 	console.log(`Server running on port ${port}`);
 });
 
-app.post('/g2t4-authtoken', async (req, res) => {
-	const {code} = req.body;
+app.post('/g2t4_auth_token', async (req, res) => {
+	const {code, url} = req.body;
 	if (!code) {
 		return res.status(400).json({error: 'Access token is missing.'});
 	}
@@ -34,7 +34,7 @@ app.post('/g2t4-authtoken', async (req, res) => {
 					client_secret: process.env.CLIENT_SECRET,
 					grant_type: 'authorization_code',
 					code: code,
-					redirect_uri: 'http://localhost:5173/profile',
+					redirect_uri: url,
 				}),
 			}
 		);

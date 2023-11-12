@@ -1,34 +1,43 @@
-import { useEffect } from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
-import "./App.css";
-import "../src/styles/styles.scss";
-import SetPassword from "./pages/SetPassword";
-import ProfilePage from "./pages/ProfilePage";
-import MfaPage from "./pages/MfaPage";
-import HomePage from "./pages/HomePage";
-import CustomerManagementDashboard from "./pages/admin/CmDashboard";
-import Enrollment from "./pages/admin/CmEnrollment";
-import Logs from "./pages/admin/CmLogs";
-import Orders from "./pages/admin/CmOrders";
-import Pricing from "./pages/admin/CmPricing";
-import CmProfile from "./pages/admin/CmProfile";
-import { Account } from "./services/Account";
-import { CookiesProvider } from "react-cookie";
-import ProtectedRoute from "./ProtectedRoute";
-import MFAProtectedRoute from "./MFAProtectedRoute";
-import AdminProtectedRoute from "./AdminProtectedRoute";
-const bankName = import.meta.env.VITE_BANK_NAME;
-const bankConfig = await import(`../config/${bankName}.json`);
+import {useEffect} from 'react';
+import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import LoginPage from './pages/LoginPage';
+import './App.css';
+import '../src/styles/styles.scss';
+import SetPassword from './pages/SetPassword';
+import ProfilePage from './pages/ProfilePage';
+import MfaPage from './pages/MfaPage';
+import HomePage from './pages/HomePage';
+import CustomerManagementDashboard from './pages/admin/CmDashboard';
+import Enrollment from './pages/admin/CmEnrollment';
+import Logs from './pages/admin/CmLogs';
+import Orders from './pages/admin/CmOrders';
+import Pricing from './pages/admin/CmPricing';
+import CmProfile from './pages/admin/CmProfile';
+import {Account} from './services/Account';
+import {CookiesProvider} from 'react-cookie';
+import ProtectedRoute from './ProtectedRoute';
+import MFAProtectedRoute from './MFAProtectedRoute';
+import AdminProtectedRoute from './AdminProtectedRoute';
+import type {BankConfig} from './utils/types';
 
 const App = () => {
 	useEffect(() => {
-		// Generate CSS custom properties dynamically from brandColors data
-		const root = document.documentElement;
-		Object.entries(bankConfig.brandColors).forEach(([name, value]) => {
-			return root.style.setProperty(`--${name}`, value as string);
-		});
-	});
+		const bankName = import.meta.env.VITE_BANK_NAME;
+		import(`../config/${bankName}.json`)
+			.then((module: {default: BankConfig}) => {
+				const bankConfig = module.default;
+
+				const root = document.documentElement;
+				Object.entries(bankConfig.brandColors).forEach(
+					([name, value]) => {
+						root.style.setProperty(`--${name}`, value);
+					}
+				);
+			})
+			.catch((error) => {
+				console.error('Failed to load bank config', error);
+			});
+	}, []);
 	return (
 		<>
 			<CookiesProvider>

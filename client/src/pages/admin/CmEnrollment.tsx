@@ -1,21 +1,23 @@
-import { DragEvent, useState, useContext, useEffect } from "react";
-import * as XLSX from "xlsx";
-import { AccountContext } from "../admin/../../services/Account";
-import UserLogoutPopup from "../../components/UserLogout";
-import AdminNavBar from "../../components/navigation/AdminNavBar";
+import {DragEvent, useState, useContext, useEffect} from 'react';
+import * as XLSX from 'xlsx';
+import {AccountContext} from '../admin/../../services/Account';
+import UserLogoutPopup from '../../components/UserLogout';
+import {useNavigate} from 'react-router-dom';
+import AdminNavBar from '../../components/navigation/AdminNavBar';
 
 const CmEnrollment = () => {
 	const [dragIsOver, setDragIsOver] = useState<boolean>(false);
-	const [filename, setFilename] = useState<string>("");
+	const [filename, setFilename] = useState<string>('');
 	const [fileSet, setFileSet] = useState<boolean>(false);
 	const [selectedFile, setSelectedFile] = useState<File>();
-	const [token, setToken] = useState<string>("");
-	const [role, setRole] = useState<string>("");
-	const [userName, setUserName] = useState<string>("");
+	const [token, setToken] = useState<string>('');
+	const [role, setRole] = useState<string>('');
+	const [userName, setUserName] = useState<string>('');
 	const [isLocked, setIsLocked] = useState<boolean>(true);
-	const [bankName, setBankName] = useState<string>("");
+	const [bankName, setBankName] = useState<string>('');
 
 	const accountContext = useContext(AccountContext);
+	const navigate = useNavigate();
 
 	useEffect(() => {
 		if (accountContext) {
@@ -23,12 +25,13 @@ const CmEnrollment = () => {
 			accountContext
 				.getSession()
 				.then((session) => {
+					if (session['custom:role'] !== 'super_admin') {
+						navigate('/cm-dashboard');
+					}
 					setToken(session.accessToken.jwtToken);
-					setRole(session["custom:role"]);
-					setBankName(session['custom:bank_name'])
-					console.log(bankName)
-					console.log(role)
-					setUserName(session.given_name + " " + session.family_name);
+					setRole(session['custom:role']);
+					setBankName(session['custom:bank_name']);
+					setUserName(session.given_name + ' ' + session.family_name);
 				})
 				.catch((error) => {
 					console.error(error); // Handle error
@@ -55,34 +58,34 @@ const CmEnrollment = () => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				const previewContainer =
-					document.getElementById("previewContainer");
+					document.getElementById('previewContainer');
 				if (previewContainer) {
 					if (
 						file.type ===
-						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+						'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 					) {
 						const data = new Uint8Array(
 							reader.result as ArrayBuffer
 						);
-						const workbook = XLSX.read(data, { type: "array" });
+						const workbook = XLSX.read(data, {type: 'array'});
 						const sheet = workbook.Sheets[workbook.SheetNames[0]];
 						const jsonResult = XLSX.utils.sheet_to_json(sheet);
-						const preview = document.createElement("pre");
+						const preview = document.createElement('pre');
 						preview.textContent = JSON.stringify(
 							jsonResult,
 							null,
 							2
 						);
-						previewContainer.innerHTML = "";
+						previewContainer.innerHTML = '';
 						previewContainer.appendChild(preview);
 						reader.readAsArrayBuffer(file);
 						setFileSet(true);
-					} else if (file.type === "text/csv") {
+					} else if (file.type === 'text/csv') {
 						// Handle CSV file
 						const data = reader.result as string;
-						const preview = document.createElement("pre");
+						const preview = document.createElement('pre');
 						preview.textContent = data;
-						previewContainer.innerHTML = "";
+						previewContainer.innerHTML = '';
 						previewContainer.appendChild(preview);
 						setFilename(file.name);
 						reader.readAsText(file);
@@ -92,10 +95,10 @@ const CmEnrollment = () => {
 			};
 			if (
 				file.type ===
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 			) {
 				reader.readAsArrayBuffer(file);
-			} else if (file.type === "text/csv") {
+			} else if (file.type === 'text/csv') {
 				reader.readAsText(file);
 			}
 			setFilename(file.name);
@@ -105,7 +108,7 @@ const CmEnrollment = () => {
 	};
 
 	const handleDivClick = () => {
-		const fileInput = document.getElementById("fileInput");
+		const fileInput = document.getElementById('fileInput');
 		if (fileInput) {
 			fileInput.click();
 		}
@@ -118,35 +121,35 @@ const CmEnrollment = () => {
 			const reader = new FileReader();
 			reader.onload = () => {
 				const previewContainer =
-					document.getElementById("previewContainer");
+					document.getElementById('previewContainer');
 				if (previewContainer) {
 					if (
 						file.type ===
-						"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+						'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 					) {
 						const data = new Uint8Array(
 							reader.result as ArrayBuffer
 						);
-						const workbook = XLSX.read(data, { type: "array" });
+						const workbook = XLSX.read(data, {type: 'array'});
 						const sheet = workbook.Sheets[workbook.SheetNames[0]];
 						const jsonResult = XLSX.utils.sheet_to_json(sheet);
-						const preview = document.createElement("pre");
+						const preview = document.createElement('pre');
 						preview.textContent = JSON.stringify(
 							jsonResult,
 							null,
 							2
 						);
-						previewContainer.innerHTML = "";
+						previewContainer.innerHTML = '';
 						previewContainer.appendChild(preview);
 						reader.readAsArrayBuffer(file);
 
 						setFileSet(true);
-					} else if (file.type === "text/csv") {
+					} else if (file.type === 'text/csv') {
 						// Handle CSV file
 						const data = reader.result as string;
-						const preview = document.createElement("pre");
+						const preview = document.createElement('pre');
 						preview.textContent = data;
-						previewContainer.innerHTML = "";
+						previewContainer.innerHTML = '';
 						previewContainer.appendChild(preview);
 						setFilename(file.name);
 						reader.readAsText(file);
@@ -156,10 +159,10 @@ const CmEnrollment = () => {
 			};
 			if (
 				file.type ===
-				"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+				'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
 			) {
 				reader.readAsArrayBuffer(file);
-			} else if (file.type === "text/csv") {
+			} else if (file.type === 'text/csv') {
 				reader.readAsText(file);
 			}
 			setFilename(file.name);
@@ -169,7 +172,7 @@ const CmEnrollment = () => {
 	};
 
 	const arrayBufferToBase64 = (buffer: ArrayBuffer): string => {
-		let binary = "";
+		let binary = '';
 		const bytes = new Uint8Array(buffer);
 		const len = bytes.byteLength;
 		for (let i = 0; i < len; i++) {
@@ -193,23 +196,23 @@ const CmEnrollment = () => {
 		};
 
 		const LAMBDA_ENDPOINT =
-			"https://xr6gnon0x3.execute-api.ap-southeast-1.amazonaws.com/dev/store-csv";
+			'https://xr6gnon0x3.execute-api.ap-southeast-1.amazonaws.com/dev/store-csv';
 		try {
 			const response = await fetch(LAMBDA_ENDPOINT, {
-				method: "POST",
+				method: 'POST',
 				body: JSON.stringify(payload),
 				headers: {
-					"Content-Type": "application/json",
+					'Content-Type': 'application/json',
 				},
 			});
 			if (!response.ok) {
-				alert("File upload failed!: Forbidden");
+				alert('File upload failed!: Forbidden');
 				throw new Error(`HTTP error! status: ${response.status}`);
 			} else {
-				alert("File uploaded successfully!");
+				alert('File uploaded successfully!');
 			}
 		} catch (error) {
-			console.error("Error uploading the file:", error);
+			console.error('Error uploading the file:', error);
 		}
 	};
 
@@ -230,7 +233,7 @@ const CmEnrollment = () => {
 							{isLocked ? (
 								<button
 									className="defaultBtn"
-									style={{ width: "auto" }}
+									style={{width: 'auto'}}
 									onClick={() => {
 										setIsLocked(!isLocked);
 									}}
@@ -240,7 +243,7 @@ const CmEnrollment = () => {
 							) : (
 								<button
 									className="defaultBtn"
-									style={{ width: "auto" }}
+									style={{width: 'auto'}}
 									onClick={() => {
 										setIsLocked(!isLocked);
 									}}
@@ -271,8 +274,8 @@ const CmEnrollment = () => {
 							<div
 								className={
 									!isLocked
-										? "drag-drop-wrapper text-center p-5 d-flex justify-content-center align-items-center"
-										: "drag-drop-disabled text-center p-5 d-flex justify-content-center align-items-center"
+										? 'drag-drop-wrapper text-center p-5 d-flex justify-content-center align-items-center'
+										: 'drag-drop-disabled text-center p-5 d-flex justify-content-center align-items-center'
 								}
 								onDrop={handleDrop}
 								onDragLeave={handleDragLeave}
@@ -280,23 +283,23 @@ const CmEnrollment = () => {
 								onClick={handleDivClick}
 								style={{
 									backgroundColor: dragIsOver
-										? "lightgray"
-										: "white",
+										? 'lightgray'
+										: 'white',
 								}}
 							>
 								<div
 									className={
-										!isLocked ? "" : "drag-drop-disabled"
+										!isLocked ? '' : 'drag-drop-disabled'
 									}
 								>
 									Drag & drop files <br /> or <br />
-									Click here{" "}
+									Click here{' '}
 								</div>
 								<label htmlFor="fileInput">
 									<input
 										type="file"
 										id="fileInput"
-										style={{ display: "none" }}
+										style={{display: 'none'}}
 										onChange={handleFileChange}
 										accept=".xlsx, .csv"
 										disabled={isLocked}
@@ -325,9 +328,9 @@ const CmEnrollment = () => {
 							className="container"
 							id="previewContainer"
 							style={{
-								width: "100%",
-								height: "400px",
-								overflowY: "scroll", // Add this to enable scrolling if needed
+								width: '100%',
+								height: '400px',
+								overflowY: 'scroll', // Add this to enable scrolling if needed
 							}}
 						></div>
 					</div>
