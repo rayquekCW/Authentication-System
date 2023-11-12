@@ -37,6 +37,11 @@
 	padding: 2em;
 }
 
-.read-the-docs {
-	color: #888;
+@keyframes spinner {
+	0% {
+		transform: rotate(0deg);
+	}
+	100% {
+		transform: rotate(360deg);
+	}
 }

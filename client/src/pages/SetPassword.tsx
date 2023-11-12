@@ -1,18 +1,15 @@
-import { useState, useEffect, useContext } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
-import UserPool from "../services/UserPool";
-import { CognitoUser } from "amazon-cognito-identity-js";
-import OtpPassword from "../components/OtpPassword";
-import Notifications from "../components/Notifications";
-import { AccountContext } from "../services/Account";
-const bankName = import.meta.env.VITE_BANK_NAME;
-const BankLogo = await import(`../assets/${bankName}.svg`);
-// import MFAPassword from '../components/MFAPassword';
+import {useState, useEffect, useContext} from 'react';
+import {useNavigate, useLocation} from 'react-router-dom';
+import {FaRegEye, FaRegEyeSlash} from 'react-icons/fa';
+import UserPool from '../services/UserPool';
+import {CognitoUser} from 'amazon-cognito-identity-js';
+import OtpPassword from '../components/OtpPassword';
+import Notifications from '../components/Notifications';
+import {AccountContext} from '../services/Account';
 
 const SetPassword = () => {
-	const [password, setPassword] = useState("");
-	const [confirmPassword, setConfirmPassword] = useState("");
+	const [password, setPassword] = useState('');
+	const [confirmPassword, setConfirmPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 	const [lengthCheck, setLengthCheck] = useState(false);
@@ -21,14 +18,27 @@ const SetPassword = () => {
 	const [isSuccessful, setIsSuccessful] = useState(false);
 	const [isSubmitted, setIsSubmitted] = useState(false);
 	const [showErrorNotification, setShowErrorNotification] = useState(false);
-	const [oldPassword, setOldPassword] = useState("");
+	const [oldPassword, setOldPassword] = useState('');
 	const [isOldPasswordInvalid, setIsOldPasswordInvalid] = useState(false);
 
 	const location = useLocation();
 	const isChange = location.state.isChangePassword;
 	const email = location.state.email;
 	const navigate = useNavigate();
-	const { getSession, logout } = useContext(AccountContext) || {};
+	const {getSession, logout} = useContext(AccountContext) || {};
+
+	const [bankLogo, setBankLogo] = useState<any>(null);
+	const bankName = import.meta.env.VITE_BANK_NAME;
+
+	//fetch bank logo
+	useEffect(() => {
+		const fetchBankLogo = async () => {
+			const logo = await import(`../assets/${bankName}.svg`);
+			setBankLogo(logo.default);
+		};
+
+		fetchBankLogo();
+	}, [bankName]);
 
 	useEffect(() => {
 		if (showErrorNotification) {
@@ -103,8 +113,6 @@ const SetPassword = () => {
 
 		if (password === confirmPassword && passwordValid) {
 			// ! Only for production
-			console.log(isChange);
-
 			if (isChange) {
 				// change password of existing user
 				if (getSession) {
@@ -116,7 +124,6 @@ const SetPassword = () => {
 								confirmPassword, // Provide the new password
 								(err: any, result: any) => {
 									if (err) {
-										console.log(err);
 										setIsSuccessful(false);
 										setIsOldPasswordInvalid(true);
 										return;
@@ -124,7 +131,7 @@ const SetPassword = () => {
 									setIsSuccessful(true);
 									if (logout && result) {
 										logout();
-										navigate("/");
+										navigate('/');
 									}
 								}
 							);
@@ -134,13 +141,9 @@ const SetPassword = () => {
 			} else {
 				setIsSuccessful(true);
 				getUser().forgotPassword({
-					onSuccess: () => {
-						console.log(
-							"onSuccess: The reset email has been sent!"
-						);
-					},
+					onSuccess: () => {},
 					onFailure: (err) => {
-						console.error("onFailure:", err);
+						console.error('onFailure:', err);
 					},
 				});
 			}
@@ -159,7 +162,7 @@ const SetPassword = () => {
 							<div className="text-center p-2 rounded">
 								<img
 									className=""
-									src={BankLogo.default}
+									src={bankLogo}
 									alt=""
 									width={350}
 								/>
@@ -170,8 +173,8 @@ const SetPassword = () => {
 												<input
 													type={
 														showPassword
-															? "text"
-															: "password"
+															? 'text'
+															: 'password'
 													}
 													className="form-control"
 													placeholder="Old Password"
@@ -208,9 +211,9 @@ const SetPassword = () => {
 												style={{
 													color: password
 														? lengthCheck
-															? "green"
-															: "red"
-														: "black",
+															? 'green'
+															: 'red'
+														: 'black',
 												}}
 											>
 												Be between 14-64 characters
@@ -219,9 +222,9 @@ const SetPassword = () => {
 												style={{
 													color: password
 														? passwordStrengthCheck
-															? "green"
-															: "red"
-														: "black",
+															? 'green'
+															: 'red'
+														: 'black',
 												}}
 											>
 												<li>
@@ -244,8 +247,8 @@ const SetPassword = () => {
 											<input
 												type={
 													showPassword
-														? "text"
-														: "password"
+														? 'text'
+														: 'password'
 												}
 												className="form-control"
 												placeholder="Password"
@@ -273,8 +276,8 @@ const SetPassword = () => {
 											<input
 												type={
 													showConfirmPassword
-														? "text"
-														: "password"
+														? 'text'
+														: 'password'
 												}
 												className="form-control"
 												placeholder="Confirm Password"
@@ -312,7 +315,7 @@ const SetPassword = () => {
 									<div>
 										<Notifications
 											message={
-												"Final verification before your password is set!"
+												'Final verification before your password is set!'
 											}
 											isError={!isSuccessful}
 										/>
@@ -335,7 +338,7 @@ const SetPassword = () => {
 										isSubmitted && (
 											<Notifications
 												message={
-													"Invalid password or passwords do not match. Please try again."
+													'Invalid password or passwords do not match. Please try again.'
 												}
 												isError={!isSuccessful}
 											/>
@@ -345,7 +348,7 @@ const SetPassword = () => {
 										isSubmitted && (
 											<Notifications
 												message={
-													"Old Password is invalid. Please try again."
+													'Old Password is invalid. Please try again.'
 												}
 												isError={!isSuccessful}
 											/>
