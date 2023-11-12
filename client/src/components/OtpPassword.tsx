@@ -28,6 +28,7 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 	const [msg, setMsg] = useState(''); // message to be displayed
 	const [error, setError] = useState(false); // true if error, false if not
 	const [maskedEmail, setMaskedEmail] = useState(''); // masked email to be displayed
+	const [isLoading, setIsLoading] = useState(false); // true if loading, false if not
 
 	// get the user
 	const getUser = () => {
@@ -117,14 +118,17 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 	 * the user in, then creates an API key and navigates to the MFA page.
 	 */
 	const handleLogin = () => {
+		setIsLoading(true);
 		// if time is less than or equal to 0, set message to "OTP is invalid" and set error to true
 		if (time <= 0) {
 			setMsg('OTP is invalid');
+			setIsLoading(false);
 			setError(true);
 		}
 		// if otp contains any empty string, set message to "OTP is invalid" and set error to true
 		if (otp.includes('')) {
 			setMsg('OTP is invalid');
+			setIsLoading(false);
 			setError(true);
 		}
 
@@ -143,19 +147,22 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 								// create an API key and assign to the user
 								fetch(URI, {
 									method: 'POST',
-								}).then(() =>
+								}).then(() => {
 									//set delay to 1.5 second to allow time for the api key to be created
-									navigate('/mfa')
-								);
+									setIsLoading(false);
+									navigate('/mfa');
+								});
 							})
 							.catch((err: any) => {
 								console.error(err);
+								setIsLoading(false);
 							});
 					}
 				},
 				onFailure: (err) => {
 					console.error('onFailure:', err);
 					setMsg('OTP is invalid');
+					setIsLoading(false);
 					setError(true);
 				},
 			});
@@ -253,7 +260,9 @@ const OtpPassword = ({otpType, email, password}: OtpProps) => {
 					}}
 					aria-label="Login"
 				>
-					<span className="btn-text">Verify</span>
+					<span className="btn-text">
+						{isLoading ? 'Loading...' : 'Verify'}
+					</span>
 				</button>
 			</div>
 			<div className="container text-center">

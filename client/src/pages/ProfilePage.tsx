@@ -31,8 +31,13 @@ const ProfilePage = () => {
 	const [mfaEnabled, setMfaEnabled] = useState(false);
 	const [isPhoneVerified, setIsPhoneVerified] = useState(false);
 	const [changePassword, setChangePassword] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const {getSession, logout} = useContext(AccountContext) || {};
+	const fullUrl = window.location.href;
+
+	const urlObj = new URL(fullUrl);
+	const baseUrl = urlObj.protocol + '//' + urlObj.host + urlObj.pathname;
 
 	const navigate = useNavigate();
 
@@ -116,12 +121,13 @@ const ProfilePage = () => {
 	};
 
 	const getUserData = async () => {
+		setIsLoading(true);
 		//get data from session
 		if (searchParams.get('code') === null) return;
 		if (userData != undefined) return;
 		try {
 			const response = await fetch(
-				'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4-authtoken',
+				'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/g2t4_auth_token',
 				{
 					method: 'POST',
 					headers: {
@@ -129,6 +135,7 @@ const ProfilePage = () => {
 					},
 					body: JSON.stringify({
 						code: searchParams.get('code'),
+						url: baseUrl,
 					}),
 				}
 			);
@@ -149,6 +156,7 @@ const ProfilePage = () => {
 					);
 					if (!verifyTokenResponse.ok) {
 						alert('Invalid Token');
+						setIsLoading(false);
 					} else {
 						sessionStorage.setItem(
 							'access_token',
@@ -179,16 +187,26 @@ const ProfilePage = () => {
 									path: '/',
 									maxAge: 3600,
 								});
+								setIsLoading(false);
 							}
-						} catch (error) {}
+							setIsLoading(false);
+						} catch (error) {
+							setIsLoading(false);
+						}
 					}
-				} catch {}
+				} catch {
+					setIsLoading(false);
+				}
 			} else {
 				console.error(
 					`Failed to fetch access token. Status code: ${response.status}`
 				);
+				setIsLoading(false);
 			}
-		} catch (error) {}
+		} catch (error) {
+			console.error('Error while fetching access token:', error);
+			setIsLoading(false);
+		}
 	};
 
 	/**
@@ -268,47 +286,55 @@ const ProfilePage = () => {
 						</Link>
 					</div>
 				</div>
-				<table className="table h-50 text-center">
-					<tbody>
-						<tr>
-							<th className="text-start p-3">Full Name</th>
-							<td className="text-start p-3">{userData?.name}</td>
-						</tr>
-						<tr>
-							<th className="text-start p-3">Email</th>
-							<td className="text-start p-3">
-								{userData?.email}
-							</td>
-						</tr>
-						<tr>
-							<th className="text-start p-3">Phone Number</th>
-							<td className="text-start p-3">
-								{userData?.phone_number
-									? userData.phone_number
-									: 'Not Set'}
+				{isLoading ? (
+					<div className="d-flex justify-content-center text-center w-100">
+						<h2>Loading...</h2>
+					</div>
+				) : (
+					<table className="table h-50 text-center">
+						<tbody>
+							<tr>
+								<th className="text-start p-3">Full Name</th>
+								<td className="text-start p-3">
+									{userData?.name}
+								</td>
+							</tr>
+							<tr>
+								<th className="text-start p-3">Email</th>
+								<td className="text-start p-3">
+									{userData?.email}
+								</td>
+							</tr>
+							<tr>
+								<th className="text-start p-3">Phone Number</th>
+								<td className="text-start p-3">
+									{userData?.phone_number
+										? userData.phone_number
+										: 'Not Set'}
 
-								{isCognitoUser && !isPhoneVerified && (
-									<span>
-										&nbsp; &nbsp; &nbsp;
-										<a href="/mfa">Finish Set-up</a>
-									</span>
-								)}
-							</td>
-						</tr>
-						<tr>
-							<th className="text-start p-3">Birth Date</th>
-							<td className="text-start p-3">
-								{userData?.birthdate &&
-								new Date(userData.birthdate).toString() !==
-									'Invalid Date'
-									? new Date(
-											userData.birthdate
-									  ).toLocaleDateString('en-GB')
-									: userData?.birthdate}
-							</td>
-						</tr>
-					</tbody>
-				</table>
+									{isCognitoUser && !isPhoneVerified && (
+										<span>
+											&nbsp; &nbsp; &nbsp;
+											<a href="/mfa">Finish Set-up</a>
+										</span>
+									)}
+								</td>
+							</tr>
+							<tr>
+								<th className="text-start p-3">Birth Date</th>
+								<td className="text-start p-3">
+									{userData?.birthdate &&
+									new Date(userData.birthdate).toString() !==
+										'Invalid Date'
+										? new Date(
+												userData.birthdate
+										  ).toLocaleDateString('en-GB')
+										: userData?.birthdate}
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				)}
 				{isCognitoUser && (
 					<div className="row justify-content-end">
 						<div className="col-12 col-lg-8 text-md-end">
