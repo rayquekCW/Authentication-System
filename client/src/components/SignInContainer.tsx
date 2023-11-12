@@ -16,6 +16,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const [password, setPassword] = useState('');
 	const [showPassword, setShowPassword] = useState(false);
 	const [errors, setErrors] = useState<string[]>([]);
+	const [isLoading, setIsLoading] = useState(false);
 
 	const {authenticate, getSession} = useContext(AccountContext) || {};
 	const navigate = useNavigate();
@@ -27,6 +28,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	 * implicitly return a Promise if the conditions in the code are met.
 	 */
 	async function login() {
+		setIsLoading(true);
 		if (authenticate) {
 			try {
 				const data: any = await authenticate(email, password);
@@ -48,6 +50,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						await getSession();
 
 					if (!mfaEnabled) {
+						setIsLoading(false);
 						return navigate('/mfa');
 					}
 
@@ -61,6 +64,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 
 						// Throw error if response is not ok
 						if (!response.ok) {
+							setIsLoading(false);
 							throw new Error('Network response was not ok');
 						}
 
@@ -71,16 +75,20 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 							data.role === 'admin' ||
 							data.role === 'super_admin'
 						) {
+							setIsLoading(false);
 							return navigate('/cm-dashboard');
 						}
 
 						// Go to home if user is not admin
+						setIsLoading(false);
 						navigate('/home');
 					} catch (error: any) {
+						setIsLoading(false);
 						setErrors([error.message]);
 					}
 				}
 			} catch (err: any) {
+				setIsLoading(false);
 				setErrors([err.message]);
 			}
 		}
@@ -175,7 +183,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						!validatePasswordFormat(password)
 					}
 				>
-					Sign In
+					{isLoading ? 'Loading...' : 'Sign In'}
 				</button>{' '}
 			</div>
 		</>

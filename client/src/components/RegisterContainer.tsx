@@ -20,12 +20,14 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 	const [dob, setDob] = useState('');
 	const [errors, setErrors] = useState<string[]>([]);
 	const [isConsent, setIsConsent] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 
 	/**
 	 * The function `verify()` sends a POST request to an API endpoint to validate a user's email and
 	 * birthdate, and based on the response, either logs an error message or navigates to a password page.
 	 */
 	function verify() {
+		setIsLoading(true);
 		const API =
 			'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/validate';
 
@@ -38,10 +40,12 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 				// if result has a errorType, then the user is not verified
 				if (result.success === false) {
 					setErrors(['Email or Date of Birth is incorrect']);
+					setIsLoading(false);
 					return;
 				}
 
 				// else, navigate to password page
+				setIsLoading(false);
 				navigate('/password', {
 					state: {
 						isChangePassword: false,
@@ -147,7 +151,7 @@ const RegisterContainer = ({handleSignIn}: RegisterContainerProps) => {
 						!validateEmailFormat(email) || !validateDateFormat(dob)
 					}
 				>
-					Activate
+					{isLoading ? 'Loading...' : 'Activate'}
 				</button>
 			</div>
 		</>
