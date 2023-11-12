@@ -16,9 +16,11 @@ jobs:
 
     - name: Install dependencies
       run: npm install
+      working-directory: ./client
 
     - name: Build
       run: npm run build
+      working-directory: ./client
 
     - name: Configure AWS credentials
       uses: aws-actions/configure-aws-credentials@v1
@@ -29,6 +31,8 @@ jobs:
 
     - name: Sync to S3
       run: aws s3 sync build/ s3://g2t4-ocbc-frontend-ap-es-1 --delete
+      working-directory: ./client
 
     - name: Invalidate CloudFront distribution
       run: aws cloudfront create-invalidation --distribution-id 'E28B7ZXFGHFMBX' --paths "/*"
+      working-directory: ./client
