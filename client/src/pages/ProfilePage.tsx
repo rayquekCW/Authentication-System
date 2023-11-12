@@ -177,6 +177,7 @@ const ProfilePage = () => {
 							);
 							if (response2.ok) {
 								const userData = await response2.json();
+								setIsLoading(false);
 								setUserData({
 									...userData,
 									phone_number: maskPhone(
@@ -187,7 +188,6 @@ const ProfilePage = () => {
 									path: '/',
 									maxAge: 3600,
 								});
-								setIsLoading(false);
 							}
 							setIsLoading(false);
 						} catch (error) {
@@ -207,6 +207,7 @@ const ProfilePage = () => {
 			console.error('Error while fetching access token:', error);
 			setIsLoading(false);
 		}
+		setIsLoading(false);
 	};
 
 	/**
@@ -248,6 +249,7 @@ const ProfilePage = () => {
 
 	const initialFetch = async () => {
 		await getUserData();
+		setIsLoading(false);
 		checkForData();
 	};
 
