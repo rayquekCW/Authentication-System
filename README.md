@@ -3,9 +3,9 @@
 This repository presents a highly scalable solution for implementing an authentication system for Ascenda's rewards platform.
 
 ## Tech Stack
-React + TypeScript
-Sass
-AWS (S3, Cognito, CloudFront, Lambda, Route 53, WAF, API Gateway
+* React + TypeScript
+* Sass
+* AWS (S3, Cognito, CloudFront, Lambda, Route 53, WAF, API Gateway
 
 ## Project Setup
 
