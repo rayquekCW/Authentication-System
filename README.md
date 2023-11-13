@@ -17,7 +17,45 @@ git clone <git_repo_link>
 ### Open your terminal in the local project `client folder`, and execute:
 ```
 npm install
-``` 
+```
+
+### Project Environment Variables
+This project requires the following environment variables to be set in a `.env` file in order to function properly.
+
+#### VITE_CLIENT_ID
+```
+VITE_CLIENT_ID=<client_id>
+```
+
+#### VITE_CLIENT_SECRET
+```
+VITE_CLIENT_SECRET=<client_secret>
+```
+
+#### VITE_AWS_USER_POOL_ID
+```
+VITE_AWS_USER_POOL_ID=<region>_<poolID>
+```
+
+#### VITE_AWS_CLIENT_ID
+```
+VITE_AWS_CLIENT_ID=<aws_client_id>
+```
+
+#### BANK CONFIG
+POSB
+```
+VITE_BANK_NAME=POSB
+VITE_APP_TITLE=POSB digibank online | POSB Singapore
+VITE_APP_ICON=/posb-tab-icon.png
+```
+
+OCBC
+```
+VITE_BANK_NAME=OCBC
+VITE_APP_TITLE=OCBC Bank Singapore - Personal Banking, Business Banking, Wealth Management
+VITE_APP_ICON=/ocbc-tab-icon.png
+```
 
 ### Run the app in development mode
 ```
