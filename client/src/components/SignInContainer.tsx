@@ -23,10 +23,10 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 	const fullUrl = window.location.href;
 
 	const urlObj = new URL(fullUrl);
-	const baseUrl = urlObj.protocol + '//' + urlObj.host + urlObj.pathname;
+	const baseUrl = urlObj.protocol + '//' + urlObj.host + '/profile';
 
 	/**
-	 * The function `requireMFASetup` checks if the user is authenticated, sets tokens in sessionStorage,
+	 * The function `requireMFASetup` checnpom ks if the user is authenticated, sets tokens in sessionStorage,
 	 * verifies if the user is an admin, and navigates to the appropriate page based on the user's role.
 	 * @returns The function `requireMFASetup` does not have an explicit return statement. However, it may
 	 * implicitly return a Promise if the conditions in the code are met.
