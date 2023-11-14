@@ -19,6 +19,7 @@ import ProtectedRoute from './ProtectedRoute';
 import MFAProtectedRoute from './MFAProtectedRoute';
 import AdminProtectedRoute from './AdminProtectedRoute';
 import type {BankConfig} from './utils/types';
+import Disclaimer from './components/Disclaimer';
 
 const App = () => {
 	useEffect(() => {
@@ -43,6 +44,7 @@ const App = () => {
 			<CookiesProvider>
 				<Router>
 					<Account>
+						<Disclaimer />
 						<Routes>
 							<Route path="/" element={<LoginPage />} />
 							<Route path="/password" element={<SetPassword />} />

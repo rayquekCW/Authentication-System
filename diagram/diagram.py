@@ -17,23 +17,26 @@ with Diagram("G2T4 AWS Lambda View with Gateway", show=False, direction="TB", ou
         updateRole = Lambda("update-Role")
         searchEmailDob = Lambda("search-email-dob")
         createApiKey = Lambda("create-api-key")
-        verifyToken = Lambda("verifytoken")
+        verifyToken = Lambda("verifytoken") #exclude from connecting to cognito
         importCsvCognito = Lambda("import-csv-cognito")
         store = Lambda("store-csv")
         validateAdmin = Lambda("validateAdmin")
-        authUserProfile = Lambda("auth_userprofile")
-        authToken = Lambda("auth_token")
+        authUserProfile = Lambda("auth_userprofile") #exclude from connecting to cognito
+        authToken = Lambda("auth_token") #exclude from connecting to cognito
         userCsvBucket = S3("user-csv-bucket")
 
         cognito = Cognito("g2t4-bank-userpool")    
 
     functions = [
         updatePhoneNo, confirmPhoneCode, retrieveUsers, validateMfa, deleteUser,
-        getQrCode, updateRole, searchEmailDob, createApiKey, verifyToken,
-        validateAdmin, authUserProfile, authToken
+        getQrCode, updateRole, searchEmailDob, createApiKey, validateAdmin
     ]
 
     for function in functions:
         api_gateway >> function >> cognito
-
+        
+    
+    api_gateway >> verifyToken
+    api_gateway >> authUserProfile
+    api_gateway >> authToken
     api_gateway >> store >> userCsvBucket >> importCsvCognito >> cognito
