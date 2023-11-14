@@ -120,11 +120,13 @@ const CmDashboard = () => {
 						sessionData.given_name + ' ' + sessionData.family_name
 					);
 					const accessToken = sessionData.accessToken.jwtToken;
-
+					//workaround to get bankName without using real bank names
+					const bankIdentifier =
+						bankName === 'BLUE' ? 'POSB' : 'OCBC'; // 'POSB' or 'OCBC
 					const headers = sessionData.headers;
 					const API =
 						'https://nu0bf8ktf0.execute-api.ap-southeast-1.amazonaws.com/dev/retrieveuser';
-					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankName}`;
+					const uri = `${API}?accessToken=${accessToken}&bankIdentifier=${bankIdentifier}`;
 					try {
 						const response = await fetch(uri, {headers});
 
