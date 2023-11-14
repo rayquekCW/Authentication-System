@@ -20,6 +20,10 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 
 	const {authenticate, getSession} = useContext(AccountContext) || {};
 	const navigate = useNavigate();
+	const fullUrl = window.location.href;
+
+	const urlObj = new URL(fullUrl);
+	const baseUrl = urlObj.protocol + '//' + urlObj.host + urlObj.pathname;
 
 	/**
 	 * The function `requireMFASetup` checks if the user is authenticated, sets tokens in sessionStorage,
@@ -162,9 +166,7 @@ const SignInContainer = ({handleSignIn}: SignInContainerProps) => {
 						<Link
 							to={`https://smurnauth-production.fly.dev/oauth/authorize?client_id=${
 								import.meta.env.VITE_CLIENT_ID
-							}&redirect_uri=${
-								import.meta.env.VITE_REDIRECT_URI
-							}&response_type=code&scope=openid+profile`}
+							}&redirect_uri=${baseUrl}&response_type=code&scope=openid+profile`}
 						>
 							Sign in with SSO
 						</Link>
