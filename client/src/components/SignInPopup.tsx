@@ -92,7 +92,8 @@ const SignInPopUp = ({
 				}
 			} else if (deleteAccount) {
 				await deleteAccount(email, password, currentUserSub);
-				closePopup();
+				window.localStorage.clear();
+				window.sessionStorage.clear();
 				navigate("/");
 			}
 			return;
